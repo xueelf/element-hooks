@@ -8,4 +8,5 @@ export default {
   quoteProps: 'as-needed',
   arrowParens: 'avoid',
   endOfLine: 'lf',
+  vueIndentScriptAndStyle: true,
 } satisfies Config;
