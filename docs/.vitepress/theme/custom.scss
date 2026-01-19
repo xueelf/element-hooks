@@ -1,0 +1,27 @@
+.el-table {
+  .el-table__header,
+  .el-table__body {
+    margin: 0;
+
+    tr {
+      border-top: none;
+      background-color: var(--el-table-tr-bg-color);
+    }
+
+    tr:nth-child(2n) {
+      background-color: var(--el-table-tr-bg-color);
+    }
+
+    th,
+    td {
+      border: none;
+      border-bottom: var(--el-table-border);
+    }
+  }
+
+  &.el-table--border {
+    .el-table__cell {
+      border-right: var(--el-table-border);
+    }
+  }
+}
