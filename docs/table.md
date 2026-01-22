@@ -10,3 +10,13 @@
 <<< @/examples/table/BasicTable.vue
 </ExampleCard>
 
+## 带斑马纹表格
+
+<ExampleCard>
+  <template #example>
+    <StripeTable />
+  </template>
+
+<<< @/examples/table/StripeTable.vue
+</ExampleCard>
+
