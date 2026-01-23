@@ -20,3 +20,13 @@
 <<< @/examples/table/StripeTable.vue
 </ExampleCard>
 
+## 带边框表格
+
+<ExampleCard>
+  <template #example>
+    <BorderTable />
+  </template>
+
+<<< @/examples/table/BorderTable.vue
+</ExampleCard>
+
