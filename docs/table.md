@@ -30,3 +30,13 @@
 <<< @/examples/table/BorderTable.vue
 </ExampleCard>
 
+## 带状态表格
+
+<ExampleCard>
+  <template #example>
+    <StatusTable />
+  </template>
+
+<<< @/examples/table/StatusTable.vue
+</ExampleCard>
+
