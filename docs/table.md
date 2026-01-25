@@ -40,3 +40,13 @@
 <<< @/examples/table/StatusTable.vue
 </ExampleCard>
 
+## 显示溢出工具提示的表格
+
+<ExampleCard>
+  <template #example>
+    <TooltipTable />
+  </template>
+
+<<< @/examples/table/TooltipTable.vue
+</ExampleCard>
+
