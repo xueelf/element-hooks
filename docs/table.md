@@ -50,3 +50,13 @@
 <<< @/examples/table/TooltipTable.vue
 </ExampleCard>
 
+## 固定表头
+
+<ExampleCard>
+  <template #example>
+    <FixedTable />
+  </template>
+
+<<< @/examples/table/FixedTable.vue
+</ExampleCard>
+
