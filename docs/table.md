@@ -70,3 +70,13 @@
 <<< @/examples/table/FixedColumnTable.vue
 </ExampleCard>
 
+## 固定列和表头
+
+<ExampleCard>
+  <template #example>
+    <FixedColumnHeaderTable />
+  </template>
+
+<<< @/examples/table/FixedColumnHeaderTable.vue
+</ExampleCard>
+
