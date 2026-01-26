@@ -60,3 +60,13 @@
 <<< @/examples/table/FixedTable.vue
 </ExampleCard>
 
+## 固定列
+
+<ExampleCard>
+  <template #example>
+    <FixedColumnTable />
+  </template>
+
+<<< @/examples/table/FixedColumnTable.vue
+</ExampleCard>
+
