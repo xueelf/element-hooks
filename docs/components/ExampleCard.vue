@@ -58,7 +58,7 @@
     :deep(.el-card__footer) {
       padding: 0;
 
-      .language-vue {
+      [class*='language-'] {
         margin: 0;
         border-radius: 0;
       }
