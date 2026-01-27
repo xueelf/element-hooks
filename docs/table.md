@@ -80,3 +80,13 @@
 <<< @/examples/table/FixedColumnHeaderTable.vue
 </ExampleCard>
 
+## 流体高度
+
+<ExampleCard>
+  <template #example>
+    <FluidHeightTable />
+  </template>
+
+<<< @/examples/table/FluidHeightTable.vue
+</ExampleCard>
+
