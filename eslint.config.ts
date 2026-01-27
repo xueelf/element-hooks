@@ -7,7 +7,7 @@ export default defineConfig(
   tseslint.configs.recommended,
   {
     rules: {
-      '@typescript-eslint/no-explicit-any': 'warn',
+      '@typescript-eslint/no-explicit-any': 'off',
       '@typescript-eslint/no-unsafe-function-type': 'off',
     },
   },
