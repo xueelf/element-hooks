@@ -8,8 +8,11 @@ import {
 import { defineComponent, computed, ref } from 'vue';
 import { createInstanceActions } from './util';
 
-export type TableColumn<T extends Recordable> = Partial<TableColumnCtx<T>> & {
+export type TableColumn<T extends Recordable> = Partial<
+  Omit<TableColumnCtx<T>, 'children'>
+> & {
   slot?: string;
+  children?: TableColumn<T>[];
 };
 // store, _self, column, row, $index, cellIndex, expanded
 export type ColumnScope<T extends Recordable> = {
@@ -38,13 +41,21 @@ export function useTable<T extends Recordable = Recordable>(
         return { ...options, ...props, ...attrs };
       });
       const Column = (columnProps: TableColumn<T>) => {
-        const { slot } = columnProps;
+        const { slot, children } = columnProps;
 
         if (slot) {
           return (
             <ElTableColumn {...columnProps}>
               {{
                 default: (scope: ColumnScope<T>) => <>{slots[slot]?.(scope)}</>,
+              }}
+            </ElTableColumn>
+          );
+        } else if (Array.isArray(children)) {
+          return (
+            <ElTableColumn {...columnProps}>
+              {{
+                default: () => children.map(child => <Column {...child} />),
               }}
             </ElTableColumn>
           );
