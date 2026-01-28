@@ -50,7 +50,7 @@
 
   const [Table] = useTable({
     maxHeight: 250,
-    data: tableData,
+    data: tableData.value,
     columns: [
       { fixed: true, prop: 'date', label: 'Date', width: 150 },
       { prop: 'name', label: 'Name', width: 120 },
