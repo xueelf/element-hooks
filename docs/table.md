@@ -90,3 +90,13 @@
 <<< @/examples/table/FluidHeightTable.vue
 </ExampleCard>
 
+## 多级表头
+
+<ExampleCard>
+  <template #example>
+    <GroupingHeaderTable />
+  </template>
+
+<<< @/examples/table/GroupingHeaderTable.vue
+</ExampleCard>
+
