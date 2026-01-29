@@ -3,7 +3,6 @@ import {
   ElTableColumn,
   type TableColumnCtx,
   type TableInstance,
-  type TableProps,
 } from 'element-plus';
 import { defineComponent, computed, ref } from 'vue';
 import { createInstanceActions } from './util';
@@ -24,7 +23,9 @@ export type ColumnScope<T extends Recordable> = {
   cellIndex: number;
   expanded: Recordable;
 };
-export type TableOptions<T extends Recordable> = Partial<TableProps<T>> & {
+export type TableOptions<T extends Recordable> = Camelized<
+  TableInstance['$props']
+> & {
   columns?: TableColumn<T>[];
 };
 
