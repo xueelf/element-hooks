@@ -100,3 +100,13 @@
 <<< @/examples/table/GroupingHeaderTable.vue
 </ExampleCard>
 
+## 单选
+
+<ExampleCard>
+  <template #example>
+    <SingleSelectTable />
+  </template>
+
+<<< @/examples/table/SingleSelectTable.vue
+</ExampleCard>
+
