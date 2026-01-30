@@ -15,6 +15,7 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 export default defineConfig({
   title: 'Element Hooks',
   description: 'Using Hooks in Element Plus.',
+  cleanUrls: true,
   themeConfig: {
     // https://vitepress.dev/reference/default-theme-config
     sidebar: [
@@ -23,7 +24,6 @@ export default defineConfig({
         items: [{ text: 'useTable', link: '/table' }],
       },
     ],
-
     socialLinks: [
       { icon: 'github', link: 'https://github.com/xueelf/element-hooks' },
     ],
