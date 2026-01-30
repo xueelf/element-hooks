@@ -110,3 +110,33 @@
 <<< @/examples/table/SingleSelectTable.vue
 </ExampleCard>
 
+## 多选
+
+<ExampleCard>
+  <template #example>
+    <MultipleSelectTable />
+  </template>
+
+<<< @/examples/table/MultipleSelectTable.vue
+</ExampleCard>
+
+## 排序
+
+<ExampleCard>
+  <template #example>
+    <SortingTable />
+  </template>
+
+<<< @/examples/table/SortingTable.vue
+</ExampleCard>
+
+## 筛选
+
+<ExampleCard>
+  <template #example>
+    <FilteringTable />
+  </template>
+
+<<< @/examples/table/FilteringTable.vue
+</ExampleCard>
+
