@@ -140,3 +140,13 @@
 <<< @/examples/table/FilteringTable.vue
 </ExampleCard>
 
+## 自定义列模板
+
+<ExampleCard>
+  <template #example>
+    <CustomColumnTable />
+  </template>
+
+<<< @/examples/table/CustomColumnTable.vue
+</ExampleCard>
+
