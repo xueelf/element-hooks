@@ -15,7 +15,9 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 export default defineConfig({
   title: 'Element Hooks',
   description: 'Using Hooks in Element Plus.',
+  lang: 'zh-CN',
   cleanUrls: true,
+  lastUpdated: true,
   themeConfig: {
     // https://vitepress.dev/reference/default-theme-config
     sidebar: [
@@ -24,9 +26,32 @@ export default defineConfig({
         items: [{ text: 'useTable', link: '/table' }],
       },
     ],
+    outline: {
+      label: '本页目录',
+    },
     socialLinks: [
       { icon: 'github', link: 'https://github.com/xueelf/element-hooks' },
     ],
+    editLink: {
+      pattern: 'https://github.com/xueelf/element-hooks/edit/master/docs/:path',
+      text: '帮助改善当前页面',
+    },
+    lastUpdated: {
+      text: '更新日期',
+      formatOptions: {
+        dateStyle: 'short',
+        timeStyle: 'short',
+      },
+    },
+    docFooter: {
+      prev: '上一页',
+      next: '下一页',
+    },
+    darkModeSwitchLabel: '外观',
+    lightModeSwitchTitle: '切换到浅色主题',
+    darkModeSwitchTitle: '切换到深色主题',
+    sidebarMenuLabel: '菜单',
+    returnToTopLabel: '返回顶部',
   },
   vite: {
     plugins: [
