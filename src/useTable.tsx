@@ -24,8 +24,9 @@ export type ColumnScope<T extends Recordable> = {
   expanded: Recordable;
 };
 export type TableOptions<T extends Recordable> = Camelized<
-  TableInstance['$props']
+  Omit<TableInstance['$props'], 'ref' | 'data' | 'columns'>
 > & {
+  data?: T[];
   columns?: TableColumn<T>[];
 };
 
@@ -38,15 +39,20 @@ export function useTable<T extends Recordable = Recordable>(
   const Table = defineComponent<typeof options>({
     name: 'Table',
     setup(props, { attrs, slots }) {
-      const tableProps = computed<typeof options>(() => {
-        return { ...options, ...props, ...attrs };
+      const optionsState = computed(() => {
+        const { columns, ...rest } = options;
+
+        return {
+          columns,
+          props: { ...rest, ...props, ...attrs },
+        };
       });
       const Column = (columnProps: TableColumn<T>) => {
-        const { slot, children } = columnProps;
+        const { slot, children, ...rest } = columnProps;
 
         if (slot) {
           return (
-            <ElTableColumn {...columnProps}>
+            <ElTableColumn {...rest}>
               {{
                 default: (scope: ColumnScope<T>) => <>{slots[slot]?.(scope)}</>,
               }}
@@ -54,20 +60,20 @@ export function useTable<T extends Recordable = Recordable>(
           );
         } else if (Array.isArray(children)) {
           return (
-            <ElTableColumn {...columnProps}>
+            <ElTableColumn {...rest}>
               {{
                 default: () => children.map(child => <Column {...child} />),
               }}
             </ElTableColumn>
           );
         }
-        return <ElTableColumn {...columnProps} />;
+        return <ElTableColumn {...rest} />;
       };
 
       return () => (
         <>
-          <ElTable ref={instanceRef} {...tableProps.value}>
-            {tableProps.value.columns?.map(column => (
+          <ElTable ref={instanceRef} {...optionsState.value.props}>
+            {optionsState.value.columns?.map(column => (
               <Column {...column} />
             ))}
           </ElTable>
