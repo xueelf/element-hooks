@@ -1,11 +1,10 @@
 <script setup lang="ts">
-  import { ref } from 'vue';
   import { useTable } from 'element-hooks';
   import dayjs from 'dayjs';
 
   const now = new Date();
 
-  const tableData = ref([
+  const tableData = [
     {
       date: '2016-05-01',
       name: 'Tom',
@@ -30,15 +29,16 @@
       address: 'No. 189, Grove St, Los Angeles',
       zip: 'CA 90036',
     },
-  ]);
+  ];
 
   const deleteRow = (index: number) => {
-    tableData.value.splice(index, 1);
+    tableData.splice(index, 1);
+    setData(tableData);
   };
 
   const onAddItem = () => {
     now.setDate(now.getDate() + 1);
-    tableData.value.push({
+    tableData.push({
       date: dayjs(now).format('YYYY-MM-DD'),
       name: 'Tom',
       state: 'California',
@@ -46,11 +46,12 @@
       address: 'No. 189, Grove St, Los Angeles',
       zip: 'CA 90036',
     });
+    setData(tableData);
   };
 
-  const [Table] = useTable({
+  const [Table, { setData }] = useTable({
     maxHeight: 250,
-    data: tableData.value,
+    data: tableData,
     columns: [
       { fixed: true, prop: 'date', label: 'Date', width: 150 },
       { prop: 'name', label: 'Name', width: 120 },

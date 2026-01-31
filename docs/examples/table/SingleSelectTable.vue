@@ -33,7 +33,7 @@
 
   const currentRow = ref<User | null>(null);
 
-  const [Table, { setCurrentRow }] = useTable({
+  const [Table, { instance }] = useTable({
     data: tableData,
     highlightCurrentRow: true,
     columns: [
@@ -46,14 +46,16 @@
       currentRow.value = val;
     },
   });
+
+  const setCurrent = (row?: User) => {
+    instance.value?.setCurrentRow(row);
+  };
 </script>
 
 <template>
   <Table style="width: 100%" />
   <div style="margin-top: 20px">
-    <el-button @click="setCurrentRow(tableData[1])">
-      Select second row
-    </el-button>
-    <el-button @click="setCurrentRow(null)">Clear selection</el-button>
+    <el-button @click="setCurrent(tableData[1])"> Select second row </el-button>
+    <el-button @click="setCurrent()"> Clear selection </el-button>
   </div>
 </template>
