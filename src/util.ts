@@ -1,28 +1,20 @@
 import { type Ref } from 'vue';
 
-export type InstanceActions<T> = {
-  [K in keyof T as T[K] extends Function ? K : never]: T[K];
-} & {
-  getInstance(): T;
-};
+export type InstanceController<T, E extends object = object> = {
+  instance: Ref<T | null>;
+} & E;
 
-export function createInstanceActions<T>(ref: Ref): InstanceActions<T> {
-  return new Proxy(<InstanceActions<T>>{}, {
+export function createController<T extends object, E extends object = object>(
+  instance: Ref<T | null>,
+  extensions?: E,
+): InstanceController<T, E> {
+  return new Proxy({} as any, {
     get(_, prop) {
-      return (...args: unknown[]) => {
-        if (ref.value === null) {
-          throw new Error(`Component has not been mounted yet`);
-        }
-        if (prop === 'getInstance') {
-          return ref.value;
-        }
-        const property = Reflect.get(ref.value, prop);
-
-        if (typeof property !== 'function') {
-          throw new Error(`${prop.toString()} is not a function`);
-        }
-        return property(...args);
-      };
+      if (extensions && Reflect.has(extensions, prop)) {
+        return Reflect.get(extensions, prop);
+      } else if (prop === 'instance') {
+        return instance;
+      }
     },
   });
 }
