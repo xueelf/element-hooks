@@ -58,7 +58,7 @@
 
   const selectable = (row: User) => ![1, 2].includes(row.id);
 
-  const [Table, { toggleRowSelection, clearSelection }] = useTable({
+  const [Table, { instance }] = useTable({
     data: tableData,
     rowKey: 'id',
     columns: [
@@ -75,10 +75,10 @@
   const toggleSelection = (rows?: User[], ignoreSelectable?: boolean) => {
     if (rows) {
       rows.forEach(row => {
-        toggleRowSelection(row, undefined, ignoreSelectable);
+        instance.value?.toggleRowSelection(row, undefined, ignoreSelectable);
       });
     } else {
-      clearSelection();
+      instance.value?.clearSelection();
     }
   };
 </script>

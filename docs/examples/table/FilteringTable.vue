@@ -1,6 +1,5 @@
 <script setup lang="ts">
   import { useTable } from 'element-hooks';
-  import type { TableColumnCtx } from 'element-plus';
 
   interface User {
     date: string;
@@ -36,7 +35,7 @@
     },
   ];
 
-  const [Table, { clearFilter }] = useTable({
+  const [Table, { instance }] = useTable({
     data: tableData,
     rowKey: 'date',
     columns: [
@@ -83,11 +82,11 @@
   });
 
   const resetDateFilter = () => {
-    clearFilter(['date']);
+    instance.value?.clearFilter(['date']);
   };
 
   const clearAllFilters = () => {
-    clearFilter();
+    instance.value?.clearFilter();
   };
 </script>
 
