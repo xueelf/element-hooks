@@ -150,3 +150,13 @@
 <<< @/examples/table/CustomColumnTable.vue
 </ExampleCard>
 
+## 自定义表头
+
+<ExampleCard>
+  <template #example>
+    <CustomHeaderTable />
+  </template>
+
+<<< @/examples/table/CustomHeaderTable.vue
+</ExampleCard>
+
