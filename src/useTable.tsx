@@ -53,10 +53,10 @@ export function useTable<T extends Recordable = Recordable>(
   options: TableOptions<T> = {},
 ) {
   const tableInstance = ref<TableInstance | null>(null);
-  const tableProps = reactive<TableOptions<T>>(options);
+  const tableOptions = reactive<TableOptions<T>>(options);
 
   const setProps = (props: Partial<TableOptions<T>>) => {
-    Object.assign(tableProps, props);
+    Object.assign(tableOptions, props);
   };
   const setColumns = (columns: TableColumn<T>[]) => {
     setProps({ columns });
@@ -74,7 +74,7 @@ export function useTable<T extends Recordable = Recordable>(
     name: 'Table',
     setup(props, { attrs, slots }) {
       const tableState = computed(() => {
-        const { columns, ...rest } = tableProps;
+        const { columns, ...rest } = tableOptions;
 
         return {
           columns,
