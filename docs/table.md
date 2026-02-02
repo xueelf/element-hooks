@@ -160,3 +160,13 @@
 <<< @/examples/table/CustomHeaderTable.vue
 </ExampleCard>
 
+## 展开行
+
+<ExampleCard>
+  <template #example>
+    <ExpandableRowTable />
+  </template>
+
+<<< @/examples/table/ExpandableRowTable.vue
+</ExampleCard>
+
