@@ -200,3 +200,13 @@
 <<< @/examples/table/SummaryTable.vue
 </ExampleCard>
 
+## 合并行或列
+
+<ExampleCard>
+  <template #example>
+    <SpanTable />
+  </template>
+
+<<< @/examples/table/SpanTable.vue
+</ExampleCard>
+
