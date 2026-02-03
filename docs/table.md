@@ -170,3 +170,13 @@
 <<< @/examples/table/ExpandableRowTable.vue
 </ExampleCard>
 
+## 树形数据与懒加载
+
+<ExampleCard>
+  <template #example>
+    <TreeTable />
+  </template>
+
+<<< @/examples/table/TreeTable.vue
+</ExampleCard>
+
