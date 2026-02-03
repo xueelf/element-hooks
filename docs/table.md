@@ -180,3 +180,13 @@
 <<< @/examples/table/TreeTable.vue
 </ExampleCard>
 
+## 可选择的树形数据
+
+<ExampleCard>
+  <template #example>
+    <TreeSelectTable />
+  </template>
+
+<<< @/examples/table/TreeSelectTable.vue
+</ExampleCard>
+
