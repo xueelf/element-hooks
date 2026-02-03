@@ -4,7 +4,7 @@ import {
   type TableColumnCtx,
   type TableInstance,
 } from 'element-plus';
-import { defineComponent, computed, ref, reactive } from 'vue';
+import { defineComponent, computed, ref, shallowRef } from 'vue';
 import { createController } from './util';
 
 export type TableColumnSlotName =
@@ -53,10 +53,20 @@ export function useTable<T extends Recordable = Recordable>(
   options: TableOptions<T> = {},
 ) {
   const tableInstance = ref<TableInstance | null>(null);
-  const tableOptions = reactive<TableOptions<T>>(options);
+  const tableOptions = shallowRef<TableOptions<T>>(options);
 
   const setProps = (props: Partial<TableOptions<T>>) => {
-    Object.assign(tableOptions, props);
+    const keys = Object.keys(props);
+
+    for (let index = 0; index < keys.length; index++) {
+      const key = keys[index];
+      const value = Reflect.get(props, key);
+
+      if (Array.isArray(value)) {
+        Reflect.set(props, key, [...value]);
+      }
+    }
+    tableOptions.value = { ...tableOptions.value, ...props };
   };
   const setColumns = (columns: TableColumn<T>[]) => {
     setProps({ columns });
@@ -74,7 +84,7 @@ export function useTable<T extends Recordable = Recordable>(
     name: 'Table',
     setup(props, { attrs, slots }) {
       const tableState = computed(() => {
-        const { columns, ...rest } = tableOptions;
+        const { columns, ...rest } = tableOptions.value;
 
         return {
           columns,
