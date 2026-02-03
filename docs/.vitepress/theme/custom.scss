@@ -1,4 +1,11 @@
 .el-table {
+  // 解决嵌套表格边框穿透问题
+  --el-table-right-border: none;
+
+  &.el-table--border {
+    --el-table-right-border: var(--el-table-border);
+  }
+
   .el-table__header,
   .el-table__body {
     margin: 0;
@@ -17,12 +24,7 @@
     td {
       border: none;
       border-bottom: var(--el-table-border);
-    }
-  }
-
-  &.el-table--border {
-    .el-table__cell {
-      border-right: var(--el-table-border);
+      border-right: var(--el-table-right-border);
     }
   }
 }
