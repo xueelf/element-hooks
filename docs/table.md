@@ -190,3 +190,13 @@
 <<< @/examples/table/TreeSelectTable.vue
 </ExampleCard>
 
+## 表尾合计行
+
+<ExampleCard>
+  <template #example>
+    <SummaryTable />
+  </template>
+
+<<< @/examples/table/SummaryTable.vue
+</ExampleCard>
+
