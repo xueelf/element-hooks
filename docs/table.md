@@ -210,3 +210,13 @@
 <<< @/examples/table/SpanTable.vue
 </ExampleCard>
 
+## 自定义索引
+
+<ExampleCard>
+  <template #example>
+    <CustomIndexTable />
+  </template>
+
+<<< @/examples/table/CustomIndexTable.vue
+</ExampleCard>
+
