@@ -6,7 +6,7 @@ import Components from 'unplugin-vue-components/vite';
 import Icons from 'unplugin-icons/vite';
 import IconsResolver from 'unplugin-icons/resolver';
 import UnoCSS from 'unocss/vite';
-import VueJsx from '@vitejs/plugin-vue-jsx';
+import VueJSX from '@vitejs/plugin-vue-jsx';
 import { ElementPlusResolver } from 'unplugin-vue-components/resolvers';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
@@ -80,7 +80,7 @@ export default defineConfig({
         autoInstall: true,
       }),
       UnoCSS(),
-      VueJsx(),
+      VueJSX(),
     ],
     resolve: {
       alias: {
