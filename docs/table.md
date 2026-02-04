@@ -220,3 +220,13 @@
 <<< @/examples/table/CustomIndexTable.vue
 </ExampleCard>
 
+## 表格布局
+
+<ExampleCard>
+  <template #example>
+    <LayoutTable />
+  </template>
+
+<<< @/examples/table/LayoutTable.vue
+</ExampleCard>
+
