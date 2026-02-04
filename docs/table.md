@@ -100,6 +100,14 @@
 <<< @/examples/table/GroupingTableHead.vue
 </ExampleCard>
 
+## 固定多级表头
+
+<ExampleCard>
+  <template #example>
+    <TableWithFixedGroupHeader />
+  </template>
+
+<<< @/examples/table/TableWithFixedGroupHeader.vue
 </ExampleCard>
 
 ## 单选
