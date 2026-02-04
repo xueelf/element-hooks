@@ -230,3 +230,12 @@
 <<< @/examples/table/LayoutTable.vue
 </ExampleCard>
 
+## Tooltip 自定义
+
+<ExampleCard>
+  <template #example>
+    <TooltipCustomTable />
+  </template>
+
+<<< @/examples/table/TooltipCustomTable.vue
+</ExampleCard>

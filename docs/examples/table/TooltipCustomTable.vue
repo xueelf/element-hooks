@@ -1,0 +1,81 @@
+<script setup lang="ts">
+  import { h } from 'vue';
+  import { ElLink, type TableTooltipData } from 'element-plus';
+  import { useTable } from 'element-hooks';
+
+  type TableData = {
+    address: string;
+    tags: string[];
+    url: string;
+  };
+
+  const tableData: TableData[] = [
+    {
+      address: 'Lohrbergstr. 86c, Süd Lilli, Saarland',
+      tags: ['Office', 'Home', 'Park', 'Garden'],
+      url: 'https://github.com/element-plus/element-plus/issues',
+    },
+    {
+      address: '760 A Street, South Frankfield, Illinois',
+      tags: ['error', 'warning', 'success', 'info'],
+      url: 'https://github.com/element-plus/element-plus/pulls',
+    },
+    {
+      address: 'Arnold-Ohletz-Str. 41a, Alt Malinascheid, Thüringen',
+      tags: ['one', 'two', 'three', 'four', 'five'],
+      url: 'https://github.com/element-plus/element-plus/discussions',
+    },
+    {
+      address: '23618 Windsor Drive, West Ricardoview, Idaho',
+      tags: ['blue', 'white', 'dark', 'gray', 'red', 'bright'],
+      url: 'https://github.com/element-plus/element-plus/actions',
+    },
+  ];
+
+  const tableRowFormatter = (data: TableTooltipData<TableData>) => {
+    return `${data.cellValue}: table formatter`;
+  };
+
+  const withVNode = (data: TableTooltipData<TableData>) => {
+    return h(ElLink, { type: 'primary', href: data.cellValue }, () =>
+      h('span', null, data.cellValue),
+    );
+  };
+
+  const [Table] = useTable({
+    data: tableData,
+    showOverflowTooltip: true,
+    tooltipFormatter: tableRowFormatter as any,
+    columns: [
+      { prop: 'address', label: 'extends table formatter', width: 240 },
+      {
+        prop: 'tags',
+        label: 'formatter object',
+        width: 240,
+        tooltipFormatter: (({ row }: any) => row.tags.join(', ')) as any,
+        slot: 'tags',
+      },
+      {
+        prop: 'url',
+        label: 'with vnode',
+        width: 240,
+        tooltipFormatter: withVNode as any,
+      },
+    ],
+  });
+</script>
+
+<template>
+  <Table style="width: 100%">
+    <template #tags="{ row }">
+      <el-tag
+        v-for="tag in row.tags"
+        :key="tag"
+        style="margin-right: 5px"
+        type="primary"
+      >
+        {{ tag }}
+      </el-tag>
+    </template>
+  </Table>
+</template>
