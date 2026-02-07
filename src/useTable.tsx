@@ -1,11 +1,11 @@
 import {
-  ElTable,
-  ElTableColumn,
   type TableColumnCtx,
   type TableInstance,
+  ElTable,
+  ElTableColumn,
 } from 'element-plus';
 import { defineComponent, computed, ref, shallowRef } from 'vue';
-import { createController } from './util';
+import { createController, createSetProps } from './util';
 
 export type TableColumnSlotName =
   | 'default'
@@ -55,22 +55,12 @@ export function useTable<T extends Recordable = Recordable>(
   const tableInstance = ref<TableInstance | null>(null);
   const tableOptions = shallowRef<TableOptions<T>>(options);
 
-  const setProps = (props: Partial<TableOptions<T>>) => {
-    const keys = Object.keys(props);
+  const setProps = createSetProps(tableOptions);
 
-    for (let index = 0; index < keys.length; index++) {
-      const key = keys[index];
-      const value = Reflect.get(props, key);
-
-      if (Array.isArray(value)) {
-        Reflect.set(props, key, [...value]);
-      }
-    }
-    tableOptions.value = { ...tableOptions.value, ...props };
-  };
   const setColumns = (columns: TableColumn<T>[]) => {
     setProps({ columns });
   };
+
   const setData = (data: T[]) => {
     setProps({ data });
   };
@@ -80,6 +70,7 @@ export function useTable<T extends Recordable = Recordable>(
     setData,
     setColumns,
   });
+
   const Table = defineComponent<TableOptions<T>>({
     name: 'Table',
     setup(props, { attrs, slots }) {
@@ -115,7 +106,7 @@ export function useTable<T extends Recordable = Recordable>(
           columnSlots.default = () =>
             children.map(child => <Column {...child} />);
         }
-        return <ElTableColumn {...rest} v-slots={columnSlots} />;
+        return <ElTableColumn v-slots={columnSlots} {...rest} />;
       };
 
       return () => {

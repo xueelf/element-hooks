@@ -1,4 +1,4 @@
-import { type Ref } from 'vue';
+import { type Ref, type ShallowRef } from 'vue';
 
 export type InstanceController<T, E extends object = object> = {
   instance: Ref<T | null>;
@@ -17,4 +17,20 @@ export function createController<T extends object, E extends object = object>(
       }
     },
   });
+}
+
+export function createSetProps<T extends object>(optionsRef: ShallowRef<T>) {
+  return (props: Partial<T>) => {
+    const keys = Object.keys(props);
+
+    for (let index = 0; index < keys.length; index++) {
+      const key = keys[index];
+      const value = Reflect.get(props, key);
+
+      if (Array.isArray(value)) {
+        Reflect.set(props, key, [...value]);
+      }
+    }
+    optionsRef.value = { ...optionsRef.value, ...props };
+  };
 }
