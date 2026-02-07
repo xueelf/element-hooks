@@ -1,6 +1,6 @@
 import { type DialogInstance, ElDialog } from 'element-plus';
 import { defineComponent, computed, ref, shallowRef } from 'vue';
-import { createController } from './util';
+import { createController, createSetProps } from './util';
 
 export type DialogSlotName = 'default' | 'header' | 'footer';
 
@@ -11,25 +11,16 @@ export function useDialog(options: DialogOptions = {}) {
   const dialogOptions = shallowRef<DialogOptions>(options);
   const visible = ref(false);
 
-  const setProps = (props: Partial<DialogOptions>) => {
-    const keys = Object.keys(props);
+  const setProps = createSetProps(dialogOptions);
 
-    for (let index = 0; index < keys.length; index++) {
-      const key = keys[index];
-      const value = Reflect.get(props, key);
-
-      if (Array.isArray(value)) {
-        Reflect.set(props, key, [...value]);
-      }
-    }
-    dialogOptions.value = { ...dialogOptions.value, ...props };
-  };
   const setTitle = (title: string) => {
     setProps({ title });
   };
+
   const open = () => {
     visible.value = true;
   };
+
   const close = () => {
     visible.value = false;
   };
@@ -40,6 +31,7 @@ export function useDialog(options: DialogOptions = {}) {
     open,
     close,
   });
+
   const Dialog = defineComponent<DialogOptions>({
     name: 'Dialog',
     setup(props, { attrs, slots }) {
