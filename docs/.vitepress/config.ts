@@ -23,7 +23,10 @@ export default defineConfig({
     sidebar: [
       {
         text: 'Hooks',
-        items: [{ text: 'useTable', link: '/table' }],
+        items: [
+          { text: 'useTable', link: '/table' },
+          { text: 'useDialog', link: '/dialog' },
+        ],
       },
     ],
     outline: {
