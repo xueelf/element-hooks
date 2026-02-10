@@ -113,7 +113,7 @@ export function useTable<T extends Recordable = Recordable>(
         const { columns = [], props } = tableState.value;
 
         return (
-          <ElTable ref={tableInstance} {...props}>
+          <ElTable ref={tableInstance} v-slots={slots} {...props}>
             {columns.map(column => (
               <Column {...column} />
             ))}
