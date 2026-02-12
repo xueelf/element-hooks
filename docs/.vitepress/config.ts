@@ -87,7 +87,15 @@ export default defineConfig({
     ],
     resolve: {
       alias: {
+        '@': resolve(__dirname, './'),
         'element-hooks': resolve(__dirname, '../../src/index'),
+      },
+    },
+    css: {
+      preprocessorOptions: {
+        scss: {
+          additionalData: `@use '@/theme/styles/element.scss';`,
+        },
       },
     },
   },
