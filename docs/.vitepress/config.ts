@@ -3,6 +3,7 @@ import { resolve, dirname } from 'node:path';
 import { defineConfig } from 'vitepress';
 import AutoImport from 'unplugin-auto-import/vite';
 import Components from 'unplugin-vue-components/vite';
+import ElementPlus from 'unplugin-element-plus/vite';
 import Icons from 'unplugin-icons/vite';
 import IconsResolver from 'unplugin-icons/resolver';
 import UnoCSS from 'unocss/vite';
@@ -78,6 +79,9 @@ export default defineConfig({
             enabledCollections: ['ep'],
           }),
         ],
+      }),
+      ElementPlus({
+        useSource: true,
       }),
       Icons({
         autoInstall: true,
