@@ -19,8 +19,10 @@ export default defineConfig({
   lang: 'zh-CN',
   cleanUrls: true,
   lastUpdated: true,
+  head: [['link', { rel: 'icon', href: '/images/logo.svg' }]],
   themeConfig: {
     // https://vitepress.dev/reference/default-theme-config
+    logo: '/images/logo.svg',
     sidebar: [
       {
         text: 'Hooks',
