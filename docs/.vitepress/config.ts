@@ -20,18 +20,39 @@ export default defineConfig({
   cleanUrls: true,
   lastUpdated: true,
   head: [['link', { rel: 'icon', href: '/images/logo.svg' }]],
+  rewrites: {
+    'posts/(.*)': '(.*)',
+  },
   themeConfig: {
     // https://vitepress.dev/reference/default-theme-config
     logo: '/images/logo.svg',
-    sidebar: [
+    nav: [
       {
-        text: 'Hooks',
+        text: '文档',
         items: [
-          { text: 'useTable', link: '/table' },
-          { text: 'useDialog', link: '/dialog' },
+          { text: '深度指南', link: '/guide/introduce' },
+          { text: '快速上手', link: '/guide/quick-start' },
         ],
       },
     ],
+    sidebar: {
+      '/guide/': [
+        {
+          text: '开始',
+          items: [
+            { text: '简介', link: '/guide/introduce' },
+            { text: '快速上手', link: '/guide/quick-start' },
+          ],
+        },
+        {
+          text: 'Hooks',
+          items: [
+            { text: 'useDialog', link: '/guide/hooks/dialog' },
+            { text: 'useTable', link: '/guide/hooks/table' },
+          ],
+        },
+      ],
+    },
     outline: {
       label: '本页目录',
     },
