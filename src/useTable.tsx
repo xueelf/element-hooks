@@ -65,10 +65,16 @@ export function useTable<T extends Recordable = Recordable>(
     setProps({ data });
   };
 
+  const getData = () => {
+    const { data } = tableOptions.value;
+    return data ? structuredClone(data) : null;
+  };
+
   const tableController = createController(tableInstance, {
     setProps,
-    setData,
     setColumns,
+    setData,
+    getData,
   });
 
   const Table = defineComponent<TableOptions<T>>({
@@ -82,20 +88,23 @@ export function useTable<T extends Recordable = Recordable>(
           props: { ...rest, ...props, ...attrs },
         };
       });
-      const Column = (columnProps: TableColumn<T>) => {
+      const Column = (columnOptions: TableColumn<T>) => {
         const {
           slot,
-          slots: columnsSlots = {},
+          slots: columnSlotOptions = {},
           children,
-          ...rest
-        } = columnProps;
+          ...columnProps
+        } = columnOptions;
         const columnSlots: Recordable = {};
 
         if (slot) {
-          columnsSlots.default = slot;
+          columnSlotOptions.default = slot;
         }
-        Object.keys(columnsSlots).forEach(key => {
-          const slotName: TableColumnSlotName = Reflect.get(columnsSlots, key);
+        Object.keys(columnSlotOptions).forEach(key => {
+          const slotName: TableColumnSlotName = Reflect.get(
+            columnSlotOptions,
+            key,
+          );
 
           if (slots[slotName]) {
             columnSlots[key] = (scope: any) => <>{slots[slotName]?.(scope)}</>;
@@ -106,7 +115,7 @@ export function useTable<T extends Recordable = Recordable>(
           columnSlots.default = () =>
             children.map(child => <Column {...child} />);
         }
-        return <ElTableColumn v-slots={columnSlots} {...rest} />;
+        return <ElTableColumn v-slots={columnSlots} {...columnProps} />;
       };
 
       return () => {
