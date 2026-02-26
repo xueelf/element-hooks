@@ -4,7 +4,9 @@ import { createController, createSetProps } from './util';
 
 export type DialogSlotName = 'default' | 'header' | 'footer';
 
-export type DialogOptions = Camelized<Omit<DialogInstance['$props'], 'ref'>>;
+export type DialogOptions = Camelized<
+  Omit<DialogInstance['$props'], 'ref' | 'modelValue' | 'onUpdate:modelValue'>
+>;
 
 export function useDialog(options: DialogOptions = {}) {
   const dialogInstance = ref<DialogInstance | null>(null);
@@ -25,19 +27,29 @@ export function useDialog(options: DialogOptions = {}) {
     visible.value = false;
   };
 
+  const getVisible = () => {
+    return visible.value;
+  };
+
   const dialogController = createController(dialogInstance, {
     setProps,
     setTitle,
     open,
     close,
+    getVisible,
   });
 
   const Dialog = defineComponent<DialogOptions>({
     name: 'Dialog',
     setup(props, { attrs, slots }) {
+      const filterKeys = ['modelValue', 'onUpdate:modelValue'];
       const dialogState = computed(() => {
+        const filteredAttrs = Object.fromEntries(
+          Object.entries(attrs).filter(([key]) => !filterKeys.includes(key)),
+        );
+
         return {
-          props: { ...dialogOptions.value, ...props, ...attrs },
+          props: { ...dialogOptions.value, ...props, ...filteredAttrs },
         };
       });
 
