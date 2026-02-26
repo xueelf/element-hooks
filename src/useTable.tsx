@@ -123,8 +123,8 @@ export function useTable<T extends Recordable = Recordable>(
 
         return (
           <ElTable ref={tableInstance} v-slots={slots} {...props}>
-            {columns.map(column => (
-              <Column {...column} />
+            {columns.map((column, index) => (
+              <Column key={index} {...column} />
             ))}
           </ElTable>
         );
