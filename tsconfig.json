@@ -37,6 +37,6 @@
     "scripts/**/*.tsx",
     "src/**/*.ts",
     "src/**/*.tsx",
-    "types/*.d.ts",
+    "types/**/*.d.ts",
   ],
 }
