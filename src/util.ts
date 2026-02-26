@@ -16,6 +16,22 @@ export function createController<T extends object, E extends object = object>(
         return instance;
       }
     },
+    has(_, prop) {
+      return (
+        (extensions && Reflect.has(extensions, prop)) || prop === 'instance'
+      );
+    },
+    ownKeys() {
+      return [...(extensions ? Reflect.ownKeys(extensions) : []), 'instance'];
+    },
+    getOwnPropertyDescriptor(_, prop) {
+      if (
+        (extensions && Reflect.has(extensions, prop)) ||
+        prop === 'instance'
+      ) {
+        return { configurable: true, enumerable: true };
+      }
+    },
   });
 }
 
