@@ -7,6 +7,7 @@ import ElementPlus from 'unplugin-element-plus/vite';
 import Icons from 'unplugin-icons/vite';
 import IconsResolver from 'unplugin-icons/resolver';
 import UnoCSS from 'unocss/vite';
+import VueDevTools from 'vite-plugin-vue-devtools';
 import VueJSX from '@vitejs/plugin-vue-jsx';
 import { ElementPlusResolver } from 'unplugin-vue-components/resolvers';
 
@@ -110,6 +111,7 @@ export default defineConfig({
         autoInstall: true,
       }),
       UnoCSS(),
+      VueDevTools(),
       VueJSX(),
     ],
     resolve: {
