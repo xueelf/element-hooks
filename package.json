@@ -4,9 +4,12 @@
   "description": "Using Hooks in Element Plus.",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
+  "files": [
+    "lib"
+  ],
   "type": "module",
   "scripts": {
-    "build": "bun scripts/build/index.ts && tsc -p tsconfig.build.json",
+    "build": "bun scripts/build/index.ts",
     "docs:dev": "vitepress dev docs",
     "docs:build": "vitepress build docs",
     "docs:preview": "vitepress preview docs",

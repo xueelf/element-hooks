@@ -1,4 +1,4 @@
-import { build, type BuildConfig } from 'bun';
+import { type BuildConfig, $, build } from 'bun';
 
 const config = {
   entrypoints: ['src/index.ts'],
@@ -8,3 +8,4 @@ const config = {
 } satisfies BuildConfig;
 
 await build(config);
+await $`tsc -p tsconfig.build.json`;
