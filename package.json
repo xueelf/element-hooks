@@ -1,6 +1,6 @@
 {
   "name": "element-hooks",
-  "version": "0.0.0",
+  "version": "1.0.0",
   "description": "Using Hooks in Element Plus.",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
