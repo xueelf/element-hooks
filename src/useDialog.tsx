@@ -1,6 +1,6 @@
 import { type DialogInstance, ElDialog } from 'element-plus';
 import { defineComponent, computed, ref, shallowRef } from 'vue';
-import { createController, createSetProps } from './util';
+import { type Camelized, createController, createSetProps } from './util';
 
 export type DialogSlotName = 'default' | 'header' | 'footer';
 

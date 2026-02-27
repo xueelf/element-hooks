@@ -7,5 +7,5 @@
     "emitDeclarationOnly": true,
     "declarationDir": "lib",
   },
-  "include": ["src/**/*.ts", "src/**/*.tsx", "types/*.d.ts"],
+  "include": ["src/**/*.ts", "src/**/*.tsx"],
 }

@@ -14,7 +14,12 @@ import {
   ref,
   shallowRef,
 } from 'vue';
-import { createController, createSetProps } from './util';
+import {
+  type Camelized,
+  type Recordable,
+  createController,
+  createSetProps,
+} from './util';
 
 export type FormItemSlotName = 'default' | 'label' | 'error';
 
