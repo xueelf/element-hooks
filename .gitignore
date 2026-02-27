@@ -3,4 +3,5 @@ lib/
 node_modules/
 
 docs/**/cache/
-docs/types/
+docs/**/dist/
+docs/**/types/
