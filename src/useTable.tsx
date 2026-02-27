@@ -115,17 +115,18 @@ export function useTable<T extends Recordable = Recordable>(
           columnSlots.default = () =>
             children.map(child => <Column {...child} />);
         }
-        return <ElTableColumn v-slots={columnSlots} {...columnProps} />;
+        return <ElTableColumn {...columnProps}>{columnSlots}</ElTableColumn>;
       };
 
       return () => {
         const { columns = [], props } = tableState.value;
 
         return (
-          <ElTable ref={tableInstance} v-slots={slots} {...props}>
-            {columns.map((column, index) => (
-              <Column key={index} {...column} />
-            ))}
+          <ElTable ref={tableInstance} {...props}>
+            {{
+              default: () => columns.map(column => <Column {...column} />),
+              ...slots,
+            }}
           </ElTable>
         );
       };
