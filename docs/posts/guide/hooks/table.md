@@ -1,5 +1,24 @@
 # useTable
 
+`useTable` 的 options 与 `ElTable` 的 props 基本保持一致，但额外增加了 `columns` 属性，用于通过配置化的方式声明表格列，替代在模板中手动编写 `<ElTableColumn>` 的方式。
+
+每个 column 配置项的属性与 `ElTableColumn` 的 props 一致，同时额外支持以下字段：
+
+- **`slot`**：指定该列默认插槽的名称，可在 `<Table>` 组件上通过对应的具名插槽自定义列内容。
+- **`slots`**：一个对象，可分别为 `default`、`header`、`filterIcon`、`expand` 指定插槽名称，实现更精细的插槽控制。
+- **`children`**：用于声明多级表头，嵌套的子列同样支持以上所有配置。
+
+> [!NOTE]
+> `slot` 是 `slots.default` 的简写形式。
+
+`useTable` 返回一个元组 `[Table, controller]`，其中 `controller` 提供了以下方法：
+
+- **`setProps`**：动态更新表格的属性配置。
+- **`setColumns`**：动态更新表格的列配置。
+- **`setData`**：动态更新表格的数据。
+- **`getData`**：获取当前表格数据的深拷贝。
+- **`instance`**：对内部 `ElTable` 实例的 ref 引用，可以通过它直接调用 `ElTable` 上的原生方法（如 `clearSelection`、`sort` 等），组件未挂载时值为 `null`。
+
 ## 基础表格 {#basic-table}
 
 <ExampleCard>

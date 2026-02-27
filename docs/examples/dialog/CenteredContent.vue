@@ -1,25 +1,21 @@
 <script setup lang="ts">
-  import { useDialog, useMessageBox } from 'element-hooks';
+  import { useDialog } from 'element-hooks';
 
-  const messageBox = useMessageBox();
   const [Dialog, { open, close }] = useDialog({
+    title: 'Warning',
     width: 500,
-    title: 'Tips',
-    async beforeClose(done) {
-      const isConfirmed = await messageBox.confirm(
-        'Are you sure to close this dialog?',
-      );
-      if (isConfirmed) {
-        done();
-      }
-    },
+    center: true,
   });
 </script>
 
 <template>
   <el-button plain @click="open">Click to open the Dialog</el-button>
+
   <Dialog>
-    <span>This is a message</span>
+    <span>
+      It should be noted that the content will not be aligned in center by
+      default
+    </span>
     <template #footer>
       <div class="dialog-footer">
         <el-button @click="close">Cancel</el-button>
