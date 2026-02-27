@@ -4,7 +4,6 @@
   "description": "Using Hooks in Element Plus.",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
-  "module": "index.ts",
   "type": "module",
   "scripts": {
     "build": "bun scripts/build/index.ts && tsc -p tsconfig.build.json",
