@@ -37,6 +37,5 @@
     "scripts/**/*.tsx",
     "src/**/*.ts",
     "src/**/*.tsx",
-    "types/**/*.d.ts",
   ],
 }

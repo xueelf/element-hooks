@@ -5,7 +5,12 @@ import {
   ElTableColumn,
 } from 'element-plus';
 import { defineComponent, computed, ref, shallowRef } from 'vue';
-import { createController, createSetProps } from './util';
+import {
+  type Camelized,
+  type Recordable,
+  createController,
+  createSetProps,
+} from './util';
 
 export type TableColumnSlotName =
   | 'default'
