@@ -40,7 +40,8 @@
       setTimeout(() => {
         Reflect.set(state, 'copied', false);
       }, 2000);
-    } catch (err) {
+    } catch (error) {
+      console.error(error);
       ElMessage.error('代码复制失败');
     }
   };

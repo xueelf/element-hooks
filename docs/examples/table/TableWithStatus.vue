@@ -35,7 +35,7 @@
         address: 'No. 189, Grove St, Los Angeles',
       },
     ],
-    rowClassName({ row, rowIndex }) {
+    rowClassName({ rowIndex }) {
       if (rowIndex === 1) {
         return 'warning-row';
       } else if (rowIndex === 3) {

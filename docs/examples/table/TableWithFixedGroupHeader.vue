@@ -4,20 +4,16 @@
   const [Table] = useTable({
     height: '250',
     columns: [
-      { prop: 'date', label: 'Date', width: 150, fixed: true },
+      { prop: 'date', label: 'Date' },
+      { prop: 'name', label: 'Name' },
+      { prop: 'zip', label: 'Zip' },
       {
-        label: 'Delivery Info',
+        label: 'Address Info',
+        fixed: 'right',
         children: [
-          { prop: 'name', label: 'Name', width: 120 },
-          {
-            label: 'Address Info',
-            children: [
-              { prop: 'state', label: 'State', width: 120 },
-              { prop: 'city', label: 'City', width: 120 },
-              { prop: 'address', label: 'Address', width: 600 },
-              { prop: 'zip', label: 'Zip', width: 120 },
-            ],
-          },
+          { prop: 'state', label: 'State' },
+          { prop: 'city', label: 'City' },
+          { prop: 'address', label: 'Address', minWidth: 200 },
         ],
       },
     ],

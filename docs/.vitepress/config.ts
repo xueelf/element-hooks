@@ -49,7 +49,9 @@ export default defineConfig({
           text: 'Hooks',
           items: [
             { text: 'useDialog', link: '/guide/hooks/dialog' },
+            { text: 'useForm', link: '/guide/hooks/form' },
             { text: 'useTable', link: '/guide/hooks/table' },
+            { text: 'useMessageBox', link: '/guide/hooks/message-box' },
           ],
         },
       ],
