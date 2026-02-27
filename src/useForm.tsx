@@ -124,17 +124,18 @@ export function useForm<T extends Recordable = Recordable>(
             };
           }
         }
-        return <ElFormItem v-slots={itemSlots} {...itemProps} />;
+        return <ElFormItem {...itemProps}>{itemSlots}</ElFormItem>;
       };
 
       return () => {
         const { items = [], props } = formState.value;
 
         return (
-          <ElForm ref={formInstance} v-slots={slots} {...props}>
-            {items.map((item, index) => (
-              <Item key={index} {...item} />
-            ))}
+          <ElForm ref={formInstance} {...props}>
+            {{
+              default: () => items.map(item => <Item {...item} />),
+              ...slots,
+            }}
           </ElForm>
         );
       };

@@ -8,6 +8,8 @@ export type DialogOptions = Camelized<
   Omit<DialogInstance['$props'], 'ref' | 'modelValue' | 'onUpdate:modelValue'>
 >;
 
+const IGNORED_ATTRS = ['modelValue', 'onUpdate:modelValue'];
+
 export function useDialog(options: DialogOptions = {}) {
   const dialogInstance = ref<DialogInstance | null>(null);
   const dialogOptions = shallowRef<DialogOptions>(options);
@@ -42,10 +44,9 @@ export function useDialog(options: DialogOptions = {}) {
   const Dialog = defineComponent<DialogOptions>({
     name: 'Dialog',
     setup(props, { attrs, slots }) {
-      const filterKeys = ['modelValue', 'onUpdate:modelValue'];
       const dialogState = computed(() => {
         const filteredAttrs = Object.fromEntries(
-          Object.entries(attrs).filter(([key]) => !filterKeys.includes(key)),
+          Object.entries(attrs).filter(([key]) => !IGNORED_ATTRS.includes(key)),
         );
 
         return {
@@ -59,10 +60,12 @@ export function useDialog(options: DialogOptions = {}) {
         return (
           <ElDialog
             ref={dialogInstance}
-            v-slots={slots}
-            v-model={visible.value}
+            modelValue={visible.value}
+            onUpdate:modelValue={(val: boolean) => (visible.value = val)}
             {...props}
-          />
+          >
+            {slots}
+          </ElDialog>
         );
       };
     },
