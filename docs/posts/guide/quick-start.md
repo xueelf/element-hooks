@@ -30,31 +30,9 @@ bun add element-hooks
 
 ## 基本用法
 
-安装完成后，你可以在组件中直接导入并使用任意 Hook：
+### 组件 Hook
 
-```vue
-<script setup lang="ts">
-  import { useTable } from 'element-hooks';
-  
-  const [Table] = useTable({
-    columns: [
-      { prop: 'name', label: '姓名', width: 180 },
-      { prop: 'age', label: '年龄', width: 100 },
-      { prop: 'address', label: '地址' },
-    ],
-    data: [
-      { name: 'Tom', age: 18, address: 'No. 189, Grove St, Los Angeles' },
-      { name: 'Jerry', age: 20, address: 'No. 189, Grove St, Los Angeles' },
-    ],
-  });
-</script>
-
-<template>
-  <Table style="width: 100%" />
-</template>
-```
-
-除 `useMessage` 和 `useMessageBox` 外，每个 Hook 都返回一个元组 `[Component, controller]`，你可以通过 controller 在逻辑代码中动态控制组件：
+组件 Hook（`useDialog`、`useForm`、`useTable`）返回一个元组 `[Component, controller]`，你可以在模板中渲染组件，并通过 controller 动态控制它：
 
 ```vue
 <script setup lang="ts">
@@ -77,12 +55,37 @@ bun add element-hooks
 </template>
 ```
 
+### 命令式 Hook
+
+命令式 Hook（`useMessage`、`useMessageBox`）用于封装 Element Plus 的命令式 API，不涉及模板渲染，直接返回可调用的方法或对象：
+
+```vue
+<script setup lang="ts">
+  import { useMessage, useMessageBox } from 'element-hooks';
+
+  const message = useMessage();
+  const messageBox = useMessageBox();
+
+  const handleDelete = async () => {
+    const confirmed = await messageBox.confirm('确定要删除吗？', '提示');
+    if (confirmed) {
+      message.success('删除成功');
+    }
+  };
+</script>
+```
+
 ## 下一步
 
 准备好了吗？前往各个 Hook 的文档了解更多用法：
 
+**组件 Hook：**
+
 - [useDialog](/guide/hooks/dialog) — 对话框
 - [useForm](/guide/hooks/form) — 表单
 - [useTable](/guide/hooks/table) — 表格
+
+**命令式 Hook：**
+
 - [useMessage](/guide/hooks/message) — 消息提示
 - [useMessageBox](/guide/hooks/message-box) — 消息弹框
