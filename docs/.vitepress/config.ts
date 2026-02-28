@@ -17,7 +17,6 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 export default defineConfig({
   title: 'Element Hooks',
   description: 'Using Hooks in Element Plus.',
-  base: '/element-hooks/',
   lang: 'zh-CN',
   cleanUrls: true,
   lastUpdated: true,
