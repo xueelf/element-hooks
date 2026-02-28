@@ -176,7 +176,7 @@ Element Hooks 提供两类 Hook：**组件 Hook** 和 **命令式 Hook**。
 
 ## 📖 文档
 
-完整文档和在线示例请访问：[element-hooks 文档站](https://xueelf.github.io/element-hooks/)
+完整文档和在线示例请访问：[element-hooks 文档站](https://element-hooks.js.org)
 
 ## 📝 License
 
