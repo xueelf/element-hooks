@@ -33,12 +33,69 @@ bun add element-hooks
 
 ## 🚀 快速上手
 
-每个 Hook 返回一个元组 `[Component, controller]`：
+Element Hooks 提供两类 Hook：**组件 Hook** 和 **命令式 Hook**。
+
+### 组件 Hook
+
+组件 Hook（`useDialog`、`useForm`、`useTable`）用于封装 Element Plus 的 UI 组件，返回一个元组 `[Component, controller]`：
 
 - **Component** — 可以直接在模板中使用的 Vue 组件，支持原始的 Props 和 Slots。
 - **controller** — 提供命令式操作的控制器对象，包含 `setProps`、`instance` 等，可在任意逻辑中调用。
 
-### useTable
+#### useDialog
+
+通过 `open` / `close` 命令式控制对话框，无需手动管理 `v-model`：
+
+```vue
+<script setup lang="ts">
+  import { useDialog } from 'element-hooks';
+
+  const [Dialog, { open, close }] = useDialog({
+    title: '提示',
+    width: 500,
+  });
+</script>
+
+<template>
+  <el-button @click="open">打开对话框</el-button>
+  <Dialog>
+    <p>这是一段内容。</p>
+    <template #footer>
+      <el-button @click="close">关闭</el-button>
+    </template>
+  </Dialog>
+</template>
+```
+
+#### useForm
+
+通过 `items` 配置数组声明表单项，使用 `render` 实现自动双向绑定：
+
+```vue
+<script setup lang="ts">
+  import { useForm } from 'element-hooks';
+  import { ElInput } from 'element-plus';
+
+  const [Form, { getModel }] = useForm({
+    labelWidth: 'auto',
+    model: { name: '', desc: '' },
+    items: [
+      { label: '名称', prop: 'name', render: { component: ElInput } },
+      {
+        label: '描述',
+        prop: 'desc',
+        render: { component: ElInput, props: { type: 'textarea' } },
+      },
+    ],
+  });
+</script>
+
+<template>
+  <Form />
+</template>
+```
+
+#### useTable
 
 通过 `columns` 配置数组声明表格列，替代手动编写 `<ElTableColumn>`：
 
@@ -64,56 +121,41 @@ bun add element-hooks
 </template>
 ```
 
-### useForm
+### 命令式 Hook
 
-通过 `items` 配置数组声明表单项，使用 `render` 实现自动双向绑定：
+命令式 Hook（`useMessage`、`useMessageBox`）用于封装 Element Plus 的命令式 API，不涉及模板渲染，直接返回可调用的方法或对象。
 
-```vue
-<script setup lang="ts">
-  import { useForm } from 'element-hooks';
-  import { ElInput } from 'element-plus';
+#### useMessage
 
-  const [Form, { getModel }] = useForm({
-    labelWidth: 'auto',
-    model: { name: '', desc: '' },
-    items: [
-      { label: '名称', prop: 'name', render: { component: ElInput } },
-      { label: '描述', prop: 'desc', render: { component: ElInput, props: { type: 'textarea' } } },
-    ],
-  });
-</script>
-
-<template>
-  <Form />
-</template>
-```
-
-### useDialog
-
-通过 `open` / `close` 命令式控制对话框，无需手动管理 `v-model`：
+直接返回 `ElMessage`，用法与 `ElMessage` 完全一致：
 
 ```vue
 <script setup lang="ts">
-  import { useDialog } from 'element-hooks';
+  import { useMessage } from 'element-hooks';
 
-  const [Dialog, { open, close }] = useDialog({
-    title: '提示',
-    width: 500,
-  });
+  const message = useMessage();
+
+  const handleSuccess = () => {
+    message({
+      message: '操作成功',
+      type: 'success',
+    });
+  };
+
+  const handleWarning = () => {
+    message({
+      message: '请注意',
+      type: 'warning',
+    });
+  };
+
+  const handleError = () => {
+    message.error('操作失败');
+  };
 </script>
-
-<template>
-  <el-button @click="open">打开对话框</el-button>
-  <Dialog>
-    <p>这是一段内容。</p>
-    <template #footer>
-      <el-button @click="close">关闭</el-button>
-    </template>
-  </Dialog>
-</template>
 ```
 
-### useMessageBox
+#### useMessageBox
 
 封装 `ElMessageBox`，简化 `confirm` / `prompt` 的异步处理，不再需要 `try/catch`：
 

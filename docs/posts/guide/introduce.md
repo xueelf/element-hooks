@@ -33,15 +33,47 @@ Element Hooks 是一个基于 [Element Plus](https://element-plus.org/) 的 Hook
 </template>
 ```
 
-### 组件 + 控制器
+### 保留原始能力
 
-每个 Hook 返回一个元组 `[Component, controller]`：
+Element Hooks 的初衷不是成为 Element Plus 的替代品，而是轻量级增强以应对不同的使用场景。Hooks 本质上还是对应的 Element Plus 功能项，例如组件 Hook，其返回的 Component 所有 Props、Slots 和事件都可以直接在模板上使用。你可以选择在 Hook 的 options 中统一配置，也可以在模板上逐个传递，两者可以自由混用——模板上的属性会与 options 合并，且**优先级更高**。
+
+以 `useDialog` 为例，`title` 和 `width` 通过 options 传入，而 `draggable` 和 `@opened` 直接写在模板上：
+
+```vue
+<script setup lang="ts">
+  import { useDialog } from 'element-hooks';
+
+  const [Dialog, { open, close }] = useDialog({
+    title: '提示',
+    width: 500,
+  });
+
+  const handleOpened = () => {
+    console.log('对话框已打开');
+  };
+</script>
+
+<template>
+  <el-button @click="open">打开对话框</el-button>
+  <Dialog draggable @opened="handleOpened">
+    <p>这是一段内容。</p>
+    <template #footer>
+      <el-button @click="close">关闭</el-button>
+    </template>
+  </Dialog>
+</template>
+```
+
+## Hook 分类
+
+Element Hooks 提供两类 Hook：**组件 Hook** 和 **命令式 Hook**。
+
+### 组件 Hook
+
+组件 Hook 用于封装 Element Plus 的 UI 组件（如对话框、表单、表格），返回一个元组 `[Component, controller]`：
 
 - **Component** — 可以直接在模板中使用的 Vue 组件，支持原始的 Props 和 Slots。
 - **controller** — 提供命令式操作的控制器对象，包含 `setProps`、`instance` 等，可在任意逻辑中调用。其中 `instance` 是对内部 Element Plus 组件实例的 ref 引用，可以通过它直接调用原始组件上的方法，组件未挂载时值为 `null`。
-
-> [!NOTE]
-> `useMessage` 和 `useMessageBox` 是例外，它们不返回元组。`useMessage` 直接返回 `ElMessage`，详见 [useMessage](/guide/hooks/message)；`useMessageBox` 返回一个包含 `alert`、`confirm`、`prompt` 方法的对象，详见 [useMessageBox](/guide/hooks/message-box)。
 
 ```vue
 <script setup lang="ts">
@@ -68,16 +100,39 @@ Element Hooks 是一个基于 [Element Plus](https://element-plus.org/) 的 Hook
 </template>
 ```
 
-### 保留原始能力
+### 命令式 Hook
 
-Element Hooks 不是对 Element Plus 的二次封装替代品，而是一层薄薄的增强。所有 Element Plus 组件原本支持的 Props、Slots 和事件都可以照常使用，你可以在配置中声明，也可以直接写在模板上。
+命令式 Hook 用于封装 Element Plus 的命令式 API（如 `ElMessage`、`ElMessageBox`），不涉及模板渲染，直接返回可调用的方法或对象。
+
+```vue
+<script setup lang="ts">
+  import { useMessage, useMessageBox } from 'element-hooks';
+
+  const message = useMessage();
+  const messageBox = useMessageBox();
+
+  const handleDelete = async () => {
+    const confirmed = await messageBox.confirm('确定要删除吗？', '提示');
+    if (confirmed) {
+      message.success('删除成功');
+    }
+  };
+</script>
+```
 
 ## 目前提供的 Hooks
+
+### 组件 Hook
 
 | Hook | 说明 |
 | --- | --- |
 | [useDialog](/guide/hooks/dialog) | 对话框，支持命令式 `open` / `close` |
 | [useForm](/guide/hooks/form) | 表单，支持配置驱动的表单项与双向绑定 |
 | [useTable](/guide/hooks/table) | 表格，支持配置驱动的列定义与多级表头 |
+
+### 命令式 Hook
+
+| Hook | 说明 |
+| --- | --- |
 | [useMessage](/guide/hooks/message) | 消息提示，hooks 风格的 `ElMessage` |
 | [useMessageBox](/guide/hooks/message-box) | 消息弹框，简化 `confirm` / `prompt` 的异步处理 |
