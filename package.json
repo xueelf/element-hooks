@@ -1,12 +1,29 @@
 {
   "name": "element-hooks",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Using Hooks in Element Plus.",
-  "main": "lib/index.js",
-  "types": "lib/index.d.ts",
+  "keywords": [
+    "vue",
+    "vue3",
+    "hooks",
+    "utils",
+    "element",
+    "element-plus",
+    "element-hooks"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/xueelf/element-hooks.git"
+  },
+  "homepage": "https://xueelf.github.io/element-hooks/",
+  "bugs": {
+    "url": "https://github.com/xueelf/element-hooks/issues"
+  },
   "files": [
     "lib"
   ],
+  "main": "lib/index.js",
+  "types": "lib/index.d.ts",
   "type": "module",
   "scripts": {
     "build": "bun scripts/build/index.ts",
