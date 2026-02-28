@@ -41,7 +41,7 @@ Element Hooks 是一个基于 [Element Plus](https://element-plus.org/) 的 Hook
 - **controller** — 提供命令式操作的控制器对象，包含 `setProps`、`instance` 等，可在任意逻辑中调用。其中 `instance` 是对内部 Element Plus 组件实例的 ref 引用，可以通过它直接调用原始组件上的方法，组件未挂载时值为 `null`。
 
 > [!NOTE]
-> `useMessageBox` 是一个例外，它不返回元组，而是直接返回一个包含 `alert`、`confirm`、`prompt` 方法的对象。详见 [useMessageBox](/guide/hooks/message-box)。
+> `useMessage` 和 `useMessageBox` 是例外，它们不返回元组。`useMessage` 直接返回 `ElMessage`，详见 [useMessage](/guide/hooks/message)；`useMessageBox` 返回一个包含 `alert`、`confirm`、`prompt` 方法的对象，详见 [useMessageBox](/guide/hooks/message-box)。
 
 ```vue
 <script setup lang="ts">
@@ -79,4 +79,5 @@ Element Hooks 不是对 Element Plus 的二次封装替代品，而是一层薄�
 | [useDialog](/guide/hooks/dialog) | 对话框，支持命令式 `open` / `close` |
 | [useForm](/guide/hooks/form) | 表单，支持配置驱动的表单项与双向绑定 |
 | [useTable](/guide/hooks/table) | 表格，支持配置驱动的列定义与多级表头 |
+| [useMessage](/guide/hooks/message) | 消息提示，hooks 风格的 `ElMessage` |
 | [useMessageBox](/guide/hooks/message-box) | 消息弹框，简化 `confirm` / `prompt` 的异步处理 |
