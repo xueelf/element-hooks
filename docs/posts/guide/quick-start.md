@@ -54,7 +54,7 @@ bun add element-hooks
 </template>
 ```
 
-除 `useMessageBox` 外，每个 Hook 都返回一个元组 `[Component, controller]`，你可以通过 controller 在逻辑代码中动态控制组件：
+除 `useMessage` 和 `useMessageBox` 外，每个 Hook 都返回一个元组 `[Component, controller]`，你可以通过 controller 在逻辑代码中动态控制组件：
 
 ```vue
 <script setup lang="ts">
@@ -84,4 +84,5 @@ bun add element-hooks
 - [useDialog](/guide/hooks/dialog) — 对话框
 - [useForm](/guide/hooks/form) — 表单
 - [useTable](/guide/hooks/table) — 表格
+- [useMessage](/guide/hooks/message) — 消息提示
 - [useMessageBox](/guide/hooks/message-box) — 消息弹框
