@@ -1,6 +1,6 @@
 import { type DialogInstance, ElDialog } from 'element-plus';
 import { defineComponent, computed, ref, shallowRef } from 'vue';
-import { type Camelized, createController, createSetProps } from './util';
+import { type Camelized, createController, createSetOptions } from './util';
 
 export type DialogSlotName = 'default' | 'header' | 'footer';
 
@@ -15,10 +15,10 @@ export function useDialog(options: DialogOptions = {}) {
   const dialogOptions = shallowRef<DialogOptions>(options);
   const visible = ref(false);
 
-  const setProps = createSetProps(dialogOptions);
+  const setOptions = createSetOptions(dialogOptions);
 
   const setTitle = (title: string) => {
-    setProps({ title });
+    setOptions({ title });
   };
 
   const open = () => {
@@ -34,7 +34,7 @@ export function useDialog(options: DialogOptions = {}) {
   };
 
   const dialogController = createController(dialogInstance, {
-    setProps,
+    setOptions,
     setTitle,
     open,
     close,

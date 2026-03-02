@@ -73,7 +73,7 @@ Element Hooks 提供两类 Hook：**组件 Hook** 和 **命令式 Hook**。
 组件 Hook 用于封装 Element Plus 的 UI 组件（如对话框、表单、表格），返回一个元组 `[Component, controller]`：
 
 - **Component** — 可以直接在模板中使用的 Vue 组件，支持原始的 Props 和 Slots。
-- **controller** — 提供命令式操作的控制器对象，包含 `setProps`、`instance` 等，可在任意逻辑中调用。其中 `instance` 是对内部 Element Plus 组件实例的 ref 引用，可以通过它直接调用原始组件上的方法，组件未挂载时值为 `null`。
+- **controller** — 提供命令式操作的控制器对象，包含 `setOptions`、`instance` 等，可在任意逻辑中调用。其中 `instance` 是对内部 Element Plus 组件实例的 ref 引用，可以通过它直接调用原始组件上的方法，组件未挂载时值为 `null`。
 
 ```vue
 <script setup lang="ts">

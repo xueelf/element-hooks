@@ -40,7 +40,7 @@
     },
   ];
 
-  const [Form, { setProps, setItems }] = useForm({
+  const [Form, { setOptions, setItems }] = useForm({
     labelPosition: 'right',
     labelWidth: 'auto',
     model: {
@@ -59,7 +59,8 @@
         v-model="labelPosition"
         aria-label="label position"
         @change="
-          (val: FormProps['labelPosition']) => setProps({ labelPosition: val })
+          (val: FormProps['labelPosition']) =>
+            setOptions({ labelPosition: val })
         "
       >
         <el-radio-button value="left">Left</el-radio-button>

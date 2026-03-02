@@ -13,7 +13,7 @@
 
 `useTable` 返回一个元组 `[Table, controller]`，其中 `controller` 提供了以下方法：
 
-- **`setProps`**：动态更新表格的属性配置。
+- **`setOptions`**：动态更新表格的属性配置。
 - **`setColumns`**：动态更新表格的列配置。
 - **`setData`**：动态更新表格的数据。
 - **`getData`**：获取当前表格数据的深拷贝。

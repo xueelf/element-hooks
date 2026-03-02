@@ -9,7 +9,7 @@
   } from 'element-plus';
   import type { ComponentSize, FormProps } from 'element-plus';
 
-  const [Form, { setProps }] = useForm({
+  const [Form, { setOptions }] = useForm({
     labelWidth: 'auto',
     labelPosition: 'right',
     size: 'default',
@@ -93,14 +93,14 @@
 
   const onSizeChange = (val: string | number | boolean | undefined) => {
     size.value = val as ComponentSize;
-    setProps({ size: val as ComponentSize });
+    setOptions({ size: val as ComponentSize });
   };
 
   const onLabelPositionChange = (
     val: string | number | boolean | undefined,
   ) => {
     labelPosition.value = val as FormProps['labelPosition'];
-    setProps({ labelPosition: val as FormProps['labelPosition'] });
+    setOptions({ labelPosition: val as FormProps['labelPosition'] });
   };
 
   const onSubmit = () => {

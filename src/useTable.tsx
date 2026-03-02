@@ -9,7 +9,7 @@ import {
   type Camelized,
   type Recordable,
   createController,
-  createSetProps,
+  createSetOptions,
 } from './util';
 
 export type TableColumnSlotName =
@@ -47,10 +47,12 @@ export type TableColumn<T extends Recordable> = Partial<
   slots?: Partial<Record<TableColumnSlotName, string>>;
 };
 
+export type TableData<T extends Recordable> = T[];
+
 export type TableOptions<T extends Recordable> = Camelized<
   Omit<TableInstance['$props'], 'ref'>
 > & {
-  data?: T[];
+  data?: TableData<T>;
   columns?: TableColumn<T>[];
 };
 
@@ -60,14 +62,14 @@ export function useTable<T extends Recordable = Recordable>(
   const tableInstance = ref<TableInstance | null>(null);
   const tableOptions = shallowRef<TableOptions<T>>(options);
 
-  const setProps = createSetProps(tableOptions);
+  const setOptions = createSetOptions(tableOptions);
 
   const setColumns = (columns: TableColumn<T>[]) => {
-    setProps({ columns });
+    setOptions({ columns });
   };
 
-  const setData = (data: T[]) => {
-    setProps({ data });
+  const setData = (data: TableData<T>) => {
+    setOptions({ data });
   };
 
   const getData = () => {
@@ -76,7 +78,7 @@ export function useTable<T extends Recordable = Recordable>(
   };
 
   const tableController = createController(tableInstance, {
-    setProps,
+    setOptions,
     setColumns,
     setData,
     getData,
