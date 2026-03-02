@@ -13,6 +13,8 @@ import {
   reactive,
   ref,
   shallowRef,
+  toRaw,
+  watch,
 } from 'vue';
 import {
   type Camelized,
@@ -43,9 +45,6 @@ export type FormOptions<T extends Recordable> = Camelized<
 export function useForm<T extends Recordable = Recordable>(
   options: FormOptions<T> = {},
 ) {
-  if (options.model && !isReactive(options.model)) {
-    options.model = reactive(options.model);
-  }
   const formInstance = ref<FormInstance | null>(null);
   const formOptions = shallowRef<FormOptions<T>>(options);
 
@@ -61,7 +60,7 @@ export function useForm<T extends Recordable = Recordable>(
 
   const getModel = () => {
     const { model } = formOptions.value;
-    return model ? structuredClone(model) : null;
+    return model ? structuredClone(toRaw(model)) : null;
   };
 
   const formController = createController(formInstance, {
@@ -74,6 +73,16 @@ export function useForm<T extends Recordable = Recordable>(
   const Form = defineComponent<FormOptions<T>>({
     name: 'Form',
     setup(props, { attrs, slots }) {
+      watch(
+        () => formOptions.value.model,
+        model => {
+          if (model && !isReactive(model)) {
+            formOptions.value.model = reactive(model);
+          }
+        },
+        { immediate: true },
+      );
+
       const formState = computed(() => {
         const { items, ...rest } = formOptions.value;
 
