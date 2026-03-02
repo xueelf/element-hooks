@@ -18,7 +18,7 @@ import {
   type Camelized,
   type Recordable,
   createController,
-  createSetProps,
+  createSetOptions,
 } from './util';
 
 export type FormItemSlotName = 'default' | 'label' | 'error';
@@ -49,14 +49,14 @@ export function useForm<T extends Recordable = Recordable>(
   const formInstance = ref<FormInstance | null>(null);
   const formOptions = shallowRef<FormOptions<T>>(options);
 
-  const setProps = createSetProps(formOptions);
+  const setOptions = createSetOptions(formOptions);
 
   const setItems = (items: FormItem[]) => {
-    setProps({ items });
+    setOptions({ items });
   };
 
   const setModel = (model: Recordable) => {
-    setProps({ model });
+    setOptions({ model });
   };
 
   const getModel = () => {
@@ -65,7 +65,7 @@ export function useForm<T extends Recordable = Recordable>(
   };
 
   const formController = createController(formInstance, {
-    setProps,
+    setOptions,
     setItems,
     setModel,
     getModel,

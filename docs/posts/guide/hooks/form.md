@@ -13,7 +13,7 @@
 
 `useForm` 返回一个元组 `[Form, controller]`，其中 `controller` 提供了以下方法：
 
-- **`setProps`**：动态更新表单的属性配置。
+- **`setOptions`**：动态更新表单的属性配置。
 - **`setItems`**：动态更新表单项配置。
 - **`setModel`**：动态更新表单的数据模型。
 - **`getModel`**：获取当前表单数据模型的深拷贝。

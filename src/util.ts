@@ -1,3 +1,4 @@
+import { assign, isArray, isObject } from 'radash';
 import { type Ref, type ShallowRef } from 'vue';
 
 export type Recordable<T = any> = Record<PropertyKey, T>;
@@ -52,18 +53,37 @@ export function createController<T extends object, E extends object = object>(
   });
 }
 
-export function createSetProps<T extends object>(optionsRef: ShallowRef<T>) {
-  return (props: Partial<T>) => {
-    const keys = Object.keys(props);
+/**
+ * 递归对比 source 与 target，将同一引用的数组或对象替换为新引用（浅拷贝）。
+ * 用于确保 shallowRef 赋值后，组件能通过 options diff 检测到变更并重新渲染。
+ */
+function forkSharedRefs<T extends object>(source: T, target: T): T {
+  const result = { ...target };
 
-    for (let index = 0; index < keys.length; index++) {
-      const key = keys[index];
-      const value = Reflect.get(props, key);
+  for (const key of Object.keys(result)) {
+    const targetVal = Reflect.get(result, key);
+    const sourceVal = Reflect.get(source, key);
 
-      if (Array.isArray(value)) {
-        Reflect.set(props, key, [...value]);
+    if (targetVal === sourceVal) {
+      if (isArray(targetVal)) {
+        Reflect.set(result, key, [...targetVal]);
+      } else if (isObject(targetVal)) {
+        Reflect.set(result, key, { ...targetVal });
       }
+    } else if (isObject(targetVal) && isObject(sourceVal)) {
+      Reflect.set(result, key, forkSharedRefs(sourceVal, targetVal));
     }
-    optionsRef.value = { ...optionsRef.value, ...props };
+  }
+  return result;
+}
+
+/**
+ * 创建一个类型安全的 setOptions 函数，用于更新 shallowRef 中的选项。
+ * 内部会先通过 forkSharedRefs 消除新旧值之间的共享引用，再进行深合并赋值。
+ */
+export function createSetOptions<T extends object>(optionsRef: ShallowRef<T>) {
+  return (options: Partial<T>) => {
+    const forkedOptions = forkSharedRefs(optionsRef.value, <T>options);
+    optionsRef.value = assign(optionsRef.value, forkedOptions);
   };
 }

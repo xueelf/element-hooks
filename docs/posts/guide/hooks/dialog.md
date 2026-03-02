@@ -6,7 +6,7 @@
 
 - **`open`** / **`close`**：控制对话框的打开与关闭，替代手动操作 `v-model` 的方式。
 - **`getVisible`**：获取当前对话框的显示状态。
-- **`setProps`**：动态更新对话框的属性配置。
+- **`setOptions`**：动态更新对话框的属性配置。
 - **`setTitle`**：动态更新对话框标题。
 - **`instance`**：对内部 `ElDialog` 实例的 ref 引用，可以通过它直接访问 `ElDialog` 上的原生属性和方法，组件未挂载时值为 `null`。
 
