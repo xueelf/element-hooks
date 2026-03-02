@@ -1,4 +1,5 @@
 import { type DialogInstance, ElDialog } from 'element-plus';
+import { omit } from 'radash';
 import { defineComponent, computed, ref, shallowRef } from 'vue';
 import { type Camelized, createController, createSetOptions } from './util';
 
@@ -7,8 +8,6 @@ export type DialogSlotName = 'default' | 'header' | 'footer';
 export type DialogOptions = Camelized<
   Omit<DialogInstance['$props'], 'ref' | 'modelValue' | 'onUpdate:modelValue'>
 >;
-
-const IGNORED_ATTRS = ['modelValue', 'onUpdate:modelValue'];
 
 export function useDialog(options: DialogOptions = {}) {
   const dialogInstance = ref<DialogInstance | null>(null);
@@ -45,9 +44,10 @@ export function useDialog(options: DialogOptions = {}) {
     name: 'Dialog',
     setup(props, { attrs, slots }) {
       const dialogState = computed(() => {
-        const filteredAttrs = Object.fromEntries(
-          Object.entries(attrs).filter(([key]) => !IGNORED_ATTRS.includes(key)),
-        );
+        const filteredAttrs = omit(attrs, [
+          'modelValue',
+          'onUpdate:modelValue',
+        ]);
 
         return {
           props: { ...dialogOptions.value, ...props, ...filteredAttrs },
