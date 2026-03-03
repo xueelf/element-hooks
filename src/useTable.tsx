@@ -88,11 +88,12 @@ export function useTable<T extends Recordable = Recordable>(
     name: 'Table',
     setup(props, { attrs, slots }) {
       const tableState = computed(() => {
-        const { columns, ...rest } = tableOptions.value;
+        const { columns: columnsOption, ...restOptions } = tableOptions.value;
+        const { columns: columnsAttr, ...restAttrs } = attrs as TableOptions<T>;
 
         return {
-          columns,
-          props: { ...rest, ...props, ...attrs },
+          columns: columnsAttr ?? columnsOption,
+          props: { ...restOptions, ...props, ...restAttrs },
         };
       });
       const Column = (columnOptions: TableColumn<T>) => {

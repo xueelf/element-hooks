@@ -84,11 +84,16 @@ export function useForm<T extends Recordable = Recordable>(
       );
 
       const formState = computed(() => {
-        const { items, ...rest } = formOptions.value;
+        const { items: itemsOption, ...restOptions } = formOptions.value;
+        const { items: itemsAttr, ...restAttrs } = attrs as FormOptions<T>;
 
         return {
-          items,
-          props: { ...rest, ...props, ...attrs },
+          items: itemsAttr ?? itemsOption,
+          props: {
+            ...restOptions,
+            ...props,
+            ...restAttrs,
+          },
         };
       });
       const Item = (itemOptions: FormItem) => {
