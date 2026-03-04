@@ -4,7 +4,15 @@ import {
   ElTable,
   ElTableColumn,
 } from 'element-plus';
-import { defineComponent, computed, ref, shallowRef } from 'vue';
+import {
+  computed,
+  defineComponent,
+  onMounted,
+  ref,
+  shallowRef,
+  toRaw,
+  watch,
+} from 'vue';
 import {
   type Camelized,
   type Recordable,
@@ -61,6 +69,7 @@ export function useTable<T extends Recordable = Recordable>(
 ) {
   const tableInstance = ref<TableInstance | null>(null);
   const tableOptions = shallowRef<TableOptions<T>>(options);
+  const tableData = ref<TableData<T> | null>(null);
 
   const setOptions = createSetOptions(tableOptions);
 
@@ -69,12 +78,11 @@ export function useTable<T extends Recordable = Recordable>(
   };
 
   const setData = (data: TableData<T>) => {
-    setOptions({ data });
+    tableData.value = data;
   };
 
   const getData = () => {
-    const { data } = tableOptions.value;
-    return data ? structuredClone(data) : null;
+    return toRaw(tableData.value);
   };
 
   const tableController = createController(tableInstance, {
@@ -86,6 +94,7 @@ export function useTable<T extends Recordable = Recordable>(
 
   const Table = defineComponent<TableOptions<T>>({
     name: 'Table',
+    inheritAttrs: false,
     setup(props, { attrs, slots }) {
       const tableState = computed(() => {
         const { columns: columnsOption, ...restOptions } = tableOptions.value;
@@ -96,6 +105,40 @@ export function useTable<T extends Recordable = Recordable>(
           props: { ...restOptions, ...props, ...restAttrs },
         };
       });
+
+      // TODO: ／人◕ ‿‿ ◕人＼ Sync table data
+      // const syncDataToSource = () => {
+      //   const rawData = toRaw(tableData.value);
+      //   const sourceData = tableState.value.props.data;
+
+      //   if (rawData && sourceData && rawData !== sourceData) {
+      //     sourceData.length = 0;
+      //     sourceData.push(...rawData);
+      //   }
+      // };
+
+      // watch(tableData, syncDataToSource, { deep: true });
+      // watch(
+      //   () => tableState.value.props.data,
+      //   data => {
+      //     if (data && toRaw(tableData.value) !== data) {
+      //       tableData.value = data;
+      //     }
+      //   },
+      // );
+
+      watch(tableData, data => {
+        const sourceData = tableState.value.props.data;
+
+        if (data && data !== sourceData) {
+          setOptions({ data });
+        }
+      });
+
+      onMounted(() => {
+        tableData.value = tableState.value.props.data ?? null;
+      });
+
       const Column = (columnOptions: TableColumn<T>) => {
         const {
           slot,
@@ -130,7 +173,11 @@ export function useTable<T extends Recordable = Recordable>(
         const { columns = [], props } = tableState.value;
 
         return (
-          <ElTable ref={tableInstance} {...props}>
+          <ElTable
+            ref={tableInstance}
+            {...props}
+            data={tableData.value ?? undefined}
+          >
             {{
               default: () => columns.map(column => <Column {...column} />),
               ...slots,

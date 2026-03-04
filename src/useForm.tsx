@@ -9,8 +9,7 @@ import {
   computed,
   defineComponent,
   h,
-  isReactive,
-  reactive,
+  onMounted,
   ref,
   shallowRef,
   toRaw,
@@ -47,6 +46,7 @@ export function useForm<T extends Recordable = Recordable>(
 ) {
   const formInstance = ref<FormInstance | null>(null);
   const formOptions = shallowRef<FormOptions<T>>(options);
+  const formModel = ref<T | null>(null);
 
   const setOptions = createSetOptions(formOptions);
 
@@ -54,13 +54,12 @@ export function useForm<T extends Recordable = Recordable>(
     setOptions({ items });
   };
 
-  const setModel = (model: Recordable) => {
-    setOptions({ model });
+  const setModel = (model: T) => {
+    formModel.value = model;
   };
 
   const getModel = () => {
-    const { model } = formOptions.value;
-    return model ? structuredClone(toRaw(model)) : null;
+    return toRaw(formModel.value);
   };
 
   const formController = createController(formInstance, {
@@ -72,17 +71,8 @@ export function useForm<T extends Recordable = Recordable>(
 
   const Form = defineComponent<FormOptions<T>>({
     name: 'Form',
+    inheritAttrs: false,
     setup(props, { attrs, slots }) {
-      watch(
-        () => formOptions.value.model,
-        model => {
-          if (model && !isReactive(model)) {
-            formOptions.value.model = reactive(model);
-          }
-        },
-        { immediate: true },
-      );
-
       const formState = computed(() => {
         const { items: itemsOption, ...restOptions } = formOptions.value;
         const { items: itemsAttr, ...restAttrs } = attrs as FormOptions<T>;
@@ -96,6 +86,33 @@ export function useForm<T extends Recordable = Recordable>(
           },
         };
       });
+
+      const syncModelToSource = () => {
+        const rawModel = toRaw(formModel.value);
+        const sourceModel = formState.value.props.model;
+
+        if (rawModel && sourceModel && rawModel !== sourceModel) {
+          Object.keys(sourceModel).forEach(key =>
+            Reflect.deleteProperty(sourceModel, key),
+          );
+          Object.assign(sourceModel, rawModel);
+        }
+      };
+
+      watch(formModel, syncModelToSource, { deep: true });
+      watch(
+        () => formState.value.props.model,
+        model => {
+          if (model && toRaw(formModel.value) !== model) {
+            formModel.value = model;
+          }
+        },
+      );
+
+      onMounted(() => {
+        formModel.value = formState.value.props.model ?? null;
+      });
+
       const Item = (itemOptions: FormItem) => {
         const {
           slot,
@@ -127,15 +144,14 @@ export function useForm<T extends Recordable = Recordable>(
           } else {
             itemSlots.default = () => {
               const { component } = render;
-              const { model } = formState.value.props;
               const { prop } = itemProps;
 
-              if (model && prop) {
+              if (formModel.value && prop) {
                 return h(component, {
                   ...render.props,
-                  modelValue: model[prop],
+                  modelValue: formModel.value[prop],
                   'onUpdate:modelValue': (value: unknown) => {
-                    Reflect.set(model, prop, value);
+                    Reflect.set(formModel.value!, prop, value);
                   },
                 });
               }
@@ -150,12 +166,17 @@ export function useForm<T extends Recordable = Recordable>(
         const { items = [], props } = formState.value;
 
         return (
-          <ElForm ref={formInstance} {...props}>
-            {{
-              default: () => items.map(item => <Item {...item} />),
-              ...slots,
-            }}
-          </ElForm>
+          <>
+            {formModel.value && (
+              <ElForm ref={formInstance} {...props} model={formModel.value}>
+                {{
+                  default: () =>
+                    items.map((item: FormItem) => <Item {...item} />),
+                  ...slots,
+                }}
+              </ElForm>
+            )}
+          </>
         );
       };
     },
