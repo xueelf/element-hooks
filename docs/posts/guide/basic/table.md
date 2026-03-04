@@ -1,23 +1,8 @@
 # useTable
 
-`useTable` 的 options 与 `ElTable` 的 props 基本保持一致，但额外增加了 `columns` 属性，用于通过配置化的方式声明表格列，替代在模板中手动编写 `<ElTableColumn>` 的方式。
+`useTable` 通过配置驱动 `ElTable`，你可以使用列定义数组代替模板中的多层 `el-table-column` 嵌套，并通过控制器统一管理表格状态。
 
-每个 column 配置项的属性与 `ElTableColumn` 的 props 一致，同时额外支持以下字段：
-
-- **`slot`**：指定该列默认插槽的名称，可在 `<Table>` 组件上通过对应的具名插槽自定义列内容。
-- **`slots`**：一个对象，可分别为 `default`、`header`、`filterIcon`、`expand` 指定插槽名称，实现更精细的插槽控制。
-- **`children`**：用于声明多级表头，嵌套的子列同样支持以上所有配置。
-
-> [!NOTE]
-> `slot` 是 `slots.default` 的简写形式。
-
-`useTable` 返回一个元组 `[Table, controller]`，其中 `controller` 提供了以下方法：
-
-- **`setState`**：动态更新表格的属性配置。
-- **`setColumns`**：动态更新表格的列配置。
-- **`setData`**：动态更新表格的数据。
-- **`getData`**：获取当前表格数据的深拷贝。
-- **`instance`**：对内部 `ElTable` 实例的 ref 引用，可以通过它直接调用 `ElTable` 上的原生方法（如 `clearSelection`、`sort` 等），组件未挂载时值为 `null`。
+这种方式在列较多、交互复杂或需要动态切换列配置的场景中更具可维护性。
 
 ## 基础表格 {#basic-table}
 
@@ -57,16 +42,6 @@
   </template>
 
 <<< @/examples/table/TableWithStatus.vue
-</ExampleCard>
-
-## 显示溢出工具提示的表格 {#table-with-show-overflow-tooltip}
-
-<ExampleCard>
-  <template #example>
-    <TableWithShowOverflowTooltip />
-  </template>
-
-<<< @/examples/table/TableWithShowOverflowTooltip.vue
 </ExampleCard>
 
 ## 固定表头 {#table-with-fixed-header}
@@ -117,16 +92,6 @@
   </template>
 
 <<< @/examples/table/GroupingTableHead.vue
-</ExampleCard>
-
-## 固定多级表头 {#table-with-fixed-group-header}
-
-<ExampleCard>
-  <template #example>
-    <TableWithFixedGroupHeader />
-  </template>
-
-<<< @/examples/table/TableWithFixedGroupHeader.vue
 </ExampleCard>
 
 ## 单选 {#single-select}
@@ -209,36 +174,6 @@
 <<< @/examples/table/TreeDataAndLazyMode.vue
 </ExampleCard>
 
-## 可选择的树形数据 {#selectable-tree}
-
-<ExampleCard>
-  <template #example>
-    <SelectableTree />
-  </template>
-
-<<< @/examples/table/SelectableTree.vue
-</ExampleCard>
-
-## 表尾合计行 {#summary-row}
-
-<ExampleCard>
-  <template #example>
-    <SummaryRow />
-  </template>
-
-<<< @/examples/table/SummaryRow.vue
-</ExampleCard>
-
-## 合并行或列 {#rowspan-and-colspan}
-
-<ExampleCard>
-  <template #example>
-    <RowspanAndColspan />
-  </template>
-
-<<< @/examples/table/RowspanAndColspan.vue
-</ExampleCard>
-
 ## 自定义索引 {#custom-index}
 
 <ExampleCard>
@@ -259,7 +194,17 @@
 <<< @/examples/table/TableLayout.vue
 </ExampleCard>
 
-## Tooltip 自定义 {#tooltip-formatter}
+## 合并列或行 {#rowspan-and-colspan}
+
+<ExampleCard>
+  <template #example>
+    <RowspanAndColspan />
+  </template>
+
+<<< @/examples/table/RowspanAndColspan.vue
+</ExampleCard>
+
+## 自定义悬浮提示 {#tooltip-formatter}
 
 <ExampleCard>
   <template #example>
@@ -268,3 +213,52 @@
 
 <<< @/examples/table/TooltipFormatter.vue
 </ExampleCard>
+
+## 始终显示悬浮提示 {#table-with-show-overflow-tooltip}
+
+<ExampleCard>
+  <template #example>
+    <TableWithShowOverflowTooltip />
+  </template>
+
+<<< @/examples/table/TableWithShowOverflowTooltip.vue
+</ExampleCard>
+
+## 尾部合计行 {#summary-row}
+
+<ExampleCard>
+  <template #example>
+    <SummaryRow />
+  </template>
+
+<<< @/examples/table/SummaryRow.vue
+</ExampleCard>
+
+## API {#api}
+
+### Options
+
+`useTable` 的配置项继承自 Element Plus `ElTable` 的 Props，并额外增加以下字段：
+
+- **`columns`**: `TableColumn[]` —— 核心配置，用于声明表格列。
+- **`data`**: `T[]` —— 表格数据。
+
+#### TableColumn
+
+属性与 `ElTableColumn` 的 props 一致，同时额外支持：
+
+| 字段 | 说明 | 类型 |
+| --- | --- | --- |
+| `slot` | 默认插槽名 | `string` |
+| `slots` | 具名插槽配置 (`default`, `header`, `filterIcon`, `expand`) | `Record<string, string>` |
+| `children` | 子列配置 (用于多级表头) | `TableColumn[]` |
+
+### Controller
+
+| 方法 | 说明 | 参数 |
+| --- | --- | --- |
+| `setState` | 动态更新表格整体配置 | `(state: Partial<TableOptions>) => void` |
+| `setColumns` | 动态更新列定义 | `(columns: TableColumn[]) => void` |
+| `setData` | 动态更新表格数据 | `(data: T[]) => void` |
+| `getData` | 获取当前数据快照 | `() => T[]` |
+| `instance` | 内部 ElTable 实例（可调用排序、选择等原生方法） | `Ref<TableInstance>` |

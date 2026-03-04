@@ -69,10 +69,10 @@
 
 <style>
   .demo-form-inline .el-input {
-    --el-input-width: 220px;
+    --el-input-width: 190px;
   }
 
   .demo-form-inline .el-select {
-    --el-select-width: 220px;
+    --el-select-width: 190px;
   }
 </style>
