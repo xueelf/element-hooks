@@ -1,12 +1,12 @@
 # 简介
 
-## 什么是 Element Hooks？
+## 什么是 Element Hooks？ {#what-is-element-hooks}
 
-Element Hooks 是一个基于 [Element Plus](https://element-plus.org/) 的 Hooks 封装库，它允许你以**配置驱动**的方式使用 Element Plus 中的常用组件。
+Element Hooks 是一个基于 [Element Plus](https://element-plus.org/) 的 Hooks 封装库，支持你以**配置驱动**的方式使用常见组件能力。
 
-在传统的 Element Plus 使用方式中，你需要在模板中编写大量的组件标签和属性。而 Element Hooks 将这些组件的创建和控制逻辑收归到 `setup` 中，通过 Hooks 返回**动态组件**和**控制器**，让你的代码更加简洁和灵活。
+在传统的 Element Plus 使用方式中，通常需要在模板中编写大量组件标签与属性。Element Hooks 将组件创建与控制逻辑收敛到 `setup` 中，通过 Hook 返回**动态组件**与**控制器**，让代码结构更清晰、扩展更自然。
 
-## 设计理念
+## 设计理念 {#design-philosophy}
 
 ### 配置驱动
 
@@ -35,7 +35,7 @@ Element Hooks 是一个基于 [Element Plus](https://element-plus.org/) 的 Hook
 
 ### 保留原始能力
 
-Element Hooks 的初衷不是成为 Element Plus 的替代品，而是轻量级增强以应对不同的使用场景。Hooks 本质上还是对应的 Element Plus 功能项，例如组件 Hook，其返回的 Component 所有 Props、Slots 和事件都可以直接在模板上使用。你可以选择在 Hook 的 options 中统一配置，也可以在模板上逐个传递，两者可以自由混用——模板上的属性会与 options 合并，且**优先级更高**。
+Element Hooks 的定位不是替代 Element Plus，而是对常见开发场景做轻量增强。Hook 本质上仍映射到对应的 Element Plus 能力：以组件 Hook 为例，返回组件的 Props、Slots 与事件均可在模板中直接使用。你既可以在 Hook 的 options 中集中配置，也可以在模板中按需传递，两者可混合使用——且模板传入的属性优先级更高。
 
 以 `useDialog` 为例，`title` 和 `width` 通过 options 传入，而 `draggable` 和 `@opened` 直接写在模板上：
 
@@ -64,16 +64,16 @@ Element Hooks 的初衷不是成为 Element Plus 的替代品，而是轻量级�
 </template>
 ```
 
-## Hook 分类
+## Hook 分类 {#hook-categories}
 
 Element Hooks 提供两类 Hook：**组件 Hook** 和 **命令式 Hook**。
 
 ### 组件 Hook
 
-组件 Hook 用于封装 Element Plus 的 UI 组件（如对话框、表单、表格），返回一个元组 `[Component, controller]`：
+组件 Hook 用于封装 Element Plus 的 UI 组件（如对话框、表单、表格），返回元组 `[Component, controller]`：
 
 - **Component** — 可以直接在模板中使用的 Vue 组件，支持原始的 Props 和 Slots。
-- **controller** — 提供命令式操作的控制器对象，包含 `setState`、`instance` 等，可在任意逻辑中调用。其中 `instance` 是对内部 Element Plus 组件实例的 ref 引用，可以通过它直接调用原始组件上的方法，组件未挂载时值为 `null`。
+- **controller** — 提供命令式操作的控制器对象，包含 `setState`、`instance` 等，可在任意逻辑中调用。其中 `instance` 是内部 Element Plus 组件实例的 ref 引用，可直接访问原生实例方法；组件未挂载时值为 `null`。
 
 ```vue
 <script setup lang="ts">
@@ -120,19 +120,19 @@ Element Hooks 提供两类 Hook：**组件 Hook** 和 **命令式 Hook**。
 </script>
 ```
 
-## 目前提供的 Hooks
+## 目前提供的 Hooks {#currently-available-hooks}
 
 ### 组件 Hook
 
 | Hook | 说明 |
 | --- | --- |
-| [useDialog](/guide/hooks/dialog) | 对话框，支持命令式 `open` / `close` |
-| [useForm](/guide/hooks/form) | 表单，支持配置驱动的表单项与双向绑定 |
-| [useTable](/guide/hooks/table) | 表格，支持配置驱动的列定义与多级表头 |
+| [useDialog](/guide/basic/dialog) | 对话框，支持命令式 `open` / `close` |
+| [useForm](/guide/basic/form) | 表单，支持配置驱动的表单项与双向绑定 |
+| [useTable](/guide/basic/table) | 表格，支持配置驱动的列定义与多级表头 |
 
 ### 命令式 Hook
 
 | Hook | 说明 |
 | --- | --- |
-| [useMessage](/guide/hooks/message) | 消息提示，hooks 风格的 `ElMessage` |
-| [useMessageBox](/guide/hooks/message-box) | 消息弹框，简化 `confirm` / `prompt` 的异步处理 |
+| [useMessage](/guide/basic/message) | 消息提示，hooks 风格的 `ElMessage` |
+| [useMessageBox](/guide/basic/message-box) | 消息弹框，简化 `confirm` / `prompt` 的异步处理 |

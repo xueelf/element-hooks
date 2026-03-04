@@ -1,23 +1,17 @@
 # useDialog
 
-`useDialog` 的 options 与 `ElDialog` 的 props 基本保持一致，但移除了 `modelValue` 相关属性，因为对话框的显示/隐藏状态由 hook 内部管理，无需手动绑定 `v-model`。
+`useDialog` 基于 `ElDialog` 提供了更清晰的状态控制方式。你可以在保留原始 Props、Slots 与事件能力的前提下，通过控制器方法完成打开、关闭与动态配置更新。
 
-`useDialog` 返回一个元组 `[Dialog, controller]`，其中 `controller` 提供了以下方法：
-
-- **`open`** / **`close`**：控制对话框的打开与关闭，替代手动操作 `v-model` 的方式。
-- **`getVisible`**：获取当前对话框的显示状态。
-- **`setState`**：动态更新对话框的属性配置。
-- **`setTitle`**：动态更新对话框标题。
-- **`instance`**：对内部 `ElDialog` 实例的 ref 引用，可以通过它直接访问 `ElDialog` 上的原生属性和方法，组件未挂载时值为 `null`。
+与手动维护 `v-model` 相比，`useDialog` 将可见状态统一收敛在 Hook 内部，适合在复杂交互场景中保持视图与逻辑解耦。
 
 ## 基础用法 {#basic-usage}
 
 <ExampleCard>
   <template #example>
-    <BasicUsage />
+    <DialogBasicUsage />
   </template>
 
-<<< @/examples/dialog/BasicUsage.vue
+<<< @/examples/dialog/DialogBasicUsage.vue
 </ExampleCard>
 
 ## 自定义内容 {#customized-content}
@@ -54,10 +48,10 @@
 
 <ExampleCard>
   <template #example>
-    <CenteredContent />
+    <DialogCenteredContent />
   </template>
 
-<<< @/examples/dialog/CenteredContent.vue
+<<< @/examples/dialog/DialogCenteredContent.vue
 </ExampleCard>
 
 ## 居中对话框 {#align-center-dialog}
@@ -129,3 +123,22 @@
 
 <<< @/examples/dialog/Events.vue
 </ExampleCard>
+
+## API {#api}
+
+### Options
+
+`useDialog` 的配置项继承自 Element Plus `ElDialog` 的 Props，但移除了 `modelValue`（由 Hook 内部管理）。
+
+更多属性请参考 [Element Plus Dialog Props](https://element-plus.org/zh-CN/component/dialog.html#attributes)。
+
+### Controller
+
+| 方法 | 说明 | 参数 |
+| --- | --- | --- |
+| `open` | 打开对话框 | `() => void` |
+| `close` | 关闭对话框 | `() => void` |
+| `getVisible` | 获取当前对话框的可见状态 | `() => boolean` |
+| `setState` | 动态更新对话框的配置属性 | `(state: Partial<DialogOptions>) => void` |
+| `setTitle` | 快捷更新对话框标题 | `(title: string) => void` |
+| `instance` | 内部 ElDialog 组件实例引用（可调用原生实例方法） | `Ref<DialogInstance>` |

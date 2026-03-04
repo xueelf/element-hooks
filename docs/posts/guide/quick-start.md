@@ -1,8 +1,8 @@
 # 快速上手
 
-## 安装
+## 安装 {#installation}
 
-Element Hooks 基于 [Element Plus](https://element-plus.org/) 构建，请确保你的项目中已经安装了以下依赖：
+Element Hooks 基于 [Element Plus](https://element-plus.org/) 构建。开始使用前，请确认项目已满足以下依赖条件：
 
 - [Vue](https://vuejs.org/) >= 3.0
 - [Element Plus](https://element-plus.org/) >= 2.11
@@ -28,11 +28,11 @@ bun add element-hooks
 
 :::
 
-## 基本用法
+## 基本用法 {#basic-usage}
 
 ### 组件 Hook
 
-组件 Hook（`useDialog`、`useForm`、`useTable`）返回一个元组 `[Component, controller]`，你可以在模板中渲染组件，并通过 controller 动态控制它：
+组件 Hook（`useDialog`、`useForm`、`useTable`）返回元组 `[Component, controller]`。你可以在模板中渲染组件，并通过 `controller` 在业务逻辑中进行状态控制：
 
 ```vue
 <script setup lang="ts">
@@ -75,17 +75,17 @@ bun add element-hooks
 </script>
 ```
 
-## 下一步
+## 下一步 {#next-steps}
 
-准备好了吗？前往各个 Hook 的文档了解更多用法：
+你可以继续阅读各 Hook 文档，了解更完整的配置项与实战示例：
 
 **组件 Hook：**
 
-- [useDialog](/guide/hooks/dialog) — 对话框
-- [useForm](/guide/hooks/form) — 表单
-- [useTable](/guide/hooks/table) — 表格
+- [useDialog](/guide/basic/dialog) — 对话框
+- [useForm](/guide/basic/form) — 表单
+- [useTable](/guide/basic/table) — 表格
 
 **命令式 Hook：**
 
-- [useMessage](/guide/hooks/message) — 消息提示
-- [useMessageBox](/guide/hooks/message-box) — 消息弹框
+- [useMessage](/guide/basic/message) — 消息提示
+- [useMessageBox](/guide/basic/message-box) — 消息弹框
