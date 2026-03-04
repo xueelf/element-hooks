@@ -4,20 +4,12 @@ import {
   ElTable,
   ElTableColumn,
 } from 'element-plus';
-import {
-  computed,
-  defineComponent,
-  onMounted,
-  ref,
-  shallowRef,
-  toRaw,
-  watch,
-} from 'vue';
+import { defineComponent, ref, toRaw } from 'vue';
 import {
   type Camelized,
   type Recordable,
   createController,
-  createSetOptions,
+  useState,
 } from './util';
 
 export type TableColumnSlotName =
@@ -67,26 +59,24 @@ export type TableOptions<T extends Recordable> = Camelized<
 export function useTable<T extends Recordable = Recordable>(
   options: TableOptions<T> = {},
 ) {
-  const tableInstance = ref<TableInstance | null>(null);
-  const tableOptions = shallowRef<TableOptions<T>>(options);
-  const tableData = ref<TableData<T> | null>(null);
+  const [tableState, setState, initState] = useState<TableOptions<T>>(options);
 
-  const setOptions = createSetOptions(tableOptions);
+  const tableInstance = ref<TableInstance | null>(null);
 
   const setColumns = (columns: TableColumn<T>[]) => {
-    setOptions({ columns });
+    setState({ columns });
   };
 
   const setData = (data: TableData<T>) => {
-    tableData.value = data;
+    setState({ data });
   };
 
   const getData = () => {
-    return toRaw(tableData.value);
+    return toRaw(tableState.value?.data);
   };
 
   const tableController = createController(tableInstance, {
-    setOptions,
+    setState,
     setColumns,
     setData,
     getData,
@@ -95,57 +85,17 @@ export function useTable<T extends Recordable = Recordable>(
   const Table = defineComponent<TableOptions<T>>({
     name: 'Table',
     inheritAttrs: false,
-    setup(props, { attrs, slots }) {
-      const tableState = computed(() => {
-        const { columns: columnsOption, ...restOptions } = tableOptions.value;
-        const { columns: columnsAttr, ...restAttrs } = attrs as TableOptions<T>;
-
-        return {
-          columns: columnsAttr ?? columnsOption,
-          props: { ...restOptions, ...props, ...restAttrs },
-        };
-      });
-
-      // TODO: ／人◕ ‿‿ ◕人＼ Sync table data
-      // const syncDataToSource = () => {
-      //   const rawData = toRaw(tableData.value);
-      //   const sourceData = tableState.value.props.data;
-
-      //   if (rawData && sourceData && rawData !== sourceData) {
-      //     sourceData.length = 0;
-      //     sourceData.push(...rawData);
-      //   }
-      // };
-
-      // watch(tableData, syncDataToSource, { deep: true });
-      // watch(
-      //   () => tableState.value.props.data,
-      //   data => {
-      //     if (data && toRaw(tableData.value) !== data) {
-      //       tableData.value = data;
-      //     }
-      //   },
-      // );
-
-      watch(tableData, data => {
-        const sourceData = tableState.value.props.data;
-
-        if (data && data !== sourceData) {
-          setOptions({ data });
-        }
-      });
-
-      onMounted(() => {
-        tableData.value = tableState.value.props.data ?? null;
-      });
+    setup(_, { slots }) {
+      initState();
 
       const Column = (columnOptions: TableColumn<T>) => {
         const {
           slot,
-          slots: columnSlotOptions = {},
+          slots: rawColumnSlots,
           children,
           ...columnProps
         } = columnOptions;
+        const columnSlotOptions = { ...rawColumnSlots };
         const columnSlots: Recordable = {};
 
         if (slot) {
@@ -170,16 +120,16 @@ export function useTable<T extends Recordable = Recordable>(
       };
 
       return () => {
-        const { columns = [], props } = tableState.value;
+        if (!tableState.value) {
+          return null;
+        }
+        const { columns = [], ...tableProps } = tableState.value;
 
         return (
-          <ElTable
-            ref={tableInstance}
-            {...props}
-            data={tableData.value ?? undefined}
-          >
+          <ElTable ref={tableInstance} {...tableProps}>
             {{
-              default: () => columns.map(column => <Column {...column} />),
+              default: () =>
+                columns.map((column: TableColumn<T>) => <Column {...column} />),
               ...slots,
             }}
           </ElTable>
