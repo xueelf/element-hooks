@@ -30,6 +30,12 @@ bun add element-hooks
 
 ## 基本用法 {#basic-usage}
 
+Element Hooks 提供三类常见用法：
+
+- **组件 Hook**：对 Element Plus 组件做轻量封装，保留原始 Props、Slots 与事件。
+- **命令式 Hook**：对命令式 API 做 Hook 化封装，直接在逻辑中调用。
+- **进阶扩展 Hook（`Ex`）**：对多个组件进行组合增强，解决常见业务页面场景。
+
 ### 组件 Hook
 
 组件 Hook（`useDialog`、`useForm`、`useTable`）返回元组 `[Component, controller]`。你可以在模板中渲染组件，并通过 `controller` 在业务逻辑中进行状态控制：
@@ -75,6 +81,20 @@ bun add element-hooks
 </script>
 ```
 
+### 进阶扩展 Hook（`Ex`）
+
+进阶扩展 Hook（如 `useExTable`）通过组合 `ElTable`、`ElForm` 与 `ElPagination`，减少列表页样板代码。
+
+```ts
+import { useExTable } from 'element-hooks'
+
+const [ExTable, controller] = useExTable({
+  columns: [],
+  data: [],
+  pagination: { currentPage: 1, pageSize: 10 },
+})
+```
+
 ## 下一步 {#next-steps}
 
 你可以继续阅读各 Hook 文档，了解更完整的配置项与实战示例：
@@ -89,3 +109,7 @@ bun add element-hooks
 
 - [useMessage](/guide/basic/message) — 消息提示
 - [useMessageBox](/guide/basic/message-box) — 消息弹框
+
+**进阶扩展 Hook：**
+
+- [useExTable](/guide/extras/table) — 列表场景组合增强

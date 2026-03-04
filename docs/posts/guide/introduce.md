@@ -35,7 +35,7 @@ Element Hooks 是一个基于 [Element Plus](https://element-plus.org/) 的 Hook
 
 ### 保留原始能力
 
-Element Hooks 的定位不是替代 Element Plus，而是对常见开发场景做轻量增强。Hook 本质上仍映射到对应的 Element Plus 能力：以组件 Hook 为例，返回组件的 Props、Slots 与事件均可在模板中直接使用。你既可以在 Hook 的 options 中集中配置，也可以在模板中按需传递，两者可混合使用——且模板传入的属性优先级更高。
+Element Hooks 的定位不是替代 Element Plus，而是对常见开发场景做轻量增强。Hook 本质上仍映射到对应的 Element Plus 能力：以组件 Hook 为例，返回组件的 Props、Slots 与事件均可直接使用。你既可以在 Hook 的 options 中集中配置，也可以通过组件 `attrs` 按需覆盖，两者可混合使用——且 **attrs 优先级更高**。
 
 以 `useDialog` 为例，`title` 和 `width` 通过 options 传入，而 `draggable` 和 `@opened` 直接写在模板上：
 
@@ -66,7 +66,11 @@ Element Hooks 的定位不是替代 Element Plus，而是对常见开发场景�
 
 ## Hook 分类 {#hook-categories}
 
-Element Hooks 提供两类 Hook：**组件 Hook** 和 **命令式 Hook**。
+Element Hooks 的分类可以直接理解为三类：
+
+- **组件 Hook**：返回可渲染组件与控制器。
+- **命令式 Hook**：返回可直接调用的方法对象。
+- **进阶扩展 Hook**：基于多个 Element Plus 组件做组合增强，命名以 `Ex` 开头。
 
 ### 组件 Hook
 
@@ -120,6 +124,12 @@ Element Hooks 提供两类 Hook：**组件 Hook** 和 **命令式 Hook**。
 </script>
 ```
 
+### 进阶扩展 Hook
+
+进阶扩展 Hook 在保留 Element Plus 原始能力的基础上，对多个组件进行组合封装，适用于中后台常见业务场景。
+
+该类 Hook 使用 `Ex` 表示扩展能力，命名形态为 `useExXxx`，例如 `useExTable`。
+
 ## 目前提供的 Hooks {#currently-available-hooks}
 
 ### 组件 Hook
@@ -136,3 +146,9 @@ Element Hooks 提供两类 Hook：**组件 Hook** 和 **命令式 Hook**。
 | --- | --- |
 | [useMessage](/guide/basic/message) | 消息提示，hooks 风格的 `ElMessage` |
 | [useMessageBox](/guide/basic/message-box) | 消息弹框，简化 `confirm` / `prompt` 的异步处理 |
+
+### 进阶扩展 Hook
+
+| Hook | 说明 |
+| --- | --- |
+| [useExTable](/guide/extras/table) | 表格、表单、分页的进阶扩展 Hook |
