@@ -56,8 +56,8 @@ export default defineConfig({
           ],
         },
         {
-          text: '进阶 Hooks',
-          items: [{ text: 'useExTable', link: '/guide/extra/table' }],
+          text: '进阶扩展',
+          items: [{ text: 'useExTable', link: '/guide/extras/table' }],
         },
       ],
     },

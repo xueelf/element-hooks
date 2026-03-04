@@ -67,7 +67,7 @@
   };
 
   const onReset = () => {
-    controller.setModel({ user: '', region: '' });
+    controller.instance.value?.form?.resetFields();
   };
 </script>
 

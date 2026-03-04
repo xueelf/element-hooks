@@ -1,6 +1,6 @@
 # useExTable
 
-`useExTable` 是一个增强型 Hook，通过统一的声明式配置组合 `ElTable`、`ElForm` 与 `ElPagination`。
+`useExTable` 是一个进阶扩展 Hook，通过统一的声明式配置组合 `ElTable`、`ElForm` 与 `ElPagination`。
 
 它适用于中后台列表页场景，可在同一配置入口下完成表格展示、条件检索与分页联动，减少页面样板代码并提升可维护性。
 
