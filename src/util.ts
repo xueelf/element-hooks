@@ -1,5 +1,5 @@
 import { assign } from 'radash';
-import { type Ref, type ShallowRef } from 'vue';
+import { type Ref, shallowRef, useAttrs, watchEffect } from 'vue';
 
 export type Recordable<T = any> = Record<PropertyKey, T>;
 
@@ -53,8 +53,39 @@ export function createController<T extends object, E extends object = object>(
   });
 }
 
-export function createSetOptions<T extends object>(optionsRef: ShallowRef<T>) {
-  return (options: Partial<T>) => {
-    optionsRef.value = assign(optionsRef.value, options as T);
+/**
+ * 创建组件状态管理。
+ *
+ * - state: shallowRef，options 与 attrs 的扁平合并（attrs 优先），手动管理 render
+ * - setState: 深合并更新 options 源 → 触发 watchEffect → state 重赋值 → render
+ * - initState: 在组件 setup 中调用，内部通过 useAttrs() 建立 watchEffect 自动同步
+ */
+export function useState<T extends object>(initial: T) {
+  const options = shallowRef<T>(initial);
+  const state = shallowRef<T | null>(null);
+
+  const normalizeArrayRef = (target: Recordable) => {
+    for (const key of Object.keys(target)) {
+      const value = target[key];
+
+      if (Array.isArray(value)) {
+        target[key] = [...value];
+      }
+    }
+    return target;
   };
+
+  const setState = (update: Partial<T>) => {
+    options.value = assign(options.value, update);
+  };
+
+  const initState = () => {
+    const attrs = useAttrs();
+
+    watchEffect(() => {
+      state.value = normalizeArrayRef({ ...options.value, ...attrs });
+    });
+  };
+
+  return [state, setState, initState] as const;
 }
