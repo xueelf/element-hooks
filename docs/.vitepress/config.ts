@@ -55,6 +55,10 @@ export default defineConfig({
             { text: 'useMessageBox', link: '/guide/hooks/message-box' },
           ],
         },
+        {
+          text: '进阶 Hooks',
+          items: [{ text: 'useExTable', link: '/guide/advanced/ex-table' }],
+        },
       ],
     },
     outline: {

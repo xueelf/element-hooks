@@ -19,7 +19,7 @@
     return `dialog-${currentAnimation.value}`;
   });
 
-  const [Dialog, { open, close, setOptions }] = useDialog({
+  const [Dialog, { open, close, setState }] = useDialog({
     class: 'custom-transition-dialog',
     width: '30%',
   });
@@ -27,7 +27,7 @@
   const openDialog = (type: string) => {
     currentAnimation.value = type;
     isObjectConfig.value = false;
-    setOptions({
+    setState({
       title: `${type} Animation Dialog`,
       transition: `dialog-${type}`,
     });
@@ -37,7 +37,7 @@
   const openDialogWithObject = () => {
     currentAnimation.value = 'object-config';
     isObjectConfig.value = true;
-    setOptions({
+    setState({
       title: 'object-config Animation Dialog',
       transition: transitionConfig.value,
     });
