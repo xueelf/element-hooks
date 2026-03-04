@@ -4,22 +4,12 @@ import {
   ElForm,
   ElFormItem,
 } from 'element-plus';
-import {
-  type Component,
-  computed,
-  defineComponent,
-  h,
-  onMounted,
-  ref,
-  shallowRef,
-  toRaw,
-  watch,
-} from 'vue';
+import { type Component, defineComponent, h, ref, toRaw, watch } from 'vue';
 import {
   type Camelized,
   type Recordable,
   createController,
-  createSetOptions,
+  useState,
 } from './util';
 
 export type FormItemSlotName = 'default' | 'label' | 'error';
@@ -44,18 +34,17 @@ export type FormOptions<T extends Recordable> = Camelized<
 export function useForm<T extends Recordable = Recordable>(
   options: FormOptions<T> = {},
 ) {
-  const formInstance = ref<FormInstance | null>(null);
-  const formOptions = shallowRef<FormOptions<T>>(options);
-  const formModel = ref<T | null>(null);
+  const [formState, setState, initState] = useState<FormOptions<T>>(options);
 
-  const setOptions = createSetOptions(formOptions);
+  const formModel = ref<T | null>(null);
+  const formInstance = ref<FormInstance | null>(null);
 
   const setItems = (items: FormItem[]) => {
-    setOptions({ items });
+    setState({ items });
   };
 
   const setModel = (model: T) => {
-    formModel.value = model;
+    setState({ model });
   };
 
   const getModel = () => {
@@ -63,7 +52,7 @@ export function useForm<T extends Recordable = Recordable>(
   };
 
   const formController = createController(formInstance, {
-    setOptions,
+    setState,
     setItems,
     setModel,
     getModel,
@@ -72,54 +61,22 @@ export function useForm<T extends Recordable = Recordable>(
   const Form = defineComponent<FormOptions<T>>({
     name: 'Form',
     inheritAttrs: false,
-    setup(props, { attrs, slots }) {
-      const formState = computed(() => {
-        const { items: itemsOption, ...restOptions } = formOptions.value;
-        const { items: itemsAttr, ...restAttrs } = attrs as FormOptions<T>;
+    setup(_, { slots }) {
+      initState();
+      formModel.value = formState.value?.model ?? null;
 
-        return {
-          items: itemsAttr ?? itemsOption,
-          props: {
-            ...restOptions,
-            ...props,
-            ...restAttrs,
-          },
-        };
-      });
-
-      const syncModelToSource = () => {
-        const rawModel = toRaw(formModel.value);
-        const sourceModel = formState.value.props.model;
-
-        if (rawModel && sourceModel && rawModel !== sourceModel) {
-          Object.keys(sourceModel).forEach(key =>
-            Reflect.deleteProperty(sourceModel, key),
-          );
-          Object.assign(sourceModel, rawModel);
-        }
-      };
-
-      watch(formModel, syncModelToSource, { deep: true });
       watch(
-        () => formState.value.props.model,
+        () => formState.value?.model,
         model => {
-          if (model && toRaw(formModel.value) !== model) {
+          if (model && model !== toRaw(formModel.value)) {
             formModel.value = model;
           }
         },
       );
 
-      onMounted(() => {
-        formModel.value = formState.value.props.model ?? null;
-      });
-
       const Item = (itemOptions: FormItem) => {
-        const {
-          slot,
-          slots: itemSlotOptions = {},
-          render,
-          ...itemProps
-        } = itemOptions;
+        const { slot, slots: rawItemSlots, render, ...itemProps } = itemOptions;
+        const itemSlotOptions = { ...rawItemSlots };
         const itemSlots: Recordable = {};
 
         if (slot) {
@@ -130,7 +87,7 @@ export function useForm<T extends Recordable = Recordable>(
 
           if (slots[slotName]) {
             itemSlots[key] = (scope: any) => {
-              const { model } = formState.value.props;
+              const model = formState.value?.model;
               return <>{slots[slotName]?.({ ...scope, model })}</>;
             };
           }
@@ -163,20 +120,18 @@ export function useForm<T extends Recordable = Recordable>(
       };
 
       return () => {
-        const { items = [], props } = formState.value;
+        if (!formState.value) {
+          return null;
+        }
+        const { items = [], ...formProps } = formState.value;
 
         return (
-          <>
-            {formModel.value && (
-              <ElForm ref={formInstance} {...props} model={formModel.value}>
-                {{
-                  default: () =>
-                    items.map((item: FormItem) => <Item {...item} />),
-                  ...slots,
-                }}
-              </ElForm>
-            )}
-          </>
+          <ElForm ref={formInstance} {...formProps} model={formModel.value}>
+            {{
+              default: () => items.map((item: FormItem) => <Item {...item} />),
+              ...slots,
+            }}
+          </ElForm>
         );
       };
     },

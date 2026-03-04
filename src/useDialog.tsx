@@ -1,7 +1,6 @@
 import { type DialogInstance, ElDialog } from 'element-plus';
-import { omit } from 'radash';
-import { defineComponent, computed, ref, shallowRef } from 'vue';
-import { type Camelized, createController, createSetOptions } from './util';
+import { defineComponent, ref } from 'vue';
+import { type Camelized, createController, useState } from './util';
 
 export type DialogSlotName = 'default' | 'header' | 'footer';
 
@@ -10,30 +9,29 @@ export type DialogOptions = Camelized<
 >;
 
 export function useDialog(options: DialogOptions = {}) {
-  const dialogInstance = ref<DialogInstance | null>(null);
-  const dialogOptions = shallowRef<DialogOptions>(options);
-  const visible = ref(false);
+  const [dialogState, setState, initState] = useState<DialogOptions>(options);
 
-  const setOptions = createSetOptions(dialogOptions);
+  const dialogVisible = ref(false);
+  const dialogInstance = ref<DialogInstance | null>(null);
 
   const setTitle = (title: string) => {
-    setOptions({ title });
+    setState({ title });
   };
 
   const open = () => {
-    visible.value = true;
+    dialogVisible.value = true;
   };
 
   const close = () => {
-    visible.value = false;
+    dialogVisible.value = false;
   };
 
   const getVisible = () => {
-    return visible.value;
+    return dialogVisible.value;
   };
 
   const dialogController = createController(dialogInstance, {
-    setOptions,
+    setState,
     setTitle,
     open,
     close,
@@ -42,27 +40,20 @@ export function useDialog(options: DialogOptions = {}) {
 
   const Dialog = defineComponent<DialogOptions>({
     name: 'Dialog',
-    setup(props, { attrs, slots }) {
-      const dialogState = computed(() => {
-        const filteredAttrs = omit(attrs, [
-          'modelValue',
-          'onUpdate:modelValue',
-        ]);
-
-        return {
-          props: { ...dialogOptions.value, ...props, ...filteredAttrs },
-        };
-      });
+    inheritAttrs: false,
+    setup(_, { slots }) {
+      initState();
 
       return () => {
-        const { props } = dialogState.value;
-
+        if (!dialogState.value) {
+          return null;
+        }
         return (
           <ElDialog
             ref={dialogInstance}
-            modelValue={visible.value}
-            onUpdate:modelValue={(val: boolean) => (visible.value = val)}
-            {...props}
+            {...dialogState.value}
+            modelValue={dialogVisible.value}
+            onUpdate:modelValue={(val: boolean) => (dialogVisible.value = val)}
           >
             {slots}
           </ElDialog>
