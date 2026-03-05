@@ -3,8 +3,8 @@
 layout: home
 
 hero:
-  name: "Element Hooks"
-  text: "Using Hooks in Element Plus."
+  name: 'Element Hooks'
+  text: 'Using Hooks in Element Plus.'
   tagline: 以 Hooks 的方式使用 Element Plus 组件
   image:
     src: /images/logo.svg

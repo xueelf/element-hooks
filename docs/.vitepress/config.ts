@@ -30,36 +30,41 @@ export default defineConfig({
     // https://vitepress.dev/reference/default-theme-config
     logo: '/images/logo.svg',
     nav: [
-      {
-        text: '文档',
-        items: [
-          { text: '深度指南', link: '/guide/introduce' },
-          { text: '快速上手', link: '/guide/quick-start' },
-        ],
-      },
+      { text: '指南', link: '/guide/introduce', activeMatch: '^/guide/' },
+      { text: 'Hooks', link: '/hooks/introduce', activeMatch: '^/hooks/' },
     ],
     sidebar: {
       '/guide/': [
         {
-          text: '开始',
+          text: '基础',
           items: [
             { text: '简介', link: '/guide/introduce' },
             { text: '快速上手', link: '/guide/quick-start' },
           ],
         },
         {
+          text: '进阶',
+          items: [{ text: '全局配置', link: '/guide/global-options' }],
+        },
+      ],
+      '/hooks/': [
+        {
+          text: '概览',
+          items: [{ text: 'Hooks 介绍', link: '/hooks/introduce' }],
+        },
+        {
           text: '核心功能 (Core)',
           items: [
-            { text: 'useDialog', link: '/guide/core/dialog' },
-            { text: 'useForm', link: '/guide/core/form' },
-            { text: 'useTable', link: '/guide/core/table' },
-            { text: 'useMessage', link: '/guide/core/message' },
-            { text: 'useMessageBox', link: '/guide/core/message-box' },
+            { text: 'useDialog', link: '/hooks/core/dialog' },
+            { text: 'useForm', link: '/hooks/core/form' },
+            { text: 'useTable', link: '/hooks/core/table' },
+            { text: 'useMessage', link: '/hooks/core/message' },
+            { text: 'useMessageBox', link: '/hooks/core/message-box' },
           ],
         },
         {
-          text: '进阶组合 (Extra)',
-          items: [{ text: 'useExTable', link: '/guide/extra/table' }],
+          text: '扩展组合 (Extra)',
+          items: [{ text: 'useExTable', link: '/hooks/extra/ex-table' }],
         },
       ],
     },

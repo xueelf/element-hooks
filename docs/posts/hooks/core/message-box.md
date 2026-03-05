@@ -75,6 +75,7 @@
 </ExampleCard>
 
 ## API {#api}
+
 ### useMessageBox
 
 与 `ElMessageBox` 的函数调用方式一致，返回包含 `alert`、`confirm` 与 `prompt` 的方法对象。
@@ -85,8 +86,8 @@
 
 ### 返回值方法
 
-| 方法名 | 描述 | 类型签名 |
-| --- | --- | --- |
-| `alert` | 简单的提示框 | `ElMessageBoxShortcutMethod` |
+| 方法名    | 描述                                            | 类型签名                                                |
+| --------- | ----------------------------------------------- | ------------------------------------------------------- | ------ |
+| `alert`   | 简单的提示框                                    | `ElMessageBoxShortcutMethod`                            |
 | `confirm` | 确认消息框，统一封装取消/关闭分支，不再抛出异常 | `(...args: MessageBoxMethodParams) => Promise<boolean>` |
-| `prompt` | 提交内容框，统一封装取消/关闭分支，不再抛出异常 | `(...args: MessageBoxMethodParams) => Promise<string | null>` |
+| `prompt`  | 提交内容框，统一封装取消/关闭分支，不再抛出异常 | `(...args: MessageBoxMethodParams) => Promise<string    | null>` |

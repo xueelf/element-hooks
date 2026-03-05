@@ -247,18 +247,18 @@
 
 属性与 `ElTableColumn` 的 props 一致，同时额外支持：
 
-| 字段 | 说明 | 类型 |
-| --- | --- | --- |
-| `slot` | 默认插槽名 | `string` |
-| `slots` | 具名插槽配置 (`default`, `header`, `filterIcon`, `expand`) | `Record<string, string>` |
-| `children` | 子列配置 (用于多级表头) | `TableColumn[]` |
+| 字段       | 说明                                                       | 类型                     |
+| ---------- | ---------------------------------------------------------- | ------------------------ |
+| `slot`     | 默认插槽名                                                 | `string`                 |
+| `slots`    | 具名插槽配置 (`default`, `header`, `filterIcon`, `expand`) | `Record<string, string>` |
+| `children` | 子列配置 (用于多级表头)                                    | `TableColumn[]`          |
 
 ### Controller
 
-| 方法 | 说明 | 参数 |
-| --- | --- | --- |
-| `setState` | 动态更新表格整体配置 | `(state: Partial<TableOptions>) => void` |
-| `setColumns` | 动态更新列定义 | `(columns: TableColumn[]) => void` |
-| `setData` | 动态更新表格数据 | `(data: T[]) => void` |
-| `getData` | 获取当前数据快照 | `() => T[]` |
-| `instance` | 内部 ElTable 实例（可调用排序、选择等原生方法） | `Ref<TableInstance>` |
+| 方法         | 说明                                            | 参数                                     |
+| ------------ | ----------------------------------------------- | ---------------------------------------- |
+| `setState`   | 动态更新表格整体配置                            | `(state: Partial<TableOptions>) => void` |
+| `setColumns` | 动态更新列定义                                  | `(columns: TableColumn[]) => void`       |
+| `setData`    | 动态更新表格数据                                | `(data: T[]) => void`                    |
+| `getData`    | 获取当前数据快照                                | `() => T[]`                              |
+| `instance`   | 内部 ElTable 实例（可调用排序、选择等原生方法） | `Ref<TableInstance>`                     |
