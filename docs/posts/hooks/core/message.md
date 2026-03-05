@@ -65,6 +65,7 @@
 </ExampleCard>
 
 ## API {#api}
+
 ### useMessage
 
 `useMessage` 无需参数，直接返回 `ElMessage` 实例函数。
@@ -72,10 +73,10 @@
 你可以直接调用完整的 `ElMessage` 方法集，包括函数调用形式与各类状态快捷方法。
 
 ```ts
-import { useMessage } from 'element-hooks'
+import { useMessage } from 'element-hooks';
 
-const message = useMessage()
+const message = useMessage();
 
 // 等同于直接调用 ElMessage.success
-message.success('Ciallo～(∠·ω< )⌒★')
+message.success('Ciallo～(∠·ω< )⌒★');
 ```

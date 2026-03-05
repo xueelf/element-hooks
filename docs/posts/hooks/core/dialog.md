@@ -134,11 +134,11 @@
 
 ### Controller
 
-| 方法 | 说明 | 参数 |
-| --- | --- | --- |
-| `open` | 打开对话框 | `() => void` |
-| `close` | 关闭对话框 | `() => void` |
-| `getVisible` | 获取当前对话框的可见状态 | `() => boolean` |
-| `setState` | 动态更新对话框的配置属性 | `(state: Partial<DialogOptions>) => void` |
-| `setTitle` | 快捷更新对话框标题 | `(title: string) => void` |
-| `instance` | 内部 ElDialog 组件实例引用（可调用原生实例方法） | `Ref<DialogInstance>` |
+| 方法         | 说明                                             | 参数                                      |
+| ------------ | ------------------------------------------------ | ----------------------------------------- |
+| `open`       | 打开对话框                                       | `() => void`                              |
+| `close`      | 关闭对话框                                       | `() => void`                              |
+| `getVisible` | 获取当前对话框的可见状态                         | `() => boolean`                           |
+| `setState`   | 动态更新对话框的配置属性                         | `(state: Partial<DialogOptions>) => void` |
+| `setTitle`   | 快捷更新对话框标题                               | `(title: string) => void`                 |
+| `instance`   | 内部 ElDialog 组件实例引用（可调用原生实例方法） | `Ref<DialogInstance>`                     |

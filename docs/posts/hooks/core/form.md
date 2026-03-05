@@ -105,11 +105,11 @@
 
 #### FormItem
 
-| 字段 | 说明 | 类型 |
-| --- | --- | --- |
-| `slot` | 默认插槽名（`slots.default` 的简写） | `string` |
-| `slots` | 精细化插槽配置 | `Record<string, string>` |
-| `render` | 渲染组件配置 | `{ component: Component \| string, props?: Recordable }` |
+| 字段     | 说明                                 | 类型                                                     |
+| -------- | ------------------------------------ | -------------------------------------------------------- |
+| `slot`   | 默认插槽名（`slots.default` 的简写） | `string`                                                 |
+| `slots`  | 精细化插槽配置                       | `Record<string, string>`                                 |
+| `render` | 渲染组件配置                         | `{ component: Component \| string, props?: Recordable }` |
 
 当 `render.component` 为字符串时，会从 `app.use(ElementHooks, { components })` 传入的全局组件映射中查找并渲染对应组件（例如 `components: { input: ElInput }` 对应 `render.component = 'input'`）。
 
@@ -118,10 +118,10 @@
 
 ### Controller
 
-| 方法 | 说明 | 参数 |
-| --- | --- | --- |
-| `setState` | 动态更新整体配置 | `(state: Partial<FormOptions>) => void` |
-| `setItems` | 动态更新表单项 | `(items: FormItem[]) => void` |
-| `setModel` | 动态更新模型数据 | `(model: Recordable) => void` |
-| `getModel` | 获取当前模型快照 | `() => Recordable` |
-| `instance` | 内部 ElForm 实例（可调用 `validate` 等原生方法） | `Ref<FormInstance>` |
+| 方法       | 说明                                             | 参数                                    |
+| ---------- | ------------------------------------------------ | --------------------------------------- |
+| `setState` | 动态更新整体配置                                 | `(state: Partial<FormOptions>) => void` |
+| `setItems` | 动态更新表单项                                   | `(items: FormItem[]) => void`           |
+| `setModel` | 动态更新模型数据                                 | `(model: Recordable) => void`           |
+| `getModel` | 获取当前模型快照                                 | `() => Recordable`                      |
+| `instance` | 内部 ElForm 实例（可调用 `validate` 等原生方法） | `Ref<FormInstance>`                     |
