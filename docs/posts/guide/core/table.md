@@ -1,6 +1,6 @@
 # useTable
 
-`useTable` 通过配置驱动 `ElTable`，你可以使用列定义数组代替模板中的多层 `el-table-column` 嵌套，并通过控制器统一管理表格状态。
+`useTable` 通过配置驱动 `ElTable`，你可以使用列定义数组代替 `<template>` 视图模板中的多层 `el-table-column` 嵌套，并通过控制器统一管理表格状态。
 
 这种方式在列较多、交互复杂或需要动态切换列配置的场景中更具可维护性。
 

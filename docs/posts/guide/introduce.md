@@ -4,13 +4,13 @@
 
 Element Hooks 是一个基于 [Element Plus](https://element-plus.org/) 的 Hooks 封装库，支持你以**配置驱动**的方式使用常见组件能力。
 
-在传统的 Element Plus 使用方式中，通常需要在模板中编写大量组件标签与属性。Element Hooks 将组件创建与控制逻辑收敛到 `setup` 中，通过 Hook 返回**动态组件**与**控制器**，让代码结构更清晰、扩展更自然。
+在传统的 Element Plus 使用方式中，通常需要在 `<template>` 视图模板中编写大量组件标签与属性。Element Hooks 将组件创建与控制逻辑统一提取到 `setup` 脚本中，通过 Hook 返回**动态组件**与**控制器**，让代码结构更清晰、扩展更自然。
 
 ## 设计理念 {#design-philosophy}
 
 ### 配置驱动
 
-以 `useTable` 为例，传统写法需要在模板中逐个声明 `<el-table-column>`，而使用 Element Hooks 后只需传入一个 `columns` 配置数组：
+以 `useTable` 为例，传统写法需要在 `<template>` 视图模板中逐个声明 `<el-table-column>`，而使用 Element Hooks 后只需传入一个 `columns` 配置数组：
 
 ```vue
 <script setup lang="ts">
@@ -37,7 +37,7 @@ Element Hooks 是一个基于 [Element Plus](https://element-plus.org/) 的 Hook
 
 Element Hooks 的定位不是替代 Element Plus，而是对常见开发场景做轻量增强。Hook 本质上仍映射到对应的 Element Plus 能力：以组件 Hook 为例，返回组件的 Props、Slots 与事件均可直接使用。你既可以在 Hook 的 options 中集中配置，也可以通过组件 `attrs` 按需覆盖，两者可混合使用——且 **attrs 优先级更高**。
 
-以 `useDialog` 为例，`title` 和 `width` 通过 options 传入，而 `draggable` 和 `@opened` 直接写在模板上：
+以 `useDialog` 为例，`title` 和 `width` 通过 options 传入，而 `draggable` 和 `@opened` 直接写在 `<template>` 视图模板上：
 
 ```vue
 <script setup lang="ts">
@@ -71,7 +71,7 @@ Element Hooks 的分类可以直接理解为两部分核心体系：
 - **核心功能 (Core)** — 对 Element Plus 基础能力的细粒度封装，保持 100% 的原生体验支持。
   - **组件类 Hook** — 返回可渲染的组件与控制器，抽离 `<template>` 视图模板中大量且冗长的节点标签与属性声明。
   - **命令式 Hook** — 封装如 `ElMessage`、`ElMessageBox` 等纯命令式 API，以 Hook 化风格接管调用差异，并提供更好的 TypeScript 推导能力。
-- **进阶组合 (Extra)** — 结合多种基础组件的高级场景，适用于中后台高频业务页面，统一以外缀 `ex-` 命名。
+- **进阶组合 (Extra)** — 结合多种基础组件的高级场景，适用于中后台高频业务页面，对外导出的 Hook 均以 `useEx` 作为前缀。
 
 ## 目前提供的 Hooks {#currently-available-hooks}
 
