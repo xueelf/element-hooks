@@ -71,7 +71,8 @@ Element Hooks 提供两类常见用法：
 
 ### 核心功能 Hook (Core)
 
-包含对组件的抽象（`useDialog`、`useForm`、`useTable`）或者纯命令式 API 的重洗（`useMessage`、`useMessageBox`）。
+包含对组件的抽象（`useDialog`、`useForm`、`useTable`）或者纯命令式 API 的一致性封装（`useMessage`、`useMessageBox`）。
+
 以对话框举例，它返回元组 `[Component, controller]`。你可以在 `<template>` 视图模板中渲染组件节点，并通过 `controller` 在业务逻辑中进行无缝状态控制：
 
 ```vue
