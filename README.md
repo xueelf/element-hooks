@@ -35,6 +35,31 @@ bun add element-hooks
 
 Element Hooks 提供两类 Hook：**组件 Hook** 和 **命令式 Hook**。
 
+### 全局配置
+
+你可以将 `ElementHooks` 作为插件安装，并传入全局默认 options：
+
+```ts
+import { createApp } from 'vue'
+import ElementHooks from 'element-hooks'
+import { ElInput } from 'element-plus'
+
+const app = createApp(App)
+
+app.use(ElementHooks, {
+  components: {
+    input: ElInput,
+  },
+  pagination: {
+    layout: 'prev, pager, next',
+  },
+})
+```
+
+当单次 Hook 调用传入同名 options 时，会与全局同名配置执行合并。
+
+全局默认项按 Element Plus 组件维度生效，例如 `form` 会同时作用于 `useForm` 与 `useExTable` 内部使用的 `ElForm`。
+
 ### 组件 Hook
 
 组件 Hook（`useDialog`、`useForm`、`useTable`）用于封装 Element Plus 的 UI 组件，返回一个元组 `[Component, controller]`：

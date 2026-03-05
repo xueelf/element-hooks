@@ -30,6 +30,40 @@ bun add element-hooks
 
 ## 基本用法 {#basic-usage}
 
+### 全局配置
+
+你可以将 `ElementHooks` 作为 Vue 插件安装，并传入全局默认配置：
+
+```ts
+import { createApp } from 'vue'
+import ElementHooks, { type GlobalOptions } from 'element-hooks'
+import { ElInput, ElSelect } from 'element-plus'
+
+const app = createApp(App)
+
+const options: GlobalOptions = {
+  components: {
+    input: ElInput,
+    select: ElSelect,
+  },
+  pagination: {
+    layout: 'prev, pager, next',
+  },
+}
+
+app.use(ElementHooks, options)
+```
+
+全局 options 支持以下字段：
+
+- `components`：给 `useForm` 的 `render.component`（字符串）提供全局组件映射（如 `input -> ElInput`）。
+- `dialog`：`useDialog` 默认 options。
+- `form`：`ElForm` 默认 options（对 `useForm` 与 `useExTable` 内部表单都生效）。
+- `table`：`ElTable` 默认 options（对 `useTable` 与 `useExTable` 内部表格都生效）。
+- `pagination`：`useExTable` 中 `ElPagination` 的全局默认 options。
+
+当单次 Hook 调用传入了同名 options（例如 `pagination`）时，会与全局同名配置执行合并。
+
 Element Hooks 提供三类常见用法：
 
 - **组件 Hook**：对 Element Plus 组件做轻量封装，保留原始 Props、Slots 与事件。
