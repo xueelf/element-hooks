@@ -144,6 +144,7 @@ export function useExTable<T extends Recordable = Recordable>(
                 ref={paginationRef}
                 {...pagination}
                 total={total}
+                style={{ marginTop: '18px' }}
                 onUpdate:current-page={(page: number) => {
                   setState({ pagination: { currentPage: page } });
                 }}
