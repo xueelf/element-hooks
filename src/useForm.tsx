@@ -5,6 +5,7 @@ import {
   ElFormItem,
 } from 'element-plus';
 import { type Component, defineComponent, h, ref, toRaw, watch } from 'vue';
+import { getComponent, withOptions } from './config';
 import {
   type Camelized,
   type Recordable,
@@ -19,7 +20,7 @@ export type FormItem = Partial<Omit<FormItemProps, 'prop'>> & {
   slot?: string;
   slots?: Partial<Record<FormItemSlotName, string>>;
   render?: {
-    component: Component;
+    component: Component | string;
     props?: Recordable;
   };
 };
@@ -34,7 +35,9 @@ export type FormOptions<T extends Recordable> = Camelized<
 export function useForm<T extends Recordable = Recordable>(
   options: FormOptions<T> = {},
 ) {
-  const [formState, setState, initState] = useState<FormOptions<T>>(options);
+  const [formState, setState, initState] = useState<FormOptions<T>>(
+    withOptions(options, 'form'),
+  );
 
   const formModel = ref<T | null>(null);
   const formInstance = ref<FormInstance | null>(null);
@@ -102,9 +105,20 @@ export function useForm<T extends Recordable = Recordable>(
             itemSlots.default = () => {
               const { component } = render;
               const { prop } = itemProps;
+              const renderComponent =
+                typeof component === 'string'
+                  ? getComponent(component)
+                  : component;
+
+              if (!renderComponent) {
+                console.warn(
+                  `[useForm] Global component "${String(component)}" is not registered.`,
+                );
+                return null;
+              }
 
               if (formModel.value && prop) {
-                return h(component, {
+                return h(renderComponent, {
                   ...render.props,
                   modelValue: formModel.value[prop],
                   'onUpdate:modelValue': (value: unknown) => {
@@ -112,7 +126,7 @@ export function useForm<T extends Recordable = Recordable>(
                   },
                 });
               }
-              return h(component, render.props);
+              return h(renderComponent, render.props);
             };
           }
         }

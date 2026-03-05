@@ -3,7 +3,7 @@ import {
   type TableInstance,
   ElPagination,
 } from 'element-plus';
-import { isArray } from 'radash';
+import { isArray, omit } from 'radash';
 import { defineComponent, onMounted, ref } from 'vue';
 import {
   type Camelized,
@@ -11,6 +11,7 @@ import {
   createController,
   useState,
 } from './util';
+import { withOptions } from './config';
 import { type FormItem, type FormOptions, useForm } from './useForm';
 import { type TableColumn, type TableOptions, useTable } from './useTable';
 
@@ -47,8 +48,20 @@ export type ExTableInstance = {
 export function useExTable<T extends Recordable = Recordable>(
   options: ExTableOptions<T> = {},
 ) {
-  const [exTableState, setState, initState] =
-    useState<ExTableOptions<T>>(options);
+  const { form, pagination, data, ...table } = options;
+
+  const mergedOptions = withOptions({
+    table,
+    form,
+    pagination,
+  });
+
+  const [exTableState, setState, initState] = useState<ExTableOptions<T>>({
+    ...(mergedOptions.table ?? {}),
+    data,
+    form: mergedOptions.form,
+    pagination: mergedOptions.pagination,
+  });
 
   const resolveData = (data?: ExTableData<T>) => {
     if (!data) {
@@ -131,9 +144,7 @@ export function useExTable<T extends Recordable = Recordable>(
         const { result, total } = resolveData(data);
         const tableProps = { ...tableOptions, data: result };
 
-        const namedSlots = Object.fromEntries(
-          Object.entries(slots).filter(([key]) => key !== 'default'),
-        );
+        const namedSlots = omit(slots, ['default']);
 
         return (
           <>

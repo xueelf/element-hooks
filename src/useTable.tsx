@@ -11,6 +11,7 @@ import {
   createController,
   useState,
 } from './util';
+import { withOptions } from './config';
 
 export type TableColumnSlotName =
   | 'default'
@@ -59,7 +60,9 @@ export type TableOptions<T extends Recordable> = Camelized<
 export function useTable<T extends Recordable = Recordable>(
   options: TableOptions<T> = {},
 ) {
-  const [tableState, setState, initState] = useState<TableOptions<T>>(options);
+  const [tableState, setState, initState] = useState<TableOptions<T>>(
+    withOptions(options, 'table'),
+  );
 
   const tableInstance = ref<TableInstance | null>(null);
 
