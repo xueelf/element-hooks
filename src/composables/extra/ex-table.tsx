@@ -3,8 +3,9 @@ import {
   type TableInstance,
   ElPagination,
 } from 'element-plus';
+import { addUnit } from 'element-plus/es/utils/dom/style';
 import { isArray, omit } from 'radash';
-import { defineComponent, onMounted, ref } from 'vue';
+import { type CSSProperties, defineComponent, onMounted, ref } from 'vue';
 import {
   type Camelized,
   type Recordable,
@@ -142,29 +143,54 @@ export function useExTable<T extends Recordable = Recordable>(
         }
         const { data, form, pagination, ...tableOptions } = exTableState.value;
         const { result, total } = resolveData(data);
-        const tableProps = { ...tableOptions, data: result };
+
+        const { height, maxHeight, ...tableProps } = tableOptions;
+
+        const hasHeightOption = height !== undefined || maxHeight !== undefined;
+        const normalizedTableProps = {
+          ...tableProps,
+          ...(hasHeightOption ? { height: '100%' } : {}),
+          data: result,
+        };
 
         const namedSlots = omit(slots, ['default']);
 
+        const wrapperStyle = {
+          display: 'flex',
+          flexDirection: 'column',
+          height: addUnit(height),
+          maxHeight: addUnit(maxHeight),
+        } satisfies CSSProperties;
+
         return (
-          <>
-            {form && <Form {...form}>{namedSlots}</Form>}
-            <Table {...tableProps}>{namedSlots}</Table>
-            {pagination && total > 0 && (
-              <ElPagination
-                ref={paginationRef}
-                {...pagination}
-                total={total}
-                style={{ marginTop: '18px' }}
-                onUpdate:current-page={(page: number) => {
-                  setState({ pagination: { currentPage: page } });
-                }}
-                onUpdate:page-size={(size: number) => {
-                  setState({ pagination: { pageSize: size } });
-                }}
-              />
+          <div class="ex-table" style={wrapperStyle}>
+            {form && (
+              <div style={{ flexShrink: 0 }}>
+                <Form {...form}>{namedSlots}</Form>
+              </div>
             )}
-          </>
+
+            <div style={{ flex: 1, minHeight: 0, minWidth: 0 }}>
+              <Table {...normalizedTableProps}>{namedSlots}</Table>
+            </div>
+
+            {pagination && total > 0 && (
+              <div style={{ flexShrink: 0 }}>
+                <ElPagination
+                  ref={paginationRef}
+                  {...pagination}
+                  total={total}
+                  style={{ marginTop: '18px' }}
+                  onUpdate:current-page={(page: number) => {
+                    setState({ pagination: { currentPage: page } });
+                  }}
+                  onUpdate:page-size={(size: number) => {
+                    setState({ pagination: { pageSize: size } });
+                  }}
+                />
+              </div>
+            )}
+          </div>
         );
       };
     },
