@@ -66,89 +66,27 @@ Element Hooks 的定位不是替代 Element Plus，而是对常见开发场景�
 
 ## Hook 分类 {#hook-categories}
 
-Element Hooks 的分类可以直接理解为三类：
+Element Hooks 的分类可以直接理解为两部分核心体系：
 
-- **组件 Hook**：返回可渲染组件与控制器。
-- **命令式 Hook**：返回可直接调用的方法对象。
-- **进阶扩展 Hook**：基于多个 Element Plus 组件做组合增强，命名以 `Ex` 开头。
-
-### 组件 Hook
-
-组件 Hook 用于封装 Element Plus 的 UI 组件（如对话框、表单、表格），返回元组 `[Component, controller]`：
-
-- **Component** — 可以直接在模板中使用的 Vue 组件，支持原始的 Props 和 Slots。
-- **controller** — 提供命令式操作的控制器对象，包含 `setState`、`instance` 等，可在任意逻辑中调用。其中 `instance` 是内部 Element Plus 组件实例的 ref 引用，可直接访问原生实例方法；组件未挂载时值为 `null`。
-
-```vue
-<script setup lang="ts">
-  import { useDialog } from 'element-hooks';
-  
-  const [Dialog, { open, close, setTitle }] = useDialog({
-    title: '提示',
-  });
-  
-  const handleOpen = () => {
-    setTitle('新标题');
-    open();
-  };
-</script>
-
-<template>
-  <button @click="handleOpen">打开</button>
-  <Dialog>
-    <p>对话框内容</p>
-    <template #footer>
-      <button @click="close">关闭</button>
-    </template>
-  </Dialog>
-</template>
-```
-
-### 命令式 Hook
-
-命令式 Hook 用于封装 Element Plus 的命令式 API（如 `ElMessage`、`ElMessageBox`），不涉及模板渲染，直接返回可调用的方法或对象。
-
-```vue
-<script setup lang="ts">
-  import { useMessage, useMessageBox } from 'element-hooks';
-
-  const message = useMessage();
-  const messageBox = useMessageBox();
-
-  const handleDelete = async () => {
-    const confirmed = await messageBox.confirm('确定要删除吗？', '提示');
-    if (confirmed) {
-      message.success('删除成功');
-    }
-  };
-</script>
-```
-
-### 进阶扩展 Hook
-
-进阶扩展 Hook 在保留 Element Plus 原始能力的基础上，对多个组件进行组合封装，适用于中后台常见业务场景。
-
-该类 Hook 使用 `Ex` 表示扩展能力，命名形态为 `useExXxx`，例如 `useExTable`。
+- **核心功能 (Core)** — 对 Element Plus 基础能力的细粒度封装，保持 100% 的原生体验支持。
+  - **组件类 Hook** — 返回可渲染的组件与控制器，抽离 `<template>` 视图模板中大量且冗长的节点标签与属性声明。
+  - **命令式 Hook** — 封装如 `ElMessage`、`ElMessageBox` 等纯命令式 API，以 Hook 化风格接管调用差异，并提供更好的 TypeScript 推导能力。
+- **进阶组合 (Extra)** — 结合多种基础组件的高级场景，适用于中后台高频业务页面，统一以外缀 `ex-` 命名。
 
 ## 目前提供的 Hooks {#currently-available-hooks}
 
-### 组件 Hook
+### 核心功能 (Core)
 
 | Hook | 说明 |
 | --- | --- |
-| [useDialog](/guide/basic/dialog) | 对话框，支持命令式 `open` / `close` |
-| [useForm](/guide/basic/form) | 表单，支持配置驱动的表单项与双向绑定 |
-| [useTable](/guide/basic/table) | 表格，支持配置驱动的列定义与多级表头 |
+| [useDialog](/guide/core/dialog) | 对话框，支持命令式 `open` / `close` |
+| [useForm](/guide/core/form) | 表单，支持配置驱动的表单项与双向绑定 |
+| [useTable](/guide/core/table) | 表格，支持配置驱动的列定义与多级表头 |
+| [useMessage](/guide/core/message) | 消息提示，hooks 风格的 `ElMessage` |
+| [useMessageBox](/guide/core/message-box) | 消息弹框，简化 `confirm` / `prompt` 的异步处理 |
 
-### 命令式 Hook
-
-| Hook | 说明 |
-| --- | --- |
-| [useMessage](/guide/basic/message) | 消息提示，hooks 风格的 `ElMessage` |
-| [useMessageBox](/guide/basic/message-box) | 消息弹框，简化 `confirm` / `prompt` 的异步处理 |
-
-### 进阶扩展 Hook
+### 进阶组合 (Extra)
 
 | Hook | 说明 |
 | --- | --- |
-| [useExTable](/guide/extras/table) | 表格、表单、分页的进阶扩展 Hook |
+| [useExTable](/guide/extra/table) | 表格、表单、分页的进阶扩展组合 |

@@ -5,13 +5,13 @@ import {
   ElFormItem,
 } from 'element-plus';
 import { type Component, defineComponent, h, ref, toRaw, watch } from 'vue';
-import { getComponent, withOptions } from './config';
+import { getComponent, withOptions } from '../../config';
 import {
   type Camelized,
   type Recordable,
   createController,
   useState,
-} from './util';
+} from '../../util';
 
 export type FormItemSlotName = 'default' | 'label' | 'error';
 

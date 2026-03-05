@@ -1,5 +1,3 @@
-import { fileURLToPath } from 'node:url';
-import { resolve, dirname } from 'node:path';
 import { defineConfig } from 'vitepress';
 import AutoImport from 'unplugin-auto-import/vite';
 import Components from 'unplugin-vue-components/vite';
@@ -11,7 +9,11 @@ import VueDevTools from 'vite-plugin-vue-devtools';
 import VueJSX from '@vitejs/plugin-vue-jsx';
 import { ElementPlusResolver } from 'unplugin-vue-components/resolvers';
 
-const __dirname = dirname(fileURLToPath(import.meta.url));
+const VITEPRESS_PATH = new URL('./', import.meta.url);
+const ROOT_PATH = new URL('../../', import.meta.url);
+
+const resolvePath = (base: URL, path: string = '') =>
+  new URL(path, base).pathname;
 
 // https://vitepress.dev/reference/site-config
 export default defineConfig({
@@ -46,18 +48,18 @@ export default defineConfig({
           ],
         },
         {
-          text: '基础',
+          text: '核心功能 (Core)',
           items: [
-            { text: 'useDialog', link: '/guide/basic/dialog' },
-            { text: 'useForm', link: '/guide/basic/form' },
-            { text: 'useTable', link: '/guide/basic/table' },
-            { text: 'useMessage', link: '/guide/basic/message' },
-            { text: 'useMessageBox', link: '/guide/basic/message-box' },
+            { text: 'useDialog', link: '/guide/core/dialog' },
+            { text: 'useForm', link: '/guide/core/form' },
+            { text: 'useTable', link: '/guide/core/table' },
+            { text: 'useMessage', link: '/guide/core/message' },
+            { text: 'useMessageBox', link: '/guide/core/message-box' },
           ],
         },
         {
-          text: '进阶扩展',
-          items: [{ text: 'useExTable', link: '/guide/extras/table' }],
+          text: '进阶组合 (Extra)',
+          items: [{ text: 'useExTable', link: '/guide/extra/table' }],
         },
       ],
     },
@@ -123,9 +125,10 @@ export default defineConfig({
     ],
     resolve: {
       alias: {
-        '@': resolve(__dirname, './'),
-        'element-hooks': resolve(__dirname, '../../src/index'),
-        'package.json': resolve(__dirname, '../../package.json'),
+        '~': resolvePath(VITEPRESS_PATH),
+        '@': resolvePath(ROOT_PATH, './src'),
+        'element-hooks': resolvePath(ROOT_PATH, './src/index'),
+        'package.json': resolvePath(ROOT_PATH, './package.json'),
       },
     },
     ssr: {
@@ -134,7 +137,7 @@ export default defineConfig({
     css: {
       preprocessorOptions: {
         scss: {
-          additionalData: `@use '@/theme/styles/element.scss';`,
+          additionalData: `@use '~/theme/styles/element.scss';`,
         },
       },
     },

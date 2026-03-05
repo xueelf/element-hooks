@@ -10,10 +10,10 @@ import {
   type Recordable,
   createController,
   useState,
-} from './util';
-import { withOptions } from './config';
-import { type FormItem, type FormOptions, useForm } from './useForm';
-import { type TableColumn, type TableOptions, useTable } from './useTable';
+} from '../../util';
+import { withOptions } from '../../config';
+import { type FormItem, type FormOptions, useForm } from '../core/form';
+import { type TableColumn, type TableOptions, useTable } from '../core/table';
 
 type PaginationInstance = InstanceType<typeof ElPagination>;
 
