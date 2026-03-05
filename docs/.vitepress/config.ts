@@ -125,6 +125,7 @@ export default defineConfig({
       alias: {
         '@': resolve(__dirname, './'),
         'element-hooks': resolve(__dirname, '../../src/index'),
+        'package.json': resolve(__dirname, '../../package.json'),
       },
     },
     ssr: {
