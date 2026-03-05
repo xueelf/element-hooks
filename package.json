@@ -22,6 +22,16 @@
   "files": [
     "lib"
   ],
+  "exports": {
+    ".": {
+      "import": "./lib/index.js",
+      "types": "./lib/index.d.ts"
+    },
+    "./composables": {
+      "import": "./lib/composables/index.js",
+      "types": "./lib/composables/index.d.ts"
+    }
+  },
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
   "type": "module",
