@@ -51,6 +51,11 @@
 | `form` | 表单配置项，参考 `useForm` 的 options | `FormOptions` | - |
 | `pagination` | 分页配置项，参数参考 `ElPagination` 的 props | `PaginationOptions` | - |
 
+支持通过 `app.use(ElementHooks, { pagination })` 配置全局分页默认项。
+
+> [!NOTE]
+> 当 `useExTable` 调用时传入了 `pagination`，会与全局 `pagination` 执行合并。
+
 ### Controller
 
 | 方法 | 说明 | 参数 |

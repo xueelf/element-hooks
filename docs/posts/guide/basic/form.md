@@ -109,7 +109,9 @@
 | --- | --- | --- |
 | `slot` | 默认插槽名（`slots.default` 的简写） | `string` |
 | `slots` | 精细化插槽配置 | `Record<string, string>` |
-| `render` | 渲染组件配置 | `{ component: Component, props?: Recordable }` |
+| `render` | 渲染组件配置 | `{ component: Component \| string, props?: Recordable }` |
+
+当 `render.component` 为字符串时，会从 `app.use(ElementHooks, { components })` 传入的全局组件映射中查找并渲染对应组件（例如 `components: { input: ElInput }` 对应 `render.component = 'input'`）。
 
 > [!NOTE]
 > `slot` 是 `slots.default` 的简写形式。当同一个表单项同时定义了 `slot` 和 `render` 时，插槽优先。
