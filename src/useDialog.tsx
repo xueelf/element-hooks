@@ -1,5 +1,6 @@
 import { type DialogInstance, ElDialog } from 'element-plus';
 import { defineComponent, ref } from 'vue';
+import { withOptions } from './config';
 import { type Camelized, createController, useState } from './util';
 
 export type DialogSlotName = 'default' | 'header' | 'footer';
@@ -9,7 +10,9 @@ export type DialogOptions = Camelized<
 >;
 
 export function useDialog(options: DialogOptions = {}) {
-  const [dialogState, setState, initState] = useState<DialogOptions>(options);
+  const [dialogState, setState, initState] = useState<DialogOptions>(
+    withOptions(options, 'dialog'),
+  );
 
   const dialogVisible = ref(false);
   const dialogInstance = ref<DialogInstance | null>(null);
