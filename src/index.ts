@@ -1,19 +1,17 @@
-import { useDialog } from './useDialog';
-import { useForm } from './useForm';
-import { useMessage } from './useMessage';
-import { useMessageBox } from './useMessageBox';
-import { useTable } from './useTable';
-import { useExTable } from './useExTable';
+import { type Plugin } from 'vue';
+import { version } from 'package.json';
+import { type GlobalOptions, setOptions } from './config';
+
+type ElementHooksPlugin = Plugin & { version: string };
 
 export default {
-  useDialog,
-  useForm,
-  useMessage,
-  useMessageBox,
-  useTable,
-  useExTable,
-};
+  install(_, options: GlobalOptions = {}) {
+    setOptions(options);
+  },
+  version,
+} satisfies ElementHooksPlugin;
 
+export * from './config';
 export * from './useDialog';
 export * from './useForm';
 export * from './useMessage';
