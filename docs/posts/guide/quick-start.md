@@ -64,15 +64,15 @@ app.use(ElementHooks, options)
 
 当单次 Hook 调用传入了同名 options（例如 `pagination`）时，会与全局同名配置执行合并。
 
-Element Hooks 提供三类常见用法：
+Element Hooks 提供两类常见用法：
 
-- **组件 Hook**：对 Element Plus 组件做轻量封装，保留原始 Props、Slots 与事件。
-- **命令式 Hook**：对命令式 API 做 Hook 化封装，直接在逻辑中调用。
-- **进阶扩展 Hook（`Ex`）**：对多个组件进行组合增强，解决常见业务页面场景。
+- **核心功能 Hook (Core)**：对 Element Plus 基础组件或命令式 API 做轻量封装，以 Hook 化风格接管调用差异，保留原生 Props、Slots 与事件。
+- **进阶组合 Hook (Extra)**：对复数核心组件进行协同增强，解决中后台复杂业务页面的样板代码积压。
 
-### 组件 Hook
+### 核心功能 Hook (Core)
 
-组件 Hook（`useDialog`、`useForm`、`useTable`）返回元组 `[Component, controller]`。你可以在模板中渲染组件，并通过 `controller` 在业务逻辑中进行状态控制：
+包含对组件的抽象（`useDialog`、`useForm`、`useTable`）或者纯命令式 API 的重洗（`useMessage`、`useMessageBox`）。
+以对话框举例，它返回元组 `[Component, controller]`。你可以在 `<template>` 视图模板中渲染组件节点，并通过 `controller` 在业务逻辑中进行无缝状态控制：
 
 ```vue
 <script setup lang="ts">
@@ -95,29 +95,9 @@ Element Hooks 提供三类常见用法：
 </template>
 ```
 
-### 命令式 Hook
+### 进阶组合 Hook (Extra)
 
-命令式 Hook（`useMessage`、`useMessageBox`）用于封装 Element Plus 的命令式 API，不涉及模板渲染，直接返回可调用的方法或对象：
-
-```vue
-<script setup lang="ts">
-  import { useMessage, useMessageBox } from 'element-hooks';
-
-  const message = useMessage();
-  const messageBox = useMessageBox();
-
-  const handleDelete = async () => {
-    const confirmed = await messageBox.confirm('确定要删除吗？', '提示');
-    if (confirmed) {
-      message.success('删除成功');
-    }
-  };
-</script>
-```
-
-### 进阶扩展 Hook（`Ex`）
-
-进阶扩展 Hook（如 `useExTable`）通过组合 `ElTable`、`ElForm` 与 `ElPagination`，减少列表页样板代码。
+进阶组合 Hook（如 `useExTable`）通过底层桥接机制组合 `ElTable`、`ElForm` 与 `ElPagination`，极大减少 CRUD 列表页的样板代码：
 
 ```ts
 import { useExTable } from 'element-hooks'
@@ -133,17 +113,14 @@ const [ExTable, controller] = useExTable({
 
 你可以继续阅读各 Hook 文档，了解更完整的配置项与实战示例：
 
-**组件 Hook：**
+**核心功能 (Core)：**
 
-- [useDialog](/guide/basic/dialog) — 对话框
-- [useForm](/guide/basic/form) — 表单
-- [useTable](/guide/basic/table) — 表格
+- [useDialog](/guide/core/dialog) — 对话框
+- [useForm](/guide/core/form) — 表单
+- [useTable](/guide/core/table) — 表格
+- [useMessage](/guide/core/message) — 消息提示
+- [useMessageBox](/guide/core/message-box) — 消息弹框
 
-**命令式 Hook：**
+**进阶组合 (Extra)：**
 
-- [useMessage](/guide/basic/message) — 消息提示
-- [useMessageBox](/guide/basic/message-box) — 消息弹框
-
-**进阶扩展 Hook：**
-
-- [useExTable](/guide/extras/table) — 列表场景组合增强
+- [useExTable](/guide/extra/table) — 列表场景组合增强

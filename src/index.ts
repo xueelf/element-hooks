@@ -12,9 +12,4 @@ export default {
 } satisfies ElementHooksPlugin;
 
 export * from './config';
-export * from './useDialog';
-export * from './useForm';
-export * from './useMessage';
-export * from './useMessageBox';
-export * from './useTable';
-export * from './useExTable';
+export * from './composables';

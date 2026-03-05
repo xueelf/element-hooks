@@ -10,8 +10,8 @@ import {
   type Recordable,
   createController,
   useState,
-} from './util';
-import { withOptions } from './config';
+} from '../../util';
+import { withOptions } from '../../config';
 
 export type TableColumnSlotName =
   | 'default'

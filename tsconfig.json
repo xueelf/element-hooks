@@ -12,6 +12,8 @@
     "moduleResolution": "bundler",
     "baseUrl": "./",
     "paths": {
+      "~/*": ["./docs/.vitepress/*"],
+      "@/*": ["./src/*"],
       "element-hooks": ["./src/index"],
     },
     "allowImportingTsExtensions": true,
@@ -32,6 +34,7 @@
     "skipLibCheck": true,
   },
   "include": [
+    "docs/**/*.ts",
     "docs/**/*.vue",
     "scripts/**/*.ts",
     "scripts/**/*.tsx",
