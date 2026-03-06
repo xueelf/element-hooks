@@ -55,6 +55,34 @@ bun add element-hooks
 
 完整的可用特性与介绍，请参阅后续的 [Hooks 介绍](/hooks/introduce)。
 
+## 自动导入 {#auto-import}
+
+如果你在项目中使用了 [unplugin-auto-import](https://github.com/unplugin/unplugin-auto-import)，可以通过引入 `element-hooks/composables` 默认对象的所有键名，将其添加至 `imports` 配置中实现 Hooks 的自动导入。
+
+::: code-group
+
+```ts [Vite]
+// vite.config.ts
+import { defineConfig } from 'vite';
+import AutoImport from 'unplugin-auto-import/vite';
+import ElementHooksComposables from 'element-hooks/composables';
+
+export default defineConfig({
+  plugins: [
+    AutoImport({
+      imports: [
+        'vue',
+        {
+          'element-hooks': Object.keys(ElementHooksComposables),
+        },
+      ],
+    }),
+  ],
+});
+```
+
+:::
+
 ## 下一步 {#next-steps}
 
 了解了基本的应用方式，你可以进一步研究：
