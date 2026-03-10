@@ -18,6 +18,31 @@ export type Camelized<T> = {
   [K in keyof T as K extends string ? CamelCase<K> : K]: T[K];
 };
 
+export type NonPartial =
+  | readonly unknown[]
+  | Function
+  | Date
+  | Error
+  | RegExp
+  | Promise<unknown>
+  | Map<unknown, unknown>
+  | ReadonlyMap<unknown, unknown>
+  | Set<unknown>
+  | ReadonlySet<unknown>
+  | WeakMap<object, unknown>
+  | WeakSet<object>;
+
+/**
+ * 将对象属性递归转换为可选。
+ */
+export type DeepPartial<T> = T extends NonPartial
+  ? T
+  : T extends object
+    ? {
+        [P in keyof T]?: DeepPartial<T[P]>;
+      }
+    : T;
+
 export type InstanceController<T, E extends object = object> = {
   instance: Ref<T | null>;
 } & E;
@@ -26,7 +51,9 @@ export function createController<T extends object, E extends object = object>(
   instance: Ref<T | null>,
   extensions?: E,
 ): InstanceController<T, E> {
-  return new Proxy({} as any, {
+  const target = Object.assign({ instance }, extensions);
+
+  return new Proxy(target, {
     get(_, prop) {
       if (extensions && Reflect.has(extensions, prop)) {
         return Reflect.get(extensions, prop);
@@ -53,6 +80,8 @@ export function createController<T extends object, E extends object = object>(
   });
 }
 
+export type SetState<T extends object> = (update: DeepPartial<T>) => void;
+
 /**
  * 创建组件状态管理。
  *
@@ -75,7 +104,7 @@ export function useState<T extends object>(initial: T) {
     return target;
   };
 
-  const setState = (update: Partial<T>) => {
+  const setState: SetState<T> = update => {
     options.value = assign(options.value, update);
   };
 
