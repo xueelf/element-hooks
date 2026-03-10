@@ -8,13 +8,22 @@ import { isArray, omit } from 'radash';
 import { type CSSProperties, defineComponent, onMounted, ref } from 'vue';
 import {
   type Camelized,
+  type DeepPartial,
   type Recordable,
   createController,
   useState,
-} from '../../util';
-import { withOptions } from '../../config';
-import { type FormItem, type FormOptions, useForm } from '../core/form';
-import { type TableColumn, type TableOptions, useTable } from '../core/table';
+} from '@/util';
+import { withOptions } from '@/config';
+import {
+  type FormItem,
+  type FormOptions,
+  useForm,
+} from '@/composables/core/form';
+import {
+  type TableColumn,
+  type TableOptions,
+  useTable,
+} from '@/composables/core/table';
 
 type PaginationInstance = InstanceType<typeof ElPagination>;
 
@@ -29,14 +38,14 @@ export type PaginationOptions = PaginationProps & {
   };
 };
 
-export type ExTableData<T extends Recordable> = T[] | Recordable;
+export type ExTableData<D extends Recordable> = D[] | Recordable;
 
-export type ExTableOptions<T extends Recordable> = Omit<
-  TableOptions<T>,
-  'data'
-> & {
-  data?: ExTableData<T>;
-  form?: FormOptions<Recordable>;
+export type ExTableOptions<
+  D extends Recordable = Recordable,
+  M extends Recordable = Recordable,
+> = Omit<TableOptions<D>, 'data'> & {
+  data?: ExTableData<D>;
+  form?: FormOptions<M>;
   pagination?: PaginationOptions;
 };
 
@@ -46,9 +55,10 @@ export type ExTableInstance = {
   pagination: PaginationInstance | null;
 };
 
-export function useExTable<T extends Recordable = Recordable>(
-  options: ExTableOptions<T> = {},
-) {
+export function useExTable<
+  D extends Recordable = Recordable,
+  M extends Recordable = Recordable,
+>(options: ExTableOptions<D, M> = {}) {
   const { form, pagination, data, ...table } = options;
 
   const mergedOptions = withOptions({
@@ -57,14 +67,14 @@ export function useExTable<T extends Recordable = Recordable>(
     pagination,
   });
 
-  const [exTableState, setState, initState] = useState<ExTableOptions<T>>({
+  const [exTableState, setState, initState] = useState<ExTableOptions<D, M>>({
     ...(mergedOptions.table ?? {}),
     data,
     form: mergedOptions.form,
     pagination: mergedOptions.pagination,
   });
 
-  const resolveData = (data?: ExTableData<T>) => {
+  const resolveData = (data?: ExTableData<D>) => {
     if (!data) {
       return { result: undefined, total: 0 };
     }
@@ -80,11 +90,11 @@ export function useExTable<T extends Recordable = Recordable>(
     };
   };
 
-  const [Form, formController] = useForm();
-  const [Table, tableController] = useTable<T>();
+  const [Form, formController] = useForm<M>();
+  const [Table, tableController] = useTable<D>();
   const exTableInstance = ref<ExTableInstance | null>(null);
 
-  const setData = (data: ExTableData<T>) => {
+  const setData = (data: ExTableData<D>) => {
     setState({ data });
   };
 
@@ -92,11 +102,11 @@ export function useExTable<T extends Recordable = Recordable>(
     setState({ form: { items } });
   };
 
-  const setColumns = (columns: TableColumn<T>[]) => {
+  const setColumns = (columns: TableColumn<D>[]) => {
     setState({ columns });
   };
 
-  const setModel = (model: Recordable) => {
+  const setModel = (model: DeepPartial<M>) => {
     setState({ form: { model } });
   };
 

@@ -5,13 +5,14 @@ import {
   ElFormItem,
 } from 'element-plus';
 import { type Component, defineComponent, h, ref, toRaw, watch } from 'vue';
-import { getComponent, withOptions } from '../../config';
+import { getComponent, withOptions } from '@/config';
 import {
   type Camelized,
+  type DeepPartial,
   type Recordable,
   createController,
   useState,
-} from '../../util';
+} from '@/util';
 
 export type FormItemSlotName = 'default' | 'label' | 'error';
 
@@ -26,7 +27,7 @@ export type FormItem = Partial<Omit<FormItemProps, 'prop'>> & {
 };
 
 export type FormOptions<T extends Recordable> = Camelized<
-  Omit<FormInstance['$props'], 'ref'>
+  Omit<FormInstance['$props'], 'ref' | 'model'>
 > & {
   model?: T;
   items?: FormItem[];
@@ -46,7 +47,7 @@ export function useForm<T extends Recordable = Recordable>(
     setState({ items });
   };
 
-  const setModel = (model: T) => {
+  const setModel = (model: DeepPartial<T>) => {
     setState({ model });
   };
 
