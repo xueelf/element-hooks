@@ -3,9 +3,9 @@
   "compilerOptions": {
     "rootDir": "src",
     "noEmit": false,
+    "outDir": "lib",
     "declaration": true,
     "emitDeclarationOnly": true,
-    "declarationDir": "lib",
   },
   "include": ["src/**/*.ts", "src/**/*.tsx"],
 }

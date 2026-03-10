@@ -10,4 +10,4 @@ const config = {
 
 await rm('lib', { recursive: true, force: true });
 await build(config);
-await $`tsc -p tsconfig.build.json`;
+await $`tsc -p tsconfig.build.json && tsc-alias -p tsconfig.build.json`;
