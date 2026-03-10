@@ -1,6 +1,6 @@
 {
   "name": "element-hooks",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "Using Hooks in Element Plus.",
   "keywords": [
     "vue",
@@ -11,17 +11,17 @@
     "element-plus",
     "element-hooks"
   ],
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/xueelf/element-hooks.git"
-  },
   "homepage": "https://element-hooks.js.org",
   "bugs": {
     "url": "https://github.com/xueelf/element-hooks/issues"
   },
+  "author": "Yuki <admin@yuki.sh>",
   "files": [
     "lib"
   ],
+  "main": "lib/index.js",
+  "type": "module",
+  "types": "lib/index.d.ts",
   "exports": {
     ".": {
       "import": "./lib/index.js",
@@ -32,9 +32,10 @@
       "types": "./lib/composables/index.d.ts"
     }
   },
-  "main": "lib/index.js",
-  "types": "lib/index.d.ts",
-  "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/xueelf/element-hooks.git"
+  },
   "scripts": {
     "build": "bun scripts/build/index.ts",
     "docs:dev": "vitepress dev docs",
