@@ -96,8 +96,9 @@ export function useForm<T extends Recordable = Recordable>(
 
           if (slots[slotName]) {
             itemSlots[key] = (scope: any) => {
-              const model = formState.value?.model;
-              return <>{slots[slotName]?.({ ...scope, model })}</>;
+              return (
+                <>{slots[slotName]?.({ ...scope, model: formModel.value })}</>
+              );
             };
           }
         });
