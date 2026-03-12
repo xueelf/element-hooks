@@ -70,6 +70,10 @@ export function useTable<T extends Recordable = Recordable>(
     setState({ columns });
   };
 
+  const getColumns = (): TableColumn<T>[] => {
+    return tableState.value?.columns ?? [];
+  };
+
   const setData = (data: TableData<T>) => {
     setState({ data });
   };
@@ -81,6 +85,7 @@ export function useTable<T extends Recordable = Recordable>(
   const tableController = createController(tableInstance, {
     setState,
     setColumns,
+    getColumns,
     setData,
     getData,
   });
