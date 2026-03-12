@@ -47,6 +47,10 @@ export function useForm<T extends Recordable = Recordable>(
     setState({ items });
   };
 
+  const getItems = (): FormItem[] => {
+    return formState.value?.items ?? [];
+  };
+
   const setModel = (model: DeepPartial<T>) => {
     setState({ model });
   };
@@ -58,6 +62,7 @@ export function useForm<T extends Recordable = Recordable>(
   const formController = createController(formInstance, {
     setState,
     setItems,
+    getItems,
     setModel,
     getModel,
   });
