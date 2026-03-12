@@ -111,9 +111,12 @@ export function useState<T extends object>(initial: T) {
   const initState = () => {
     const attrs = useAttrs();
 
-    watchEffect(() => {
-      state.value = normalizeArrayRef({ ...options.value, ...attrs });
-    });
+    watchEffect(
+      () => {
+        state.value = normalizeArrayRef({ ...options.value, ...attrs });
+      },
+      { flush: 'sync' },
+    );
   };
 
   return [state, setState, initState] as const;
