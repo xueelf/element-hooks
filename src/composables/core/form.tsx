@@ -51,7 +51,7 @@ export function useForm<T extends Recordable = Recordable>(
     setState({ model });
   };
 
-  const getModel = () => {
+  const getModel = (): T | null => {
     return toRaw(formModel.value);
   };
 
