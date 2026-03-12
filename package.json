@@ -1,6 +1,6 @@
 {
   "name": "element-hooks",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "description": "Using Hooks in Element Plus.",
   "keywords": [
     "vue",
@@ -46,33 +46,33 @@
     "prepare": "husky"
   },
   "devDependencies": {
-    "@commitlint/cli": "^20.4.1",
-    "@commitlint/config-conventional": "^20.4.1",
+    "@commitlint/cli": "^20.4.3",
+    "@commitlint/config-conventional": "^20.4.3",
     "@element-plus/icons-vue": "^2.3.2",
-    "@eslint/js": "^9.39.2",
+    "@eslint/js": "^9.39.4",
     "@iconify-json/ep": "^1.2.4",
-    "@types/bun": "^1.3.9",
+    "@types/bun": "^1.3.10",
     "@vitejs/plugin-vue-jsx": "^5.1.4",
     "@vue/eslint-config-typescript": "^14.7.0",
-    "eslint": "^9.39.2",
+    "eslint": "^9.39.4",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-vue": "^10.8.0",
     "husky": "^9.1.7",
     "prettier": "^3.8.1",
     "radash": "^12.1.1",
-    "sass-embedded": "^1.97.3",
+    "sass-embedded": "^1.98.0",
     "tsc-alias": "^1.8.16",
-    "unocss": "^66.6.0",
+    "unocss": "^66.6.6",
     "unplugin-auto-import": "^21.0.0",
     "unplugin-element-plus": "^0.11.2",
     "unplugin-icons": "^23.0.1",
     "unplugin-vue-components": "^31.0.0",
-    "vite-plugin-vue-devtools": "^8.0.6",
+    "vite-plugin-vue-devtools": "^8.0.7",
     "vitepress": "^2.0.0-alpha.16"
   },
   "peerDependencies": {
-    "element-plus": "^2.11.0",
-    "typescript": "^5.0.0"
+    "element-plus": "^2.13.1",
+    "typescript": "^5.9.3"
   },
   "devEngines": {
     "runtime": {
