@@ -51,7 +51,7 @@ export type TableColumn<T extends Recordable> = Partial<
 export type TableData<T extends Recordable> = T[];
 
 export type TableOptions<T extends Recordable> = Camelized<
-  Omit<TableInstance['$props'], 'ref'>
+  Omit<TableInstance['$props'], 'ref' | 'data'>
 > & {
   data?: TableData<T>;
   columns?: TableColumn<T>[];
@@ -74,8 +74,8 @@ export function useTable<T extends Recordable = Recordable>(
     setState({ data });
   };
 
-  const getData = () => {
-    return toRaw(tableState.value?.data);
+  const getData = (): TableData<T> => {
+    return toRaw(tableState.value?.data) ?? [];
   };
 
   const tableController = createController(tableInstance, {
