@@ -6,8 +6,11 @@ import { type FormOptions } from './composables/core/form';
 import { type TableOptions } from './composables/core/table';
 import { type Recordable } from './util';
 
+export interface GlobalComponents {}
+export type GlobalComponentName = keyof GlobalComponents;
+
 export type GlobalOptions = {
-  components?: Record<string, Component>;
+  components?: Partial<Record<string, Component>>;
   dialog?: DialogOptions;
   form?: FormOptions<Recordable>;
   table?: TableOptions<Recordable>;

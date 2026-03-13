@@ -5,7 +5,7 @@ import {
   ElFormItem,
 } from 'element-plus';
 import { type Component, defineComponent, h, ref, toRaw, watch } from 'vue';
-import { getComponent, withOptions } from '@/config';
+import { getComponent, withOptions, type GlobalComponentName } from '@/config';
 import {
   type Camelized,
   type DeepPartial,
@@ -21,7 +21,7 @@ export type FormItem = Partial<Omit<FormItemProps, 'prop'>> & {
   slot?: string;
   slots?: Partial<Record<FormItemSlotName, string>>;
   render?: {
-    component: Component | string;
+    component: Component | GlobalComponentName | (string & {});
     props?: Recordable;
   };
 };
