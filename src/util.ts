@@ -1,4 +1,4 @@
-import { assign } from 'radash';
+import { assign, isFunction } from 'radash';
 import { type Ref, shallowRef, useAttrs, watchEffect } from 'vue';
 
 export type Recordable<T = any> = Record<PropertyKey, T>;
@@ -121,3 +121,19 @@ export function useState<T extends object>(initial: T) {
 
   return [state, setState, initState] as const;
 }
+
+export const resolveFunctionalProps = (props: Recordable = {}) => {
+  const result: Recordable = {};
+
+  for (const key in props) {
+    const value = props[key];
+
+    // 以 on 开头，且后跟至少一个大写字母的键，被认为是事件类型
+    if (isFunction(value) && !/^on[A-Z]/.test(key)) {
+      result[key] = value();
+    } else {
+      result[key] = value;
+    }
+  }
+  return result;
+};
