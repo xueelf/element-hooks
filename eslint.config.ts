@@ -25,6 +25,7 @@ export default defineConfigWithVueTs(
       '@typescript-eslint/no-unsafe-function-type': 'off',
       'vue/multi-word-component-names': 'off',
       'vue/no-reserved-component-names': 'off',
+      '@typescript-eslint/no-empty-object-type': 'warn',
     },
   },
 );

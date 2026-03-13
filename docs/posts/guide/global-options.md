@@ -55,3 +55,20 @@ const globalOptions = getOptions();
 :::tip 合并规则
 在单次 Hook 调用时传入的同名 options，会使用**深合并**（Deep Merge）机制与全局配置合并，且单次调用的参数具有更高优先级。
 :::
+
+## TypeScript {#typescript}
+
+为了在使用全局注册的组件（如 `useForm` 中的 `render.component`）时能够自动获得代码补全，你可以通过 TypeScript 的模块扩展（Module Augmentation）向 `GlobalComponents` 接口注入你的全局组件名称：
+
+```ts
+import { Component } from 'vue';
+
+declare module 'element-hooks' {
+  interface GlobalComponents {
+    /** 字典选择器 */
+    'dict-select': Component;
+  }
+}
+```
+
+这段代码可以直接添加到你的任何 `.ts` 文件中，例如 `config.ts`，也可以添加到一个 `.d.ts` 文件中。确保这个文件包含在项目的 `tsconfig.json` 中的 "file" 或 "include" 字段内。
