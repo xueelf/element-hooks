@@ -12,6 +12,7 @@ import {
   type Recordable,
   createController,
   useState,
+  resolveFunctionalProps,
 } from '@/util';
 
 export type FormItemSlotName = 'default' | 'label' | 'error';
@@ -126,14 +127,14 @@ export function useForm<T extends Recordable = Recordable>(
 
               if (formModel.value && prop) {
                 return h(renderComponent, {
-                  ...render.props,
+                  ...resolveFunctionalProps(render.props),
                   modelValue: formModel.value[prop],
                   'onUpdate:modelValue': (value: unknown) => {
                     Reflect.set(formModel.value!, prop, value);
                   },
                 });
               }
-              return h(renderComponent, render.props);
+              return h(renderComponent, resolveFunctionalProps(render.props));
             };
           }
         }

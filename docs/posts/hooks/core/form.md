@@ -111,10 +111,38 @@
 | `slots`  | 精细化插槽配置                       | `Record<string, string>`                                 |
 | `render` | 渲染组件配置                         | `{ component: Component \| string, props?: Recordable }` |
 
+##### `render.component`
+
 当 `render.component` 为字符串时，会从 `app.use(ElementHooks, { components })` 传入的全局组件映射中查找并渲染对应组件（例如 `components: { input: ElInput }` 对应 `render.component = 'input'`）。
 
-> [!NOTE]
-> `slot` 是 `slots.default` 的简写形式。当同一个表单项同时定义了 `slot` 和 `render` 时，插槽优先。
+##### `render.props`
+
+在 `render.props` 中，如果你需要使用**响应式变量**来给组件传参，可以将其写为一个函数。组件会在渲染时，自动执行该函数并追踪依赖。
+
+这意味着当你的响应式数据发生改变时，组件 Props 也会自动重新渲染，从而实现**动态传参**，无需再手动调用 `setState` 或 `setItems` 刷新整个表单项。
+
+> [!WARNING] 注意事项
+> 动态传参的特性会过滤掉以 `on` 开头的事件属性。例如 `onClick` 或 `onChange` 等事件监听器，即使为函数也不会被自动执行。
+
+```ts
+const options = ref([]);
+const [Form] = useForm({
+  items: [
+    {
+      render: {
+        component: ElSelect,
+        props: {
+          options: () => options.value,
+        },
+      },
+    },
+  ],
+});
+```
+
+##### `render.slot`
+
+`slot` 是 `slots.default` 的简写形式。当同一个表单项同时定义了 `slot` 和 `render` 时，插槽优先。
 
 ### Controller
 
