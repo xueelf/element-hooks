@@ -118,7 +118,12 @@ export function useExTable<
     return resolveData(exTableState.value?.data).result;
   };
 
-  const getCurrentPage = () => exTableState.value?.pagination?.currentPage;
+  const getPagination = () => {
+    return {
+      pageSize: exTableState.value?.pagination?.pageSize,
+      currentPage: exTableState.value?.pagination?.currentPage,
+    };
+  };
 
   const exTableController = createController(exTableInstance, {
     setState,
@@ -128,7 +133,7 @@ export function useExTable<
     setModel,
     getModel,
     getData,
-    getCurrentPage,
+    getPagination,
   });
 
   const ExTable = defineComponent({
