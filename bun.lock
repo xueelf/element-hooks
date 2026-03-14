@@ -5,13 +5,13 @@
     "": {
       "name": "element-hooks",
       "devDependencies": {
-        "@commitlint/cli": "^20.4.3",
-        "@commitlint/config-conventional": "^20.4.3",
+        "@commitlint/cli": "^20.4.4",
+        "@commitlint/config-conventional": "^20.4.4",
         "@element-plus/icons-vue": "^2.3.2",
         "@eslint/js": "^10.0.1",
         "@iconify-json/ep": "^1.2.4",
         "@types/bun": "^1.3.10",
-        "@vitejs/plugin-vue-jsx": "^5.1.4",
+        "@vitejs/plugin-vue-jsx": "^5.1.5",
         "@vue/eslint-config-typescript": "^14.7.0",
         "eslint": "^10.0.3",
         "eslint-config-prettier": "^10.1.8",
@@ -26,7 +26,7 @@
         "unplugin-element-plus": "^0.11.2",
         "unplugin-icons": "^23.0.1",
         "unplugin-vue-components": "^31.0.0",
-        "vite-plugin-vue-devtools": "^8.0.7",
+        "vite-plugin-vue-devtools": "^8.1.0",
         "vitepress": "^2.0.0-alpha.16",
       },
       "peerDependencies": {
