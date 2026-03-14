@@ -4,7 +4,15 @@ import {
   ElForm,
   ElFormItem,
 } from 'element-plus';
-import { type Component, defineComponent, h, ref, toRaw, watch } from 'vue';
+import {
+  type Component,
+  type FunctionalComponent,
+  defineComponent,
+  h,
+  ref,
+  toRaw,
+  watch,
+} from 'vue';
 import { getComponent, withOptions, type GlobalComponentName } from '@/config';
 import {
   type Camelized,
@@ -22,9 +30,14 @@ export type FormItem = Partial<Omit<FormItemProps, 'prop'>> & {
   slot?: string;
   slots?: Partial<Record<FormItemSlotName, string>>;
   render?: {
-    component: Component | GlobalComponentName | (string & {});
+    component:
+      | Component
+      | FunctionalComponent
+      | GlobalComponentName
+      | (string & {});
     props?: Recordable;
   };
+  raw?: boolean;
 };
 
 export type FormOptions<T extends Recordable> = Camelized<
@@ -85,7 +98,13 @@ export function useForm<T extends Recordable = Recordable>(
       );
 
       const Item = (itemOptions: FormItem) => {
-        const { slot, slots: rawItemSlots, render, ...itemProps } = itemOptions;
+        const {
+          slot,
+          slots: rawItemSlots,
+          render,
+          raw,
+          ...itemProps
+        } = itemOptions;
         const itemSlotOptions = { ...rawItemSlots };
         const itemSlots: Recordable = {};
 
@@ -137,6 +156,10 @@ export function useForm<T extends Recordable = Recordable>(
               return h(renderComponent, resolveFunctionalProps(render.props));
             };
           }
+        }
+
+        if (raw) {
+          return itemSlots.default?.();
         }
         return <ElFormItem {...itemProps}>{itemSlots}</ElFormItem>;
       };
