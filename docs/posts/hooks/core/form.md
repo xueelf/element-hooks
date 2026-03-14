@@ -94,6 +94,18 @@
 <<< @/examples/form/Accessibility.vue
 </ExampleCard>
 
+## 纯元素节点 {#raw}
+
+有时我们只想在表单流里面渲染一段独立的提示文字或者分割线，而不希望它被 `el-form-item` 默认的间距和样式包裹。此时可以通过给表单项配置 `raw: true` 来移除外层 `el-form-item`，实现纯粹的节点渲染。
+
+<ExampleCard>
+  <template #example>
+    <Raw />
+  </template>
+
+<<< @/examples/form/Raw.vue
+</ExampleCard>
+
 ## API {#api}
 
 ### Options
@@ -105,11 +117,12 @@
 
 #### FormItem
 
-| 字段     | 说明                                 | 类型                                                     |
-| -------- | ------------------------------------ | -------------------------------------------------------- |
-| `slot`   | 默认插槽名（`slots.default` 的简写） | `string`                                                 |
-| `slots`  | 精细化插槽配置                       | `Record<string, string>`                                 |
-| `render` | 渲染组件配置                         | `{ component: Component \| string, props?: Recordable }` |
+| 字段     | 说明                                      | 类型                                                     |
+| -------- | ----------------------------------------- | -------------------------------------------------------- |
+| `raw`    | 是否为纯元素节点（不包裹 `el-form-item`） | `boolean`                                                |
+| `slot`   | 默认插槽名（`slots.default` 的简写）      | `string`                                                 |
+| `slots`  | 精细化插槽配置                            | `Record<string, string>`                                 |
+| `render` | 渲染组件配置                              | `{ component: Component \| string, props?: Recordable }` |
 
 ##### `render.component`
 
