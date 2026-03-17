@@ -12,6 +12,7 @@ import {
   useState,
 } from '@/util';
 import { withOptions } from '@/config';
+import { HOOK_METADATA, type HookOptions } from '@/devtools';
 
 export type TableColumnSlotName =
   | 'default'
@@ -50,20 +51,25 @@ export type TableColumn<T extends Recordable> = Partial<
 
 export type TableData<T extends Recordable> = T[];
 
-export type TableOptions<T extends Recordable> = Camelized<
-  Omit<TableInstance['$props'], 'ref' | 'data'>
-> & {
-  data?: TableData<T>;
-  columns?: TableColumn<T>[];
-};
+export type TableOptions<T extends Recordable> = HookOptions &
+  Partial<Camelized<Omit<TableInstance['$props'], 'ref' | 'data'>>> & {
+    data?: TableData<T>;
+    columns?: TableColumn<T>[];
+  };
 
 export function useTable<T extends Recordable = Recordable>(
   options: TableOptions<T> = {},
 ) {
+  const name = 'Table';
+
+  Reflect.set(options, HOOK_METADATA, {
+    name,
+    internal: options[HOOK_METADATA]?.internal,
+  });
+
   const [tableState, setState, initState] = useState<TableOptions<T>>(
     withOptions(options, 'table'),
   );
-
   const tableInstance = ref<TableInstance | null>(null);
 
   const setColumns = (columns: TableColumn<T>[]) => {
@@ -91,7 +97,7 @@ export function useTable<T extends Recordable = Recordable>(
   });
 
   const Table = defineComponent<TableOptions<T>>({
-    name: 'Table',
+    name,
     inheritAttrs: false,
     setup(_, { slots }) {
       initState();

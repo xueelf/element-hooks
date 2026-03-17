@@ -21,7 +21,7 @@ export type OptionKey = Exclude<keyof GlobalOptions, 'components'>;
 
 const globalOptions: GlobalOptions = {};
 
-export const setOptions = (options: GlobalOptions = {}) => {
+export const setOptions = (options: GlobalOptions) => {
   Object.assign(globalOptions, options);
 };
 
@@ -35,12 +35,14 @@ export function withOptions<T extends Recordable>(
   source: T,
 ): Omit<GlobalOptions, 'components'> & T;
 export function withOptions(source: Recordable, key?: OptionKey) {
-  if (key) {
-    const defaultOptions = globalOptions[key] ?? {};
-    return assign(defaultOptions, source);
+  const merged = key
+    ? assign(globalOptions[key] ?? {}, source)
+    : assign(omit(globalOptions, ['components']), source);
+
+  for (const sym of Object.getOwnPropertySymbols(source)) {
+    Reflect.set(merged, sym, Reflect.get(source, sym));
   }
-  const defaultGlobalOptions = omit(globalOptions, ['components']);
-  return assign(defaultGlobalOptions, source);
+  return merged;
 }
 
 export const getComponent = (name: string) => {
