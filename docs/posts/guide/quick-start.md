@@ -28,6 +28,24 @@ bun add element-hooks
 
 :::
 
+## 引入插件 {#plugin-registration}
+
+在绝大多数场景下，强烈建议将 Element Hooks 作为 Vue 插件进行注册。这不仅允许你进行[全局配置](/guide/global-options)，还能自动开启针对 **Vue DevTools** 的扩展支持，以便在开发时直观地审查和追踪各个 Hook 的内部状态树。
+
+```ts{9}
+import { createApp } from 'vue';
+import ElementPlus from 'element-plus';
+import ElementHooks from 'element-hooks';
+import App from './App.vue';
+
+const app = createApp(App);
+
+app.use(ElementPlus);
+app.use(ElementHooks);
+
+app.mount('#app');
+```
+
 ## 基本用法 {#basic-usage}
 
 在页面中，你只需要引入所需的 Hook 并执行它，通常会返回一个由**组件（Component）**与**控制器（Controller）**组成的元组。你可以在 `setup` 中调用控制逻辑，并在 `<template>` 视图声明挂载的组件标签：

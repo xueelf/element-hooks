@@ -2,6 +2,7 @@ import type { Theme } from 'vitepress';
 import DefaultTheme from 'vitepress/theme';
 import ElementPlus from 'element-plus';
 import zhCn from 'element-plus/es/locale/lang/zh-cn';
+import ElementHooks from 'element-hooks';
 
 import 'virtual:uno.css';
 import 'element-plus/dist/index.css';
@@ -14,5 +15,6 @@ export default {
     app.use(ElementPlus, {
       locale: zhCn,
     });
+    app.use(ElementHooks);
   },
 } satisfies Theme;
