@@ -129,7 +129,10 @@ export function useState<T extends object>(initial: HookStateOptions<T>) {
   return [state, setState, initState] as const;
 }
 
-export const resolveFunctionalProps = (props: Recordable = {}) => {
+export const resolveFunctionalProps = (
+  props: Recordable = {},
+  ...args: any[]
+) => {
   const result: Recordable = {};
 
   for (const key in props) {
