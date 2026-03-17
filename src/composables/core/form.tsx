@@ -14,6 +14,7 @@ import {
   watch,
 } from 'vue';
 import { getComponent, withOptions, type GlobalComponentName } from '@/config';
+import { HOOK_METADATA, type HookOptions } from '@/devtools';
 import {
   type Camelized,
   type DeepPartial,
@@ -40,20 +41,25 @@ export type FormItem = Partial<Omit<FormItemProps, 'prop'>> & {
   raw?: boolean;
 };
 
-export type FormOptions<T extends Recordable> = Camelized<
-  Omit<FormInstance['$props'], 'ref' | 'model'>
-> & {
-  model?: T;
-  items?: FormItem[];
-};
+export type FormOptions<T extends Recordable> = HookOptions &
+  Partial<Camelized<Omit<FormInstance['$props'], 'ref' | 'model'>>> & {
+    model?: T;
+    items?: FormItem[];
+  };
 
 export function useForm<T extends Recordable = Recordable>(
   options: FormOptions<T> = {},
 ) {
+  const name = 'Form';
+
+  Reflect.set(options, HOOK_METADATA, {
+    name,
+    internal: options[HOOK_METADATA]?.internal,
+  });
+
   const [formState, setState, initState] = useState<FormOptions<T>>(
     withOptions(options, 'form'),
   );
-
   const formModel = ref<T | null>(null);
   const formInstance = ref<FormInstance | null>(null);
 
@@ -82,7 +88,7 @@ export function useForm<T extends Recordable = Recordable>(
   });
 
   const Form = defineComponent<FormOptions<T>>({
-    name: 'Form',
+    name,
     inheritAttrs: false,
     setup(_, { slots }) {
       initState();

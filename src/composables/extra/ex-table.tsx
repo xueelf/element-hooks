@@ -14,6 +14,8 @@ import {
   useState,
 } from '@/util';
 import { withOptions } from '@/config';
+import { HOOK_METADATA } from '@/devtools';
+
 import {
   type FormItem,
   type FormOptions,
@@ -59,6 +61,7 @@ export function useExTable<
   D extends Recordable = Recordable,
   M extends Recordable = Recordable,
 >(options: ExTableOptions<D, M> = {}) {
+  const name = 'ExTable';
   const { form, pagination, data, ...table } = options;
 
   const mergedOptions = withOptions({
@@ -69,6 +72,10 @@ export function useExTable<
 
   const [exTableState, setState, initState] = useState<ExTableOptions<D, M>>({
     ...(mergedOptions.table ?? {}),
+    [HOOK_METADATA]: {
+      name,
+      internal: false,
+    },
     data,
     form: mergedOptions.form,
     pagination: mergedOptions.pagination,
@@ -90,8 +97,16 @@ export function useExTable<
     };
   };
 
-  const [Form, formController] = useForm<M>();
-  const [Table, tableController] = useTable<D>();
+  const [Form, formController] = useForm<M>({
+    [HOOK_METADATA]: {
+      internal: true,
+    },
+  });
+  const [Table, tableController] = useTable<D>({
+    [HOOK_METADATA]: {
+      internal: true,
+    },
+  });
   const exTableInstance = ref<ExTableInstance | null>(null);
 
   const setData = (data: ExTableData<D>) => {
@@ -137,7 +152,7 @@ export function useExTable<
   });
 
   const ExTable = defineComponent({
-    name: 'ExTable',
+    name,
     inheritAttrs: false,
     setup(_, { slots }) {
       initState();

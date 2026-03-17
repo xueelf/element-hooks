@@ -1,5 +1,6 @@
 import { assign, isFunction } from 'radash';
 import { type Ref, shallowRef, useAttrs, watchEffect } from 'vue';
+import { useDevtools, HOOK_METADATA, type HookOptions } from './devtools';
 
 export type Recordable<T = any> = Record<PropertyKey, T>;
 
@@ -82,6 +83,8 @@ export function createController<T extends object, E extends object = object>(
 
 export type SetState<T extends object> = (update: DeepPartial<T>) => void;
 
+export type HookStateOptions<T> = T & HookOptions;
+
 /**
  * 创建组件状态管理。
  *
@@ -89,10 +92,14 @@ export type SetState<T extends object> = (update: DeepPartial<T>) => void;
  * - setState: 深合并更新 options 源 → 触发 watchEffect → state 重赋值 → render
  * - initState: 在组件 setup 中调用，内部通过 useAttrs() 建立 watchEffect 自动同步
  */
-export function useState<T extends object>(initial: T) {
-  const options = shallowRef<T>(initial);
+export function useState<T extends object>(initial: HookStateOptions<T>) {
+  const options = shallowRef<HookStateOptions<T>>(initial);
   const state = shallowRef<T | null>(null);
+  const meta = Reflect.get(initial, HOOK_METADATA);
 
+  if (meta && meta.name && !meta.internal) {
+    useDevtools(meta.name, state);
+  }
   const normalizeArrayRef = (target: Recordable) => {
     for (const key of Object.keys(target)) {
       const value = target[key];
