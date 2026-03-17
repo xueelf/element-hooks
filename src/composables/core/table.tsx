@@ -4,15 +4,24 @@ import {
   ElTable,
   ElTableColumn,
 } from 'element-plus';
-import { defineComponent, ref, toRaw } from 'vue';
+import {
+  type Component,
+  type FunctionalComponent,
+  defineComponent,
+  h,
+  ref,
+  toRaw,
+} from 'vue';
 import {
   type Camelized,
   type Recordable,
   createController,
   useState,
+  resolveFunctionalProps,
 } from '@/util';
-import { withOptions } from '@/config';
+import { getComponent, withOptions, type GlobalComponentName } from '@/config';
 import { HOOK_METADATA, type HookOptions } from '@/devtools';
+import { isArray } from 'radash';
 
 export type TableColumnSlotName =
   | 'default'
@@ -47,6 +56,14 @@ export type TableColumn<T extends Recordable> = Partial<
   children?: TableColumn<T>[];
   slot?: string;
   slots?: Partial<Record<TableColumnSlotName, string>>;
+  render?: {
+    component:
+      | Component
+      | FunctionalComponent
+      | GlobalComponentName
+      | (string & {});
+    props?: Recordable;
+  };
 };
 
 export type TableData<T extends Recordable> = T[];
@@ -107,6 +124,7 @@ export function useTable<T extends Recordable = Recordable>(
           slot,
           slots: rawColumnSlots,
           children,
+          render,
           ...columnProps
         } = columnOptions;
         const columnSlotOptions = { ...rawColumnSlots };
@@ -126,7 +144,34 @@ export function useTable<T extends Recordable = Recordable>(
           }
         });
 
-        if (Array.isArray(children) && children.length > 0) {
+        if (render) {
+          if (columnSlots.default) {
+            console.warn(
+              `[useTable] TableColumn "${columnProps.prop ?? slot}" has both a slot and render defined. The slot will take priority.`,
+            );
+          } else {
+            columnSlots.default = (scope: any) => {
+              const { component } = render;
+              const renderComponent =
+                typeof component === 'string'
+                  ? getComponent(component)
+                  : component;
+
+              if (!renderComponent) {
+                console.warn(
+                  `[useTable] Global component "${String(component)}" is not registered.`,
+                );
+                return null;
+              }
+              return h(
+                renderComponent,
+                resolveFunctionalProps(render.props, scope.row),
+              );
+            };
+          }
+        }
+
+        if (isArray(children) && children.length > 0) {
           columnSlots.default = () =>
             children.map(child => <Column {...child} />);
         }
