@@ -247,11 +247,49 @@
 
 属性与 `ElTableColumn` 的 props 一致，同时额外支持：
 
-| 字段       | 说明                                                       | 类型                     |
-| ---------- | ---------------------------------------------------------- | ------------------------ |
-| `slot`     | 默认插槽名                                                 | `string`                 |
-| `slots`    | 具名插槽配置 (`default`, `header`, `filterIcon`, `expand`) | `Record<string, string>` |
-| `children` | 子列配置 (用于多级表头)                                    | `TableColumn[]`          |
+| 字段       | 说明                                                       | 类型                                                     |
+| ---------- | ---------------------------------------------------------- | -------------------------------------------------------- |
+| `slot`     | 默认插槽名（`slots.default` 的简写）                       | `string`                                                 |
+| `slots`    | 具名插槽配置 (`default`, `header`, `filterIcon`, `expand`) | `Record<string, string>`                                 |
+| `children` | 子列配置 (用于多级表头)                                    | `TableColumn[]`                                          |
+| `render`   | 渲染组件配置                                               | `{ component: Component \| string, props?: Recordable }` |
+
+##### `render.component`
+
+当 `render.component` 为字符串时，会从 `app.use(ElementHooks, { components })` 传入的全局组件映射中查找并渲染对应组件（例如 `components: { tag: ElTag }` 对应 `render.component = 'tag'`）。
+
+##### `render.props`
+
+在 `render.props` 中，如果你需要使用**响应式变量**来给组件传参，或者需要根据当前行的数据动态传参，可以将其写为一个函数。组件会在渲染时自动执行该函数（**函数的默认参数为当前行的数据 `row`**）并追踪依赖。
+
+这意味着当你的响应式数据或当前行数据发生改变时，组件 Props 也会自动重新渲染，从而实现**动态传参**，无需再手动调用 `setState` 或 `setColumns` 刷新整个列表项配置。
+
+> [!WARNING] 注意事项
+> 动态传参的特性会过滤掉以 `on` 开头的事件属性。例如 `onClick` 或 `onChange` 等事件监听器，即使为函数也不会被自动执行。
+
+```ts
+import { ElTag } from 'element-plus';
+
+const [Table] = useTable({
+  columns: [
+    {
+      prop: 'gender',
+      label: '性别',
+      render: {
+        component: ElTag,
+        props: {
+          // row 为当前行的数据
+          type: row => (row.gender === '男' ? 'primary' : 'danger'),
+        },
+      },
+    },
+  ],
+});
+```
+
+##### `render.slot`
+
+`slot` 是 `slots.default` 的简写形式。当同一个列同时定义了 `slot` 和 `render` 时，插槽优先。
 
 ### Controller
 

@@ -130,14 +130,16 @@
 
 ##### `render.props`
 
-在 `render.props` 中，如果你需要使用**响应式变量**来给组件传参，可以将其写为一个函数。组件会在渲染时，自动执行该函数并追踪依赖。
+在 `render.props` 中，如果你需要使用**响应式变量**来给组件传参，或者需要根据当前表单的模型数据动态传参，可以将其写为一个函数。组件会在渲染时，自动执行该函数（**函数的默认参数为当前表单的模型数据 `model`**）并追踪依赖。
 
-这意味着当你的响应式数据发生改变时，组件 Props 也会自动重新渲染，从而实现**动态传参**，无需再手动调用 `setState` 或 `setItems` 刷新整个表单项。
+这意味着当你的响应式数据或模型数据发生改变时，组件 Props 也会自动重新渲染，从而实现**动态传参**，无需再手动调用 `setState` 或 `setItems` 刷新整个表单项。
 
 > [!WARNING] 注意事项
 > 动态传参的特性会过滤掉以 `on` 开头的事件属性。例如 `onClick` 或 `onChange` 等事件监听器，即使为函数也不会被自动执行。
 
 ```ts
+import { ElSelect } from 'element-plus';
+
 const options = ref([]);
 const [Form] = useForm({
   items: [
@@ -146,6 +148,8 @@ const [Form] = useForm({
         component: ElSelect,
         props: {
           options: () => options.value,
+          // model 为当前表单数据
+          disabled: model => model.status !== 'active',
         },
       },
     },
