@@ -37,28 +37,31 @@ Element Hooks 提供两类 Hook：**组件 Hook** 和 **命令式 Hook**。
 
 ### 全局配置
 
-你可以将 `ElementHooks` 作为插件安装，并传入全局默认 options：
+推荐将 `ElementHooks` 作为插件去挂载，这样不仅可以设置跨局的默认 options 去减少重复配置，而且会自动**开启 Vue DevTools 支持**，以便开发时可视化追踪所有 Hook 的内部状态：
 
 ```ts
-import { createApp } from 'vue'
-import ElementHooks from 'element-hooks'
-import { ElInput } from 'element-plus'
+import { createApp } from 'vue';
+import ElementPlus from 'element-plus';
+import ElementHooks from 'element-hooks';
+import App from './App.vue';
+import DictSelect from './components/selector/DictSelect.vue'
 
-const app = createApp(App)
+const app = createApp(App);
 
+app.use(ElementPlus);
 app.use(ElementHooks, {
   components: {
-    input: ElInput,
+    'dict-select': DictSelect,
   },
   pagination: {
     layout: 'prev, pager, next',
   },
-})
+});
+
+app.mount('#app');
 ```
 
-当单次 Hook 调用传入同名 options 时，会与全局同名配置执行合并。
-
-全局默认项按 Element Plus 组件维度生效，例如 `form` 会同时作用于 `useForm` 与 `useExTable` 内部使用的 `ElForm`。
+全局默认项按 Element Plus 组件维度生效，例如 `form` 会同时作用于 `useForm` 与 `useExTable` 内部的 `ElForm`；各个 Hook 单次调用传入同名 options 时，会自动与之执行合并。
 
 ### 组件 Hook
 
@@ -192,6 +195,7 @@ app.use(ElementHooks, {
 
   const handleDelete = async () => {
     const confirmed = await messageBox.confirm('确定要删除吗？', '提示');
+
     if (confirmed) {
       // 执行删除
     }
