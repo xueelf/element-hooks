@@ -152,14 +152,17 @@ export function useForm<T extends Recordable = Recordable>(
 
               if (formModel.value && prop) {
                 return h(renderComponent, {
-                  ...resolveFunctionalProps(render.props),
                   modelValue: formModel.value[prop],
+                  ...resolveFunctionalProps(render.props, formModel.value),
                   'onUpdate:modelValue': (value: unknown) => {
                     Reflect.set(formModel.value!, prop, value);
                   },
                 });
               }
-              return h(renderComponent, resolveFunctionalProps(render.props));
+              return h(
+                renderComponent,
+                resolveFunctionalProps(render.props, formModel.value),
+              );
             };
           }
         }
