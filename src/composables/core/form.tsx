@@ -27,7 +27,7 @@ import {
 export type FormItemSlotName = 'default' | 'label' | 'error';
 
 export type FormItem = Partial<Omit<FormItemProps, 'prop'>> & {
-  prop?: string;
+  prop?: string | string[];
   slot?: string;
   slots?: Partial<Record<FormItemSlotName, string>>;
   render?: {
@@ -46,6 +46,36 @@ export type FormOptions<T extends Recordable> = HookOptions &
     model?: T;
     items?: FormItem[];
   };
+
+function getProp(targetObject: Recordable, path: string | string[]) {
+  const pathKeys = Array.isArray(path) ? path : path.split('.');
+
+  return pathKeys.reduce(
+    (currentLevel, key: string) => (currentLevel ?? {})[key],
+    targetObject,
+  );
+}
+
+function setProp(
+  targetObject: Recordable,
+  path: string | string[],
+  value: unknown,
+) {
+  const pathKeys = Array.isArray(path) ? [...path] : path.split('.');
+  const lastKey = pathKeys.pop();
+
+  if (!lastKey) {
+    return;
+  }
+  const targetParent = pathKeys.reduce((currentLevel: any, key: string) => {
+    if (currentLevel[key] === undefined) {
+      Reflect.set(currentLevel, key, {});
+    }
+    return currentLevel[key];
+  }, targetObject);
+
+  Reflect.set(targetParent, lastKey, value);
+}
 
 export function useForm<T extends Recordable = Recordable>(
   options: FormOptions<T> = {},
@@ -152,10 +182,10 @@ export function useForm<T extends Recordable = Recordable>(
 
               if (formModel.value && prop) {
                 return h(renderComponent, {
-                  modelValue: formModel.value[prop],
                   ...resolveFunctionalProps(render.props, formModel.value),
+                  modelValue: getProp(formModel.value, prop),
                   'onUpdate:modelValue': (value: unknown) => {
-                    Reflect.set(formModel.value!, prop, value);
+                    setProp(formModel.value, prop, value);
                   },
                 });
               }
