@@ -140,7 +140,7 @@ export const resolveFunctionalProps = (
 
     // 以 on 开头，且后跟至少一个大写字母的键，被认为是事件类型
     if (isFunction(value) && !/^on[A-Z]/.test(key)) {
-      result[key] = value();
+      result[key] = value(...args);
     } else {
       result[key] = value;
     }
