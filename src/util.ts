@@ -1,8 +1,38 @@
 import { assign, isFunction } from 'radash';
-import { type Ref, shallowRef, useAttrs, watchEffect } from 'vue';
-import { useDevtools, HOOK_METADATA, type HookOptions } from './devtools';
+import {
+  type Ref,
+  type Component,
+  type FunctionalComponent,
+  shallowRef,
+  useAttrs,
+  watchEffect,
+} from 'vue';
+import { type GlobalComponentName } from './config';
+import { type HookOptions, HOOK_METADATA, useDevtools } from './devtools';
+
+export type BasicValue =
+  | string
+  | number
+  | boolean
+  | symbol
+  | object
+  | null
+  | undefined;
 
 export type Recordable<T = any> = Record<PropertyKey, T>;
+
+export type RenderComponent =
+  | Component
+  | FunctionalComponent
+  | GlobalComponentName
+  | (string & {});
+
+export type RenderProps<T> = Recordable<BasicValue | ((value: T) => unknown)>;
+
+export type RenderOptions<T> = {
+  component: RenderComponent;
+  props?: RenderProps<T>;
+};
 
 /**
  * 将字符串字面量转换为小驼峰命名
@@ -131,7 +161,7 @@ export function useState<T extends object>(initial: HookStateOptions<T>) {
 
 export const resolveFunctionalProps = (
   props: Recordable = {},
-  ...args: any[]
+  ...args: unknown[]
 ) => {
   const result: Recordable = {};
 

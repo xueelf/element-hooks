@@ -4,24 +4,18 @@ import {
   ElTable,
   ElTableColumn,
 } from 'element-plus';
-import {
-  type Component,
-  type FunctionalComponent,
-  defineComponent,
-  h,
-  ref,
-  toRaw,
-} from 'vue';
+import { defineComponent, h, ref, toRaw } from 'vue';
+import { isArray } from 'radash';
 import {
   type Camelized,
   type Recordable,
   createController,
   useState,
   resolveFunctionalProps,
+  type RenderOptions,
 } from '@/util';
-import { getComponent, withOptions, type GlobalComponentName } from '@/config';
-import { HOOK_METADATA, type HookOptions } from '@/devtools';
-import { isArray } from 'radash';
+import { getComponent, withOptions } from '@/config';
+import { type HookOptions, HOOK_METADATA } from '@/devtools';
 
 export type TableColumnSlotName =
   | 'default'
@@ -50,20 +44,13 @@ export type ColumnScope<T extends Recordable> =
   | ColumnFilterIconScope
   | ColumnExpandScope;
 
-export type TableColumn<T extends Recordable> = Partial<
+export type TableColumn<T extends Recordable = Recordable> = Partial<
   Omit<TableColumnCtx<T>, 'children'>
 > & {
   children?: TableColumn<T>[];
   slot?: string;
   slots?: Partial<Record<TableColumnSlotName, string>>;
-  render?: {
-    component:
-      | Component
-      | FunctionalComponent
-      | GlobalComponentName
-      | (string & {});
-    props?: Recordable;
-  };
+  render?: RenderOptions<T>;
 };
 
 export type TableData<T extends Recordable> = T[];
@@ -140,7 +127,9 @@ export function useTable<T extends Recordable = Recordable>(
           );
 
           if (slots[slotName]) {
-            columnSlots[key] = (scope: any) => <>{slots[slotName]?.(scope)}</>;
+            columnSlots[key] = (scope: ColumnScope<T>) => (
+              <>{slots[slotName]?.(scope)}</>
+            );
           }
         });
 
@@ -150,7 +139,7 @@ export function useTable<T extends Recordable = Recordable>(
               `[useTable] TableColumn "${columnProps.prop ?? slot}" has both a slot and render defined. The slot will take priority.`,
             );
           } else {
-            columnSlots.default = (scope: any) => {
+            columnSlots.default = (scope: ColumnDefaultScope<T>) => {
               const { component } = render;
               const renderComponent =
                 typeof component === 'string'
