@@ -21,7 +21,7 @@ export default defineConfigWithVueTs(
 
   {
     rules: {
-      '@typescript-eslint/no-explicit-any': 'off',
+      '@typescript-eslint/no-explicit-any': 'warn',
       '@typescript-eslint/no-unsafe-function-type': 'off',
       'vue/multi-word-component-names': 'off',
       'vue/no-reserved-component-names': 'off',
