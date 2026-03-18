@@ -4,16 +4,8 @@ import {
   ElForm,
   ElFormItem,
 } from 'element-plus';
-import {
-  type Component,
-  type FunctionalComponent,
-  defineComponent,
-  h,
-  ref,
-  toRaw,
-  watch,
-} from 'vue';
-import { getComponent, withOptions, type GlobalComponentName } from '@/config';
+import { defineComponent, h, ref, toRaw, watch } from 'vue';
+import { getComponent, withOptions } from '@/config';
 import { HOOK_METADATA, type HookOptions } from '@/devtools';
 import {
   type Camelized,
@@ -22,29 +14,25 @@ import {
   createController,
   useState,
   resolveFunctionalProps,
+  type RenderOptions,
 } from '@/util';
 
 export type FormItemSlotName = 'default' | 'label' | 'error';
 
-export type FormItem = Partial<Omit<FormItemProps, 'prop'>> & {
+export type FormItem<T extends Recordable = Recordable> = Partial<
+  Omit<FormItemProps, 'prop'>
+> & {
   prop?: string | string[];
   slot?: string;
   slots?: Partial<Record<FormItemSlotName, string>>;
-  render?: {
-    component:
-      | Component
-      | FunctionalComponent
-      | GlobalComponentName
-      | (string & {});
-    props?: Recordable;
-  };
+  render?: RenderOptions<T>;
   raw?: boolean;
 };
 
 export type FormOptions<T extends Recordable> = HookOptions &
   Partial<Camelized<Omit<FormInstance['$props'], 'ref' | 'model'>>> & {
     model?: T;
-    items?: FormItem[];
+    items?: FormItem<T>[];
   };
 
 function getProp(targetObject: Recordable, path: string | string[]) {
@@ -67,12 +55,15 @@ function setProp(
   if (!lastKey) {
     return;
   }
-  const targetParent = pathKeys.reduce((currentLevel: any, key: string) => {
-    if (currentLevel[key] === undefined) {
-      Reflect.set(currentLevel, key, {});
-    }
-    return currentLevel[key];
-  }, targetObject);
+  const targetParent = pathKeys.reduce(
+    (currentLevel: Recordable, key: string) => {
+      if (currentLevel[key] === undefined) {
+        Reflect.set(currentLevel, key, {});
+      }
+      return currentLevel[key];
+    },
+    targetObject,
+  );
 
   Reflect.set(targetParent, lastKey, value);
 }
@@ -93,11 +84,11 @@ export function useForm<T extends Recordable = Recordable>(
   const formModel = ref<T | null>(null);
   const formInstance = ref<FormInstance | null>(null);
 
-  const setItems = (items: FormItem[]) => {
+  const setItems = (items: FormItem<T>[]) => {
     setState({ items });
   };
 
-  const getItems = (): FormItem[] => {
+  const getItems = (): FormItem<T>[] => {
     return formState.value?.items ?? [];
   };
 
@@ -133,7 +124,7 @@ export function useForm<T extends Recordable = Recordable>(
         },
       );
 
-      const Item = (itemOptions: FormItem) => {
+      const Item = (itemOptions: FormItem<T>) => {
         const {
           slot,
           slots: rawItemSlots,
@@ -151,7 +142,7 @@ export function useForm<T extends Recordable = Recordable>(
           const slotName: FormItemSlotName = Reflect.get(itemSlotOptions, key);
 
           if (slots[slotName]) {
-            itemSlots[key] = (scope: any) => {
+            itemSlots[key] = (scope: Recordable) => {
               return (
                 <>{slots[slotName]?.({ ...scope, model: formModel.value })}</>
               );
@@ -212,7 +203,8 @@ export function useForm<T extends Recordable = Recordable>(
         return (
           <ElForm ref={formInstance} {...formProps} model={formModel.value}>
             {{
-              default: () => items.map((item: FormItem) => <Item {...item} />),
+              default: () =>
+                items.map((item: FormItem<T>) => <Item {...item} />),
               ...slots,
             }}
           </ElForm>
