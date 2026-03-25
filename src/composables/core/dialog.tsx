@@ -2,7 +2,13 @@ import { type DialogInstance, ElDialog } from 'element-plus';
 import { defineComponent, ref } from 'vue';
 import { withOptions } from '@/config';
 import { HOOK_METADATA, type HookOptions } from '@/devtools';
-import { type Camelized, createController, useState } from '@/util';
+import {
+  type Camelized,
+  type Setter,
+  createController,
+  unwrapSetter,
+  useState,
+} from '@/util';
 
 export type DialogSlotName = 'default' | 'header' | 'footer';
 
@@ -30,8 +36,11 @@ export function useDialog(options: DialogOptions = {}) {
   const dialogVisible = ref(false);
   const dialogInstance = ref<DialogInstance | null>(null);
 
-  const setTitle = (title: string) => {
-    setState({ title });
+  const setTitle: Setter<typeof options.title> = update => {
+    setState(prev => ({
+      ...prev,
+      title: unwrapSetter(update, prev.title),
+    }));
   };
 
   const open = () => {

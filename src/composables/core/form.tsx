@@ -9,12 +9,13 @@ import { getComponent, withOptions } from '@/config';
 import { HOOK_METADATA, type HookOptions } from '@/devtools';
 import {
   type Camelized,
-  type DeepPartial,
   type Recordable,
-  createController,
-  useState,
-  resolveFunctionalProps,
   type RenderOptions,
+  type Setter,
+  createController,
+  resolveFunctionalProps,
+  unwrapSetter,
+  useState,
 } from '@/util';
 
 export type FormItemSlotName = 'default' | 'label' | 'error';
@@ -84,16 +85,22 @@ export function useForm<T extends Recordable = Recordable>(
   const formModel = ref<T | null>(null);
   const formInstance = ref<FormInstance | null>(null);
 
-  const setItems = (items: FormItem<T>[]) => {
-    setState({ items });
+  const setItems: Setter<(typeof options)['items']> = update => {
+    setState(prev => ({
+      ...prev,
+      items: unwrapSetter(update, prev.items),
+    }));
   };
 
   const getItems = (): FormItem<T>[] => {
     return formState.value?.items ?? [];
   };
 
-  const setModel = (model: DeepPartial<T>) => {
-    setState({ model });
+  const setModel: Setter<(typeof options)['model']> = update => {
+    setState(prev => ({
+      ...prev,
+      model: unwrapSetter(update, prev.model),
+    }));
   };
 
   const getModel = (): T | null => {
