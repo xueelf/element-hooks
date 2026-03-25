@@ -9,10 +9,12 @@ import { isArray } from 'radash';
 import {
   type Camelized,
   type Recordable,
-  createController,
-  useState,
-  resolveFunctionalProps,
   type RenderOptions,
+  type Setter,
+  createController,
+  resolveFunctionalProps,
+  unwrapSetter,
+  useState,
 } from '@/util';
 import { getComponent, withOptions } from '@/config';
 import { type HookOptions, HOOK_METADATA } from '@/devtools';
@@ -76,16 +78,22 @@ export function useTable<T extends Recordable = Recordable>(
   );
   const tableInstance = ref<TableInstance | null>(null);
 
-  const setColumns = (columns: TableColumn<T>[]) => {
-    setState({ columns });
+  const setColumns: Setter<(typeof options)['columns']> = update => {
+    setState(prev => ({
+      ...prev,
+      columns: unwrapSetter(update, prev.columns),
+    }));
   };
 
   const getColumns = (): TableColumn<T>[] => {
     return tableState.value?.columns ?? [];
   };
 
-  const setData = (data: TableData<T>) => {
-    setState({ data });
+  const setData: Setter<(typeof options)['data']> = update => {
+    setState(prev => ({
+      ...prev,
+      data: unwrapSetter(update, prev.data),
+    }));
   };
 
   const getData = (): TableData<T> => {

@@ -1,4 +1,4 @@
-import { assign, isFunction } from 'radash';
+import { isArray, isFunction } from 'radash';
 import {
   type Ref,
   type Component,
@@ -111,7 +111,14 @@ export function createController<T extends object, E extends object = object>(
   });
 }
 
-export type SetState<T extends object> = (update: DeepPartial<T>) => void;
+export type Setter<T> = {
+  (value: T): void;
+  (updater: (prev: T) => T): void;
+};
+
+export function unwrapSetter<T>(update: T | ((prev: T) => T), prev: T): T {
+  return isFunction(update) ? update(prev) : update;
+}
 
 export type HookStateOptions<T> = T & HookOptions;
 
@@ -119,7 +126,7 @@ export type HookStateOptions<T> = T & HookOptions;
  * 创建组件状态管理。
  *
  * - state: shallowRef，options 与 attrs 的扁平合并（attrs 优先），手动管理 render
- * - setState: 深合并更新 options 源 → 触发 watchEffect → state 重赋值 → render
+ * - setState: 更新 options 源 → 触发 watchEffect → state 重赋值 → render
  * - initState: 在组件 setup 中调用，内部通过 useAttrs() 建立 watchEffect 自动同步
  */
 export function useState<T extends object>(initial: HookStateOptions<T>) {
@@ -134,15 +141,15 @@ export function useState<T extends object>(initial: HookStateOptions<T>) {
     for (const key of Object.keys(target)) {
       const value = target[key];
 
-      if (Array.isArray(value)) {
+      if (isArray(value)) {
         target[key] = [...value];
       }
     }
     return target;
   };
 
-  const setState: SetState<T> = update => {
-    options.value = assign(options.value, update);
+  const setState: Setter<HookStateOptions<T>> = update => {
+    options.value = unwrapSetter(update, options.value);
   };
 
   const initState = () => {

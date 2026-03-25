@@ -6,26 +6,18 @@ import {
 import { addUnit } from 'element-plus/es/utils/dom/style';
 import { isArray, omit } from 'radash';
 import { type CSSProperties, defineComponent, onMounted, ref } from 'vue';
+import { withOptions } from '@/config';
+import { type FormOptions, useForm } from '@/composables/core/form';
+import { type TableOptions, useTable } from '@/composables/core/table';
+import { HOOK_METADATA } from '@/devtools';
 import {
   type Camelized,
-  type DeepPartial,
   type Recordable,
+  type Setter,
   createController,
+  unwrapSetter,
   useState,
 } from '@/util';
-import { withOptions } from '@/config';
-import { HOOK_METADATA } from '@/devtools';
-
-import {
-  type FormItem,
-  type FormOptions,
-  useForm,
-} from '@/composables/core/form';
-import {
-  type TableColumn,
-  type TableOptions,
-  useTable,
-} from '@/composables/core/table';
 
 type PaginationInstance = InstanceType<typeof ElPagination>;
 
@@ -109,20 +101,46 @@ export function useExTable<
   });
   const exTableInstance = ref<ExTableInstance | null>(null);
 
-  const setData = (data: ExTableData<D>) => {
-    setState({ data });
+  const setData: Setter<typeof options.data> = update => {
+    setState(prev => ({
+      ...prev,
+      data: unwrapSetter(update, prev.data),
+    }));
   };
 
-  const setItems = (items: FormItem[]) => {
-    setState({ form: { items } });
+  const setItems: Setter<
+    NonNullable<typeof options.form>['items']
+  > = update => {
+    setState(prev => ({
+      ...prev,
+      form: { ...prev.form, items: unwrapSetter(update, prev.form?.items) },
+    }));
   };
 
-  const setColumns = (columns: TableColumn<D>[]) => {
-    setState({ columns });
+  const setColumns: Setter<(typeof options)['columns']> = update => {
+    setState(prev => ({
+      ...prev,
+      columns: unwrapSetter(update, prev.columns),
+    }));
   };
 
-  const setModel = (model: DeepPartial<M>) => {
-    setState({ form: { model } });
+  const setModel: Setter<
+    NonNullable<typeof options.form>['model']
+  > = update => {
+    setState(prev => ({
+      ...prev,
+      form: {
+        ...prev.form,
+        model: unwrapSetter(update, prev.form?.model),
+      },
+    }));
+  };
+
+  const setPagination: Setter<(typeof options)['pagination']> = update => {
+    setState(prev => ({
+      ...prev,
+      pagination: unwrapSetter(update, prev.pagination),
+    }));
   };
 
   const getModel = () => {
@@ -146,6 +164,7 @@ export function useExTable<
     setItems,
     setColumns,
     setModel,
+    setPagination,
     getModel,
     getData,
     getPagination,
@@ -212,10 +231,10 @@ export function useExTable<
                   total={total}
                   style={{ marginTop: '18px' }}
                   onUpdate:current-page={(page: number) => {
-                    setState({ pagination: { currentPage: page } });
+                    setPagination(prev => ({ ...prev, currentPage: page }));
                   }}
                   onUpdate:page-size={(size: number) => {
-                    setState({ pagination: { pageSize: size } });
+                    setPagination(prev => ({ ...prev, pageSize: size }));
                   }}
                 />
               </div>
