@@ -44,7 +44,10 @@ export default defineConfig({
         },
         {
           text: '进阶',
-          items: [{ text: '全局配置', link: '/guide/global-options' }],
+          items: [
+            { text: '全局配置', link: '/guide/global-options' },
+            { text: '状态管理', link: '/guide/state-management' },
+          ],
         },
       ],
       '/hooks/': [
