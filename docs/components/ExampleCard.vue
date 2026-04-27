@@ -1,6 +1,6 @@
 <script setup lang="ts">
-  import { ElMessage } from 'element-plus';
   import { Check, CopyDocument, Hide, View } from '@element-plus/icons-vue';
+  import { ElMessage } from 'element-plus';
   import { computed, reactive, useTemplateRef } from 'vue';
 
   const state = reactive({

@@ -1,8 +1,6 @@
 <script setup lang="ts">
   import { useForm } from 'element-hooks';
-  import { ElInput } from 'element-plus';
-
-  import type { FormRules } from 'element-plus';
+  import { type FormRules, ElInput } from 'element-plus';
 
   const validatePass = (rule: any, value: any, callback: any) => {
     if (value === '') {

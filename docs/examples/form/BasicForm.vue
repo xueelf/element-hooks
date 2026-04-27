@@ -1,11 +1,11 @@
 <script setup lang="ts">
   import { useForm } from 'element-hooks';
   import {
+    ElCheckboxGroup,
     ElInput,
+    ElRadioGroup,
     ElSelect,
     ElSwitch,
-    ElCheckboxGroup,
-    ElRadioGroup,
   } from 'element-plus';
 
   const [Form] = useForm({

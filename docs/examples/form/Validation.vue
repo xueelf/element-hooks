@@ -1,15 +1,15 @@
 <script setup lang="ts">
   import { useForm } from 'element-hooks';
   import {
+    type FormRules,
+    ElCheckboxGroup,
     ElInput,
+    ElRadioGroup,
+    ElSegmented,
     ElSelect,
     ElSelectV2,
     ElSwitch,
-    ElCheckboxGroup,
-    ElRadioGroup,
-    ElSegmented,
   } from 'element-plus';
-  import type { FormRules } from 'element-plus';
 
   interface RuleForm {
     name: string;

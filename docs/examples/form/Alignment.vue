@@ -1,10 +1,7 @@
 <script setup lang="ts">
+  import { type FormItem, useForm } from 'element-hooks';
+  import { type FormItemProps, type FormProps, ElInput } from 'element-plus';
   import { ref } from 'vue';
-  import { useForm } from 'element-hooks';
-  import { ElInput } from 'element-plus';
-
-  import type { FormItem } from 'element-hooks';
-  import type { FormItemProps, FormProps } from 'element-plus';
 
   const labelPosition = ref<FormProps['labelPosition']>('right');
   const itemLabelPosition = ref<FormItemProps['labelPosition']>('');

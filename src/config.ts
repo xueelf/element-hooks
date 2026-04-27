@@ -1,9 +1,10 @@
 import { assign, omit } from 'radash';
 import { type Component } from 'vue';
+
 import { type DialogOptions } from './composables/core/dialog';
-import { type PaginationOptions } from './composables/extra/ex-table';
 import { type FormOptions } from './composables/core/form';
 import { type TableOptions } from './composables/core/table';
+import { type PaginationOptions } from './composables/extra/ex-table';
 import { type Recordable } from './util';
 
 export interface GlobalComponents {}
