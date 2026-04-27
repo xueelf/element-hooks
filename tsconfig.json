@@ -10,7 +10,6 @@
     /* Modules */
     "module": "esnext",
     "moduleResolution": "bundler",
-    "baseUrl": "./",
     "paths": {
       "~/*": ["./docs/.vitepress/*"],
       "@/*": ["./src/*"],
