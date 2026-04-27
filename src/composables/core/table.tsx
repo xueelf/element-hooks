@@ -4,8 +4,11 @@ import {
   ElTable,
   ElTableColumn,
 } from 'element-plus';
-import { defineComponent, h, ref, toRaw } from 'vue';
 import { isArray } from 'radash';
+import { defineComponent, h, ref, toRaw } from 'vue';
+
+import { getComponent, withOptions } from '@/config';
+import { type HookOptions, HOOK_METADATA } from '@/devtools';
 import {
   type Camelized,
   type Recordable,
@@ -16,8 +19,6 @@ import {
   unwrapSetter,
   useState,
 } from '@/util';
-import { getComponent, withOptions } from '@/config';
-import { type HookOptions, HOOK_METADATA } from '@/devtools';
 
 export type TableColumnSlotName =
   | 'default'
@@ -67,15 +68,14 @@ export function useTable<T extends Recordable = Recordable>(
   options: TableOptions<T> = {},
 ) {
   const name = 'Table';
+  const merged = withOptions(options, 'table');
 
-  Reflect.set(options, HOOK_METADATA, {
+  Reflect.set(merged, HOOK_METADATA, {
     name,
     internal: options[HOOK_METADATA]?.internal,
   });
 
-  const [tableState, setState, initState] = useState<TableOptions<T>>(
-    withOptions(options, 'table'),
-  );
+  const [tableState, setState, initState] = useState<TableOptions<T>>(merged);
   const tableInstance = ref<TableInstance | null>(null);
 
   const setColumns: Setter<(typeof options)['columns']> = update => {
