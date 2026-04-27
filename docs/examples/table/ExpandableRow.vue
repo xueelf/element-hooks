@@ -1,6 +1,6 @@
 <script setup lang="ts">
-  import { ref } from 'vue';
   import { useTable } from 'element-hooks';
+  import { ref } from 'vue';
 
   const parentBorder = ref(false);
   const childBorder = ref(false);

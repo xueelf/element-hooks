@@ -1,13 +1,13 @@
-import { defineConfig } from 'vitepress';
-import AutoImport from 'unplugin-auto-import/vite';
-import Components from 'unplugin-vue-components/vite';
-import ElementPlus from 'unplugin-element-plus/vite';
-import Icons from 'unplugin-icons/vite';
-import IconsResolver from 'unplugin-icons/resolver';
-import UnoCSS from 'unocss/vite';
-import VueDevTools from 'vite-plugin-vue-devtools';
 import VueJSX from '@vitejs/plugin-vue-jsx';
+import UnoCSS from 'unocss/vite';
+import AutoImport from 'unplugin-auto-import/vite';
+import ElementPlus from 'unplugin-element-plus/vite';
+import IconsResolver from 'unplugin-icons/resolver';
+import Icons from 'unplugin-icons/vite';
 import { ElementPlusResolver } from 'unplugin-vue-components/resolvers';
+import Components from 'unplugin-vue-components/vite';
+import VueDevTools from 'vite-plugin-vue-devtools';
+import { defineConfig } from 'vitepress';
 
 const VITEPRESS_PATH = new URL('./', import.meta.url);
 const ROOT_PATH = new URL('../../', import.meta.url);

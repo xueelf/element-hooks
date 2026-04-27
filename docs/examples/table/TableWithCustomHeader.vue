@@ -1,6 +1,6 @@
 <script setup lang="ts">
-  import { ref, watch } from 'vue';
   import { useTable } from 'element-hooks';
+  import { ref, watch } from 'vue';
 
   interface User {
     date: string;

@@ -1,8 +1,8 @@
-import type { Theme } from 'vitepress';
-import DefaultTheme from 'vitepress/theme';
+import ElementHooks from 'element-hooks';
 import ElementPlus from 'element-plus';
 import zhCn from 'element-plus/es/locale/lang/zh-cn';
-import ElementHooks from 'element-hooks';
+import { type Theme } from 'vitepress';
+import DefaultTheme from 'vitepress/theme';
 
 import 'virtual:uno.css';
 import 'element-plus/dist/index.css';

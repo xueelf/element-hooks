@@ -1,6 +1,6 @@
 <script setup lang="ts">
-  import { ElMessage } from 'element-plus';
   import { useMessageBox } from 'element-hooks';
+  import { ElMessage } from 'element-plus';
 
   const messageBox = useMessageBox();
 

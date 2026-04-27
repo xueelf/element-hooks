@@ -1,7 +1,7 @@
 <script setup lang="ts">
-  import { h } from 'vue';
   import { useForm } from 'element-hooks';
   import { ElAlert, ElInput } from 'element-plus';
+  import { h } from 'vue';
 
   const [Form] = useForm({
     labelWidth: '100px',

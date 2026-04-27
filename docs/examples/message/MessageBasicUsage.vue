@@ -1,6 +1,6 @@
 <script setup lang="ts">
-  import { h } from 'vue';
   import { useMessage } from 'element-hooks';
+  import { h } from 'vue';
 
   const message = useMessage();
 

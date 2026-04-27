@@ -1,6 +1,6 @@
 <script setup lang="ts">
-  import { useDialog } from 'element-hooks';
   import { CircleCloseFilled } from '@element-plus/icons-vue';
+  import { useDialog } from 'element-hooks';
 
   const [Dialog, { open }] = useDialog({
     showClose: false,

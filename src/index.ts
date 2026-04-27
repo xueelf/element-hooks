@@ -1,5 +1,6 @@
 import { version } from 'package.json';
 import { type Plugin } from 'vue';
+
 import { type GlobalOptions, setOptions } from './config';
 import { setupDevtools } from './devtools';
 
