@@ -134,8 +134,9 @@
 
 这意味着当你的响应式数据或模型数据发生改变时，组件 Props 也会自动重新渲染，从而实现**动态传参**，无需再手动调用 `setState` 或 `setItems` 刷新整个表单项。
 
-> [!WARNING] 注意事项
-> 动态传参的特性会过滤掉以 `on` 开头的事件属性。例如 `onClick` 或 `onChange` 等事件监听器，即使为函数也不会被自动执行。
+:::warning 注意事项
+动态传参的特性会过滤掉以 `on` 开头的事件属性。例如 `onClick` 或 `onChange` 等事件监听器，即使为函数也不会被自动执行。
+:::
 
 ```ts
 import { ElSelect } from 'element-plus';
