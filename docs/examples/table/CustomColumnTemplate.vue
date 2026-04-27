@@ -1,6 +1,6 @@
 <script setup lang="ts">
-  import { useTable } from 'element-hooks';
   import { Timer } from '@element-plus/icons-vue';
+  import { useTable } from 'element-hooks';
 
   interface User {
     date: string;

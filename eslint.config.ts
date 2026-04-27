@@ -1,10 +1,10 @@
-import { globalIgnores } from 'eslint/config';
 import {
   defineConfigWithVueTs,
   vueTsConfigs,
 } from '@vue/eslint-config-typescript';
-import pluginVue from 'eslint-plugin-vue';
 import skipFormatting from 'eslint-config-prettier/flat';
+import pluginVue from 'eslint-plugin-vue';
+import { globalIgnores } from 'eslint/config';
 
 export default defineConfigWithVueTs(
   {
@@ -12,7 +12,7 @@ export default defineConfigWithVueTs(
     files: ['**/*.{vue,ts,tsx}'],
   },
 
-  globalIgnores(['**/lib/**']),
+  globalIgnores(['**/dist/**']),
 
   ...pluginVue.configs['flat/essential'],
   vueTsConfigs.recommended,

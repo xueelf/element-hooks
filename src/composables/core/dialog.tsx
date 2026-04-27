@@ -1,7 +1,8 @@
 import { type DialogInstance, ElDialog } from 'element-plus';
 import { defineComponent, ref } from 'vue';
+
 import { withOptions } from '@/config';
-import { HOOK_METADATA, type HookOptions } from '@/devtools';
+import { type HookOptions, HOOK_METADATA } from '@/devtools';
 import {
   type Camelized,
   type Setter,
@@ -24,15 +25,14 @@ export type DialogOptions = HookOptions &
 
 export function useDialog(options: DialogOptions = {}) {
   const name = 'Dialog';
+  const merged = withOptions(options, 'dialog');
 
-  Reflect.set(options, HOOK_METADATA, {
+  Reflect.set(merged, HOOK_METADATA, {
     name,
     internal: options[HOOK_METADATA]?.internal,
   });
 
-  const [dialogState, setState, initState] = useState<DialogOptions>(
-    withOptions(options, 'dialog'),
-  );
+  const [dialogState, setState, initState] = useState<DialogOptions>(merged);
   const dialogVisible = ref(false);
   const dialogInstance = ref<DialogInstance | null>(null);
 

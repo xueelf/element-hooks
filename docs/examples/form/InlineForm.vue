@@ -1,6 +1,6 @@
 <script setup lang="ts">
   import { useForm } from 'element-hooks';
-  import { ElInput, ElSelect, ElDatePicker } from 'element-plus';
+  import { ElDatePicker, ElInput, ElSelect } from 'element-plus';
 
   const [Form] = useForm({
     inline: true,

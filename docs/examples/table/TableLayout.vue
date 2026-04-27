@@ -1,6 +1,6 @@
 <script setup lang="ts">
-  import { ref } from 'vue';
   import { useTable } from 'element-hooks';
+  import { ref } from 'vue';
 
   const tableLayout = ref<'fixed' | 'auto'>('fixed');
 

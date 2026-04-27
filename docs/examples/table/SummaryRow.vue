@@ -1,8 +1,7 @@
 <script setup lang="ts">
-  import type { TableColumnCtx } from 'element-plus';
-  import type { VNode } from 'vue';
   import { useTable } from 'element-hooks';
-  import { h } from 'vue';
+  import { type TableColumnCtx } from 'element-plus';
+  import { type VNode, h } from 'vue';
 
   interface Product {
     id: string;

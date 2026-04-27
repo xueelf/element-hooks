@@ -9,4 +9,14 @@ export default {
   arrowParens: 'avoid',
   endOfLine: 'lf',
   vueIndentScriptAndStyle: true,
+  plugins: ['prettier-plugin-sort'],
+  importOrderGroups: [
+    'builtin',
+    'external',
+    'internal',
+    'parent',
+    'sibling',
+    'index',
+  ],
+  importOrderTypeImports: 'inline-first',
 } satisfies Config;

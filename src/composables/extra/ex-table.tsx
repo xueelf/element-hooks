@@ -5,10 +5,11 @@ import {
 } from 'element-plus';
 import { addUnit } from 'element-plus/es/utils/dom/style';
 import { isArray, omit } from 'radash';
-import { type CSSProperties, defineComponent, onMounted, ref } from 'vue';
-import { withOptions } from '@/config';
+import { type CSSProperties, computed, defineComponent, ref } from 'vue';
+
 import { type FormOptions, useForm } from '@/composables/core/form';
 import { type TableOptions, useTable } from '@/composables/core/table';
+import { withOptions } from '@/config';
 import { HOOK_METADATA } from '@/devtools';
 import {
   type Camelized,
@@ -99,7 +100,12 @@ export function useExTable<
       internal: true,
     },
   });
-  const exTableInstance = ref<ExTableInstance | null>(null);
+  const paginationRef = ref<PaginationInstance | null>(null);
+  const exTableInstance = computed<ExTableInstance>(() => ({
+    form: formController.instance.value,
+    table: tableController.instance.value,
+    pagination: paginationRef.value,
+  }));
 
   const setData: Setter<typeof options.data> = update => {
     setState(prev => ({
@@ -175,16 +181,6 @@ export function useExTable<
     inheritAttrs: false,
     setup(_, { slots }) {
       initState();
-
-      const paginationRef = ref<PaginationInstance | null>(null);
-
-      onMounted(() => {
-        exTableInstance.value = {
-          form: formController.instance.value,
-          table: tableController.instance.value,
-          pagination: paginationRef.value,
-        };
-      });
 
       return () => {
         if (!exTableState.value) {

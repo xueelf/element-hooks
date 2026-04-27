@@ -40,11 +40,12 @@ Element Hooks 提供两类 Hook：**组件 Hook** 和 **命令式 Hook**。
 推荐将 `ElementHooks` 作为插件去挂载，这样不仅可以设置跨局的默认 options 去减少重复配置，而且会自动**开启 Vue DevTools 支持**，以便开发时可视化追踪所有 Hook 的内部状态：
 
 ```ts
-import { createApp } from 'vue';
-import ElementPlus from 'element-plus';
 import ElementHooks from 'element-hooks';
+import ElementPlus from 'element-plus';
+import { createApp } from 'vue';
+
 import App from './App.vue';
-import DictSelect from './components/selector/DictSelect.vue'
+import DictSelect from './components/selector/DictSelect.vue';
 
 const app = createApp(App);
 

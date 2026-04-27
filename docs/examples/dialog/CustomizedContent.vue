@@ -1,5 +1,5 @@
 <script setup lang="ts">
-  import { useDialog, useTable, useForm } from 'element-hooks';
+  import { useDialog, useForm, useTable } from 'element-hooks';
   import { ElInput, ElSelect } from 'element-plus';
 
   const gridData = [

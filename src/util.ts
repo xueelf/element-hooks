@@ -1,12 +1,13 @@
 import { isArray, isFunction } from 'radash';
 import {
-  type Ref,
   type Component,
   type FunctionalComponent,
+  type Ref,
   shallowRef,
   useAttrs,
   watchEffect,
 } from 'vue';
+
 import { type GlobalComponentName } from './config';
 import { type HookOptions, HOOK_METADATA, useDevtools } from './devtools';
 
@@ -82,33 +83,7 @@ export function createController<T extends object, E extends object = object>(
   instance: Ref<T | null>,
   extensions?: E,
 ): InstanceController<T, E> {
-  const target = Object.assign({ instance }, extensions);
-
-  return new Proxy(target, {
-    get(_, prop) {
-      if (extensions && Reflect.has(extensions, prop)) {
-        return Reflect.get(extensions, prop);
-      } else if (prop === 'instance') {
-        return instance;
-      }
-    },
-    has(_, prop) {
-      return (
-        (extensions && Reflect.has(extensions, prop)) || prop === 'instance'
-      );
-    },
-    ownKeys() {
-      return [...(extensions ? Reflect.ownKeys(extensions) : []), 'instance'];
-    },
-    getOwnPropertyDescriptor(_, prop) {
-      if (
-        (extensions && Reflect.has(extensions, prop)) ||
-        prop === 'instance'
-      ) {
-        return { configurable: true, enumerable: true };
-      }
-    },
-  });
+  return Object.assign({ instance }, extensions);
 }
 
 export type Setter<T> = {
@@ -137,7 +112,7 @@ export function useState<T extends object>(initial: HookStateOptions<T>) {
   if (meta && meta.name && !meta.internal) {
     useDevtools(meta.name, state);
   }
-  const normalizeArrayRef = (target: Recordable) => {
+  const cloneArrayValues = (target: Recordable) => {
     for (const key of Object.keys(target)) {
       const value = target[key];
 
@@ -157,7 +132,7 @@ export function useState<T extends object>(initial: HookStateOptions<T>) {
 
     watchEffect(
       () => {
-        state.value = normalizeArrayRef({ ...options.value, ...attrs });
+        state.value = cloneArrayValues({ ...options.value, ...attrs });
       },
       { flush: 'sync' },
     );

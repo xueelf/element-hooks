@@ -1,9 +1,9 @@
-import { type App, type ShallowRef, onScopeDispose, toRaw } from 'vue';
 import { setupDevToolsPlugin } from '@vue/devtools-api';
 import {
   type CustomInspectorNode,
   type PluginDescriptor,
 } from '@vue/devtools-kit';
+import { type App, type ShallowRef, onScopeDispose, toRaw } from 'vue';
 
 const INSPECTOR_ID = 'element-hooks';
 

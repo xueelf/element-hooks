@@ -5,8 +5,9 @@ import {
   ElFormItem,
 } from 'element-plus';
 import { defineComponent, h, ref, toRaw, watch } from 'vue';
+
 import { getComponent, withOptions } from '@/config';
-import { HOOK_METADATA, type HookOptions } from '@/devtools';
+import { type HookOptions, HOOK_METADATA } from '@/devtools';
 import {
   type Camelized,
   type Recordable,
@@ -73,15 +74,14 @@ export function useForm<T extends Recordable = Recordable>(
   options: FormOptions<T> = {},
 ) {
   const name = 'Form';
+  const merged = withOptions(options, 'form');
 
-  Reflect.set(options, HOOK_METADATA, {
+  Reflect.set(merged, HOOK_METADATA, {
     name,
     internal: options[HOOK_METADATA]?.internal,
   });
 
-  const [formState, setState, initState] = useState<FormOptions<T>>(
-    withOptions(options, 'form'),
-  );
+  const [formState, setState, initState] = useState<FormOptions<T>>(merged);
   const formModel = ref<T | null>(null);
   const formInstance = ref<FormInstance | null>(null);
 

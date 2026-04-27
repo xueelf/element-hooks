@@ -5,9 +5,9 @@
 你可以将 `ElementHooks` 作为 Vue 插件安装，并传入全局默认配置。这样在后续使用任何 Hook 时，都会优先继承相关的全局配置，从而统一站内组件的基础交互和表单排版风格。
 
 ```ts
-import { createApp } from 'vue';
 import ElementHooks from 'element-hooks';
 import { ElInput, ElSelect } from 'element-plus';
+import { createApp } from 'vue';
 
 const app = createApp(App);
 
@@ -27,7 +27,7 @@ app.use(ElementHooks, {
 Element Hooks 也提供了暴露在外的 `setOptions` 与 `getOptions` 方法用于命令式地读写全局配置：
 
 ```ts
-import { setOptions, getOptions } from 'element-hooks';
+import { getOptions, setOptions } from 'element-hooks';
 import { ElInput } from 'element-plus';
 
 setOptions({

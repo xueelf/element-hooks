@@ -1,13 +1,14 @@
 <script setup lang="ts">
-  import { ref } from 'vue';
   import { useForm } from 'element-hooks';
   import {
-    ElInput,
-    ElSelect,
+    type ComponentSize,
+    type FormProps,
     ElCheckboxGroup,
+    ElInput,
     ElRadioGroup,
+    ElSelect,
   } from 'element-plus';
-  import type { ComponentSize, FormProps } from 'element-plus';
+  import { ref } from 'vue';
 
   const [Form, { setState }] = useForm({
     labelWidth: 'auto',
