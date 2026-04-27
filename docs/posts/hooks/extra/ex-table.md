@@ -53,18 +53,19 @@
 
 支持通过 `app.use(ElementHooks, { pagination })` 配置全局分页默认项。
 
-> [!NOTE]
-> 当 `useExTable` 调用时传入了 `pagination`，会与全局 `pagination` 执行合并。
+:::tip
+当 `useExTable` 调用时传入了 `pagination`，会与全局 `pagination` 执行合并。
+:::
 
 ### Controller
 
-| 方法             | 说明                       | 参数                                       |
-| ---------------- | -------------------------- | ------------------------------------------ |
-| `setState`       | 更新 ExTable 的整体状态    | `(state: Partial<ExTableOptions>) => void` |
-| `setData`        | 更新表格数据               | `(data: ExTableData) => void`              |
-| `setModel`       | 更新表单模型数据           | `(model: Recordable) => void`              |
-| `getModel`       | 获取当前的表单数据         | `() => Recordable`                         |
-| `setItems`       | 更新表单项配置             | `(items: FormItem[]) => void`              |
-| `setColumns`     | 更新表格列配置             | `(columns: TableColumn[]) => void`         |
-| `getData`        | 获取当前表格渲染的数组数据 | `() => T[]`                                |
-| `getCurrentPage` | 获取当前页码               | `() => number`                             |
+| 方法            | 说明                               | 参数                                                |
+| --------------- | ---------------------------------- | --------------------------------------------------- |
+| `setState`      | 更新 ExTable 的整体状态            | `(state: Partial<ExTableOptions>) => void`          |
+| `setData`       | 更新表格数据                       | `(data: ExTableData) => void`                       |
+| `setModel`      | 更新表单模型数据                   | `(model: Recordable) => void`                       |
+| `getModel`      | 获取当前的表单数据                 | `() => Recordable`                                  |
+| `setItems`      | 更新表单项配置                     | `(items: FormItem[]) => void`                       |
+| `setColumns`    | 更新表格列配置                     | `(columns: TableColumn[]) => void`                  |
+| `getData`       | 获取当前表格渲染的数组数据         | `() => T[]`                                         |
+| `getPagination` | 获取当前分页信息（页码与每页条数） | `() => { currentPage?: number; pageSize?: number }` |

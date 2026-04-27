@@ -264,8 +264,9 @@
 
 这意味着当你的响应式数据或当前行数据发生改变时，组件 Props 也会自动重新渲染，从而实现**动态传参**，无需再手动调用 `setState` 或 `setColumns` 刷新整个列表项配置。
 
-> [!WARNING] 注意事项
-> 动态传参的特性会过滤掉以 `on` 开头的事件属性。例如 `onClick` 或 `onChange` 等事件监听器，即使为函数也不会被自动执行。
+:::warning 注意事项
+动态传参的特性会过滤掉以 `on` 开头的事件属性。例如 `onClick` 或 `onChange` 等事件监听器，即使为函数也不会被自动执行。
+:::
 
 ```ts
 import { ElTag } from 'element-plus';
@@ -297,6 +298,7 @@ const [Table] = useTable({
 | ------------ | ----------------------------------------------- | ---------------------------------------- |
 | `setState`   | 动态更新表格整体配置                            | `(state: Partial<TableOptions>) => void` |
 | `setColumns` | 动态更新列定义                                  | `(columns: TableColumn[]) => void`       |
+| `getColumns` | 获取当前列定义快照                              | `() => TableColumn[]`                    |
 | `setData`    | 动态更新表格数据                                | `(data: T[]) => void`                    |
 | `getData`    | 获取当前数据快照                                | `() => T[]`                              |
 | `instance`   | 内部 ElTable 实例（可调用排序、选择等原生方法） | `Ref<TableInstance>`                     |
