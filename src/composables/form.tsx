@@ -16,6 +16,7 @@ import {
   type Camelized,
   type Recordable,
   type RenderOptions,
+  type SetRequired,
   type Setter,
   createController,
   resolveRenderProps,
@@ -45,6 +46,10 @@ export type FormOptions<T extends object> = HookOptions &
   };
 
 export type FormProps<T extends object> = HookComponentProps<FormOptions<T>>;
+
+type InternalFormOptions<T extends object> = FormOptions<T> & {
+  [HOOK_METADATA]: { internal: true };
+};
 
 function getProp(targetObject: object, path: string | string[]) {
   const pathKeys = Array.isArray(path) ? path : path.split('.');
@@ -85,8 +90,9 @@ function setProp(
 }
 
 export function useForm<T extends object = Recordable>(
-  options: FormOptions<T> = {},
+  input?: SetRequired<FormOptions<T>, 'model'> | InternalFormOptions<T>,
 ) {
+  const options: FormOptions<T> = input ?? {};
   const name = 'Form';
   const merged = withOptions(options, 'form');
 
@@ -111,11 +117,16 @@ export function useForm<T extends object = Recordable>(
     return getCurrentState().items ?? [];
   };
 
-  const setModel: Setter<T | null> = update => {
-    setState(prev => ({
-      ...prev,
-      model: unwrapSetter(update, prev.model ?? null) ?? undefined,
-    }));
+  const setModel: Setter<T> = update => {
+    setState(prev => {
+      if (prev.model === undefined) {
+        if (typeof update === 'function') {
+          throw new Error('[useForm] Cannot update an uninitialized model.');
+        }
+        return { ...prev, model: update };
+      }
+      return { ...prev, model: unwrapSetter(update, prev.model) };
+    });
   };
 
   const getModel = (): T | null => {

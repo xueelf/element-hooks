@@ -199,16 +199,22 @@ export function useGrid<
     }));
   };
 
-  const setModel: Setter<M | null> = update => {
-    const nextModel = unwrapSetter(update, getModel());
-
-    setState(prev => ({
-      ...prev,
-      form: {
-        ...prev.form,
-        model: nextModel ?? undefined,
-      },
-    }));
+  const setModel: Setter<M> = update => {
+    setState(prev => {
+      if (prev.form?.model === undefined) {
+        if (typeof update === 'function') {
+          throw new Error('[useGrid] Cannot update an uninitialized model.');
+        }
+        return { ...prev, form: { ...prev.form, model: update } };
+      }
+      return {
+        ...prev,
+        form: {
+          ...prev.form,
+          model: unwrapSetter(update, prev.form.model),
+        },
+      };
+    });
   };
 
   const updatePagination = (

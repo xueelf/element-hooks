@@ -21,4 +21,4 @@ export * from './message-box';
 export * from './message';
 export * from './table';
 
-export type { Awaitable, Recordable } from '../util';
+export type { Awaitable, Recordable, SetRequired } from '#/util';
