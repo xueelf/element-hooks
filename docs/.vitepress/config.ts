@@ -1,3 +1,5 @@
+import { fileURLToPath } from 'node:url';
+
 import VueJSX from '@vitejs/plugin-vue-jsx';
 import UnoCSS from 'unocss/vite';
 import AutoImport from 'unplugin-auto-import/vite';
@@ -9,11 +11,9 @@ import Components from 'unplugin-vue-components/vite';
 import VueDevTools from 'vite-plugin-vue-devtools';
 import { defineConfig } from 'vitepress';
 
-const VITEPRESS_PATH = new URL('./', import.meta.url);
-const ROOT_PATH = new URL('../../', import.meta.url);
-
-const resolvePath = (base: URL, path: string = '') =>
-  new URL(path, base).pathname;
+function pathResolve(dir: string) {
+  return fileURLToPath(new URL(dir, import.meta.url));
+}
 
 // https://vitepress.dev/reference/site-config
 export default defineConfig({
@@ -133,10 +133,9 @@ export default defineConfig({
     ],
     resolve: {
       alias: {
-        '~': resolvePath(VITEPRESS_PATH),
-        '@': resolvePath(ROOT_PATH, './src'),
-        'element-hooks': resolvePath(ROOT_PATH, './src/index'),
-        'package.json': resolvePath(ROOT_PATH, './package.json'),
+        '~': pathResolve('../../'),
+        '#': pathResolve('../../src'),
+        'element-hooks': pathResolve('../../src/index'),
       },
     },
     ssr: {
