@@ -205,8 +205,8 @@ export function useTable<T extends object = Recordable>(
           columnSlots.default = () =>
             children.map((child, index) => (
               <Column
-                {...child}
                 key={child.key ?? child.columnKey ?? child.prop ?? index}
+                {...child}
               />
             ));
         }
@@ -225,8 +225,8 @@ export function useTable<T extends object = Recordable>(
               default: () =>
                 columns.map((column, index) => (
                   <Column
-                    {...column}
                     key={column.key ?? column.columnKey ?? column.prop ?? index}
+                    {...column}
                   />
                 )),
               ...slots,

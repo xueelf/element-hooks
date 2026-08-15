@@ -230,7 +230,6 @@ export function useForm<T extends object = Recordable>(
               default: () =>
                 items.map((item, index) => (
                   <Item
-                    {...item}
                     key={
                       item.key ??
                       (Array.isArray(item.prop)
@@ -238,6 +237,7 @@ export function useForm<T extends object = Recordable>(
                         : item.prop) ??
                       index
                     }
+                    {...item}
                   />
                 )),
               ...slots,
