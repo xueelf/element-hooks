@@ -3,13 +3,25 @@ import {
   type TableInstance,
   ElTable,
   ElTableColumn,
+  vLoading,
 } from 'element-plus';
-import { isArray } from 'radash';
-import { defineComponent, h, ref, toRaw } from 'vue';
-
-import { getComponent, withOptions } from '@/config';
-import { type HookOptions, HOOK_METADATA } from '@/devtools';
 import {
+  type VNodeChild,
+  defineComponent,
+  h,
+  ref,
+  toRaw,
+  withDirectives,
+} from 'vue';
+
+import { getComponent, withOptions } from '#/config';
+import {
+  type HookComponentProps,
+  type HookOptions,
+  HOOK_METADATA,
+} from '#/devtools';
+import {
+  type Awaitable,
   type Camelized,
   type Recordable,
   type RenderOptions,
@@ -17,21 +29,27 @@ import {
   createController,
   resolveFunctionalProps,
   unwrapSetter,
+  useDataSetter,
   useState,
-} from '@/util';
+} from '#/util';
 
-export type TableColumnSlotName =
-  | 'default'
-  | 'header'
-  | 'filterIcon'
-  | 'expand';
+const tableColumnSlotNames = [
+  'default',
+  'header',
+  'filterIcon',
+  'expand',
+] as const;
+export type TableColumnSlotName = (typeof tableColumnSlotNames)[number];
+type TableColumnSlot = (...args: never[]) => VNodeChild;
 
-export type ColumnDefaultScope<T extends Recordable> = {
+export type TableRow = Recordable;
+
+export type ColumnDefaultScope<T extends object> = {
   column: TableColumnCtx<T>;
   row: T;
   $index: number;
 };
-export type ColumnHeaderScope<T extends Recordable> = {
+export type ColumnHeaderScope<T extends object> = {
   column: TableColumnCtx<T>;
   $index: number;
 };
@@ -41,30 +59,35 @@ export type ColumnFilterIconScope = {
 export type ColumnExpandScope = {
   expanded: boolean;
 };
-export type ColumnScope<T extends Recordable> =
+export type ColumnScope<T extends object> =
   | ColumnDefaultScope<T>
   | ColumnHeaderScope<T>
   | ColumnFilterIconScope
   | ColumnExpandScope;
 
-export type TableColumn<T extends Recordable = Recordable> = Partial<
+export type TableColumn<T extends object = TableRow> = Partial<
   Omit<TableColumnCtx<T>, 'children'>
 > & {
+  key?: string | number;
   children?: TableColumn<T>[];
   slot?: string;
   slots?: Partial<Record<TableColumnSlotName, string>>;
   render?: RenderOptions<T>;
 };
 
-export type TableData<T extends Recordable> = T[];
+export type TableData<T extends object> = T[];
 
-export type TableOptions<T extends Recordable> = HookOptions &
+export type TableDataCallback<T extends object> = () => Awaitable<TableData<T>>;
+
+export type TableOptions<T extends object> = HookOptions &
   Partial<Camelized<Omit<TableInstance['$props'], 'ref' | 'data'>>> & {
     data?: TableData<T>;
     columns?: TableColumn<T>[];
   };
 
-export function useTable<T extends Recordable = Recordable>(
+export type TableProps<T extends object> = HookComponentProps<TableOptions<T>>;
+
+export function useTable<T extends object = TableRow>(
   options: TableOptions<T> = {},
 ) {
   const name = 'Table';
@@ -75,7 +98,8 @@ export function useTable<T extends Recordable = Recordable>(
     internal: options[HOOK_METADATA]?.internal,
   });
 
-  const [tableState, setState, initState] = useState<TableOptions<T>>(merged);
+  const [tableState, setState, initState, getCurrentState] =
+    useState<TableOptions<T>>(merged);
   const tableInstance = ref<TableInstance | null>(null);
 
   const setColumns: Setter<(typeof options)['columns']> = update => {
@@ -86,18 +110,31 @@ export function useTable<T extends Recordable = Recordable>(
   };
 
   const getColumns = (): TableColumn<T>[] => {
-    return tableState.value?.columns ?? [];
+    return getCurrentState().columns ?? [];
   };
 
-  const setData: Setter<(typeof options)['data']> = update => {
-    setState(prev => ({
-      ...prev,
-      data: unwrapSetter(update, prev.data),
-    }));
-  };
+  const { loading, setData: setResolvedData } = useDataSetter<
+    TableData<T>,
+    void
+  >(
+    data => {
+      setState(prev => ({ ...prev, data }));
+    },
+    () => undefined,
+  );
+
+  function setData(data: TableData<T>): void;
+  function setData(callback: () => TableData<T>): void;
+  function setData(callback: () => PromiseLike<TableData<T>>): Promise<void>;
+  function setData(callback: TableDataCallback<T>): void | Promise<void>;
+  function setData(
+    dataOrCallback: TableData<T> | TableDataCallback<T>,
+  ): void | Promise<void> {
+    return setResolvedData(dataOrCallback);
+  }
 
   const getData = (): TableData<T> => {
-    return toRaw(tableState.value?.data) ?? [];
+    return toRaw(getCurrentState().data) ?? [];
   };
 
   const tableController = createController(tableInstance, {
@@ -108,7 +145,7 @@ export function useTable<T extends Recordable = Recordable>(
     getData,
   });
 
-  const Table = defineComponent<TableOptions<T>>({
+  const Table = defineComponent<TableProps<T>>({
     name,
     inheritAttrs: false,
     setup(_, { slots }) {
@@ -123,23 +160,21 @@ export function useTable<T extends Recordable = Recordable>(
           ...columnProps
         } = columnOptions;
         const columnSlotOptions = { ...rawColumnSlots };
-        const columnSlots: Recordable = {};
 
         if (slot) {
           columnSlotOptions.default = slot;
         }
-        Object.keys(columnSlotOptions).forEach(key => {
-          const slotName: TableColumnSlotName = Reflect.get(
-            columnSlotOptions,
-            key,
-          );
+        const columnSlots = tableColumnSlotNames.reduce<
+          Partial<Record<TableColumnSlotName, TableColumnSlot>>
+        >((result, key) => {
+          const slotName = columnSlotOptions[key];
+          const scopedSlot = slotName ? slots[slotName] : undefined;
 
-          if (slots[slotName]) {
-            columnSlots[key] = (scope: ColumnScope<T>) => (
-              <>{slots[slotName]?.(scope)}</>
-            );
+          if (scopedSlot) {
+            result[key] = (scope: ColumnScope<T>) => scopedSlot(scope);
           }
-        });
+          return result;
+        }, {});
 
         if (render) {
           if (columnSlots.default) {
@@ -168,9 +203,14 @@ export function useTable<T extends Recordable = Recordable>(
           }
         }
 
-        if (isArray(children) && children.length > 0) {
+        if (children?.length) {
           columnSlots.default = () =>
-            children.map(child => <Column {...child} />);
+            children.map((child, index) => (
+              <Column
+                {...child}
+                key={child.key ?? child.columnKey ?? child.prop ?? index}
+              />
+            ));
         }
         return <ElTableColumn {...columnProps}>{columnSlots}</ElTableColumn>;
       };
@@ -181,14 +221,20 @@ export function useTable<T extends Recordable = Recordable>(
         }
         const { columns = [], ...tableProps } = tableState.value;
 
-        return (
+        return withDirectives(
           <ElTable ref={tableInstance} {...tableProps}>
             {{
               default: () =>
-                columns.map((column: TableColumn<T>) => <Column {...column} />),
+                columns.map((column, index) => (
+                  <Column
+                    {...column}
+                    key={column.key ?? column.columnKey ?? column.prop ?? index}
+                  />
+                )),
               ...slots,
             }}
-          </ElTable>
+          </ElTable>,
+          [[vLoading, loading.value]],
         );
       };
     },
