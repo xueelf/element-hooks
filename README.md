@@ -62,11 +62,11 @@ app.use(ElementHooks, {
 app.mount('#app');
 ```
 
-全局默认项按 Element Plus 组件维度生效，例如 `form` 会同时作用于 `useForm` 与 `useExTable` 内部的 `ElForm`；各个 Hook 单次调用传入同名 options 时，会自动与之执行合并。
+全局默认项按 Element Plus 组件维度生效，例如 `form` 会同时作用于 `useForm` 与 `useGrid` 内部的 `ElForm`；各个 Hook 单次调用传入同名 options 时，会自动与之执行合并。
 
 ### 组件 Hook
 
-组件 Hook（`useDialog`、`useForm`、`useTable`）用于封装 Element Plus 的 UI 组件，返回一个元组 `[Component, controller]`：
+组件 Hook（`useDialog`、`useForm`、`useTable`、`useGrid`）用于封装 Element Plus 的 UI 组件，返回一个元组 `[Component, controller]`：
 
 - **Component** — 可以直接在模板中使用的 Vue 组件，支持原始的 Props 和 Slots。
 - **controller** — 提供命令式操作的控制器对象，包含 `setState`、`instance` 等，可在任意逻辑中调用。

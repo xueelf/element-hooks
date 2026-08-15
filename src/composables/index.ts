@@ -1,9 +1,9 @@
-import { useDialog } from './core/dialog';
-import { useForm } from './core/form';
-import { useMessage } from './core/message';
-import { useMessageBox } from './core/message-box';
-import { useTable } from './core/table';
-import { useExTable } from './extra/ex-table';
+import { useDialog } from './dialog';
+import { useForm } from './form';
+import { useGrid } from './grid';
+import { useMessage } from './message';
+import { useMessageBox } from './message-box';
+import { useTable } from './table';
 
 export default {
   useDialog,
@@ -11,13 +11,14 @@ export default {
   useMessage,
   useMessageBox,
   useTable,
-  useExTable,
+  useGrid,
 };
 
-export * from './core/dialog';
-export * from './core/form';
-export * from './core/message';
-export * from './core/message-box';
-export * from './core/table';
+export * from './dialog';
+export * from './form';
+export * from './grid';
+export * from './message-box';
+export * from './message';
+export * from './table';
 
-export * from './extra/ex-table';
+export type { Awaitable, Recordable } from '../util';
