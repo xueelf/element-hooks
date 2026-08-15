@@ -1,8 +1,10 @@
 # useMessage
 
-`useMessage` 对 `ElMessage` 进行了轻量封装，适用于主动操作后的即时反馈场景。
+`useMessage` 对 `ElMessage` 进行轻量封装。
+它适用于操作后的即时反馈场景。
 
-它保持与 `ElMessage` 一致的调用方式，支持函数直接调用与 `success`、`warning`、`info`、`error`、`primary` 等快捷方法，可无缝迁移现有代码。
+它保持 `ElMessage` 的调用方式。
+它同时支持函数调用和状态快捷方法。
 
 ## 基础用法 {#basic-usage}
 
@@ -64,9 +66,17 @@
 <<< @/examples/message/Grouping.vue
 </ExampleCard>
 
-## API {#api}
+## Placement {#placement}
 
-### useMessage
+<ExampleCard>
+  <template #example>
+    <Placement />
+  </template>
+
+<<< @/examples/message/Placement.vue
+</ExampleCard>
+
+## API {#api}
 
 `useMessage` 无需参数，直接返回 `ElMessage` 实例函数。
 
