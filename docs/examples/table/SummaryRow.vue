@@ -1,9 +1,9 @@
 <script setup lang="ts">
-  import { type TableRow, useTable } from 'element-hooks';
+  import { useTable } from 'element-hooks';
   import { type TableColumnCtx } from 'element-plus';
   import { type VNode, h } from 'vue';
 
-  interface Product extends TableRow {
+  interface Product {
     id: string;
     name: string;
     amount1: string;

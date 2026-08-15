@@ -333,6 +333,6 @@ const [Table] = useTable({
 所有回调函数完成后，加载状态才会结束。
 
 `T` 必须满足 `object` 约束。
-默认类型 `TableRow` 是 `Record<string, unknown>`。
+默认类型 `Recordable` 是 `Record<string, unknown>`。
 
 `setState` 和 `setColumns` 支持 `(prev) => next` 函数式更新。

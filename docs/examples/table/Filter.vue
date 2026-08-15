@@ -1,7 +1,7 @@
 <script setup lang="ts">
-  import { type TableRow, useTable } from 'element-hooks';
+  import { useTable } from 'element-hooks';
 
-  interface User extends TableRow {
+  interface User {
     date: string;
     name: string;
     address: string;

@@ -8,11 +8,7 @@ import { addUnit } from 'element-plus/es/utils/dom/style';
 import { type Slot, computed, defineComponent, ref, withDirectives } from 'vue';
 
 import { type FormOptions, useForm } from '#/composables/form';
-import {
-  type TableOptions,
-  type TableRow,
-  useTable,
-} from '#/composables/table';
+import { type TableOptions, useTable } from '#/composables/table';
 import { withOptions } from '#/config';
 import { type HookComponentProps, HOOK_METADATA } from '#/devtools';
 import {
@@ -59,7 +55,7 @@ export type GridDataCallback<D extends object, M extends object> = (
 ) => Awaitable<GridData<D>>;
 
 export type GridOptions<
-  D extends object = TableRow,
+  D extends object = Recordable,
   M extends object = Recordable,
 > = Omit<TableOptions<D>, 'data' | 'height' | 'maxHeight'> & {
   data?: GridData<D>;
@@ -70,7 +66,7 @@ export type GridOptions<
 };
 
 export type GridProps<
-  D extends object = TableRow,
+  D extends object = Recordable,
   M extends object = Recordable,
 > = HookComponentProps<GridOptions<D, M>>;
 
@@ -89,7 +85,7 @@ function mergePayload(model: object | null, pagination: GridPaginationPayload) {
 }
 
 export function useGrid<
-  D extends object = TableRow,
+  D extends object = Recordable,
   M extends object = Recordable,
 >(options: GridOptions<D, M> = {}) {
   const name = 'Grid';

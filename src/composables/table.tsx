@@ -42,8 +42,6 @@ const tableColumnSlotNames = [
 export type TableColumnSlotName = (typeof tableColumnSlotNames)[number];
 type TableColumnSlot = (...args: never[]) => VNodeChild;
 
-export type TableRow = Recordable;
-
 export type ColumnDefaultScope<T extends object> = {
   column: TableColumnCtx<T>;
   row: T;
@@ -65,7 +63,7 @@ export type ColumnScope<T extends object> =
   | ColumnFilterIconScope
   | ColumnExpandScope;
 
-export type TableColumn<T extends object = TableRow> = Partial<
+export type TableColumn<T extends object = Recordable> = Partial<
   Omit<TableColumnCtx<T>, 'children'>
 > & {
   key?: string | number;
@@ -87,7 +85,7 @@ export type TableOptions<T extends object> = HookOptions &
 
 export type TableProps<T extends object> = HookComponentProps<TableOptions<T>>;
 
-export function useTable<T extends object = TableRow>(
+export function useTable<T extends object = Recordable>(
   options: TableOptions<T> = {},
 ) {
   const name = 'Table';
