@@ -18,37 +18,25 @@ export type HookOptions = {
   [HOOK_METADATA]?: HookMetadata;
 };
 
+export type HookComponentProps<T extends HookOptions> = Omit<
+  T,
+  keyof HookOptions
+>;
+
 const hookRegistry = new Map<string, Set<ShallowRef<object | null>>>();
 
 interface InspectorApi {
   sendInspectorTree(id: string): void;
-  sendInspectorState(id: string): void;
 }
 
-const inspector = {
-  api: null as InspectorApi | null,
-
-  init(api: InspectorApi) {
-    this.api = api;
-  },
-
-  sendTree() {
-    this.api?.sendInspectorTree(INSPECTOR_ID);
-  },
-
-  sendState() {
-    this.api?.sendInspectorState(INSPECTOR_ID);
-  },
-};
+let inspectorApi: InspectorApi | null = null;
 
 export function useDevtools(name: string, state: ShallowRef<object | null>) {
-  if (!hookRegistry.has(name)) {
-    hookRegistry.set(name, new Set());
-  }
-  const set = hookRegistry.get(name)!;
+  const set = hookRegistry.get(name) ?? new Set();
 
+  hookRegistry.set(name, set);
   set.add(state);
-  inspector.sendTree();
+  inspectorApi?.sendInspectorTree(INSPECTOR_ID);
 
   onScopeDispose(() => {
     set.delete(state);
@@ -56,17 +44,17 @@ export function useDevtools(name: string, state: ShallowRef<object | null>) {
     if (set.size === 0) {
       hookRegistry.delete(name);
     }
-    inspector.sendTree();
+    inspectorApi?.sendInspectorTree(INSPECTOR_ID);
   });
 }
 
 export function setupDevtools(app: App) {
   const descriptor = {
-    id: 'element-hooks',
+    id: INSPECTOR_ID,
     label: 'Element Hooks',
     packageName: 'element-hooks',
     homepage: 'https://element-hooks.js.org',
-    app: app as PluginDescriptor['app'],
+    app,
     logo: '/images/logo.svg',
     enableEarlyProxy: true,
   } satisfies PluginDescriptor;
@@ -79,7 +67,7 @@ export function setupDevtools(app: App) {
       treeFilterPlaceholder: 'Search hooks',
     });
 
-    inspector.init(api);
+    inspectorApi = api;
 
     api.on.getInspectorTree(payload => {
       if (payload.inspectorId !== INSPECTOR_ID) {
@@ -105,6 +93,10 @@ export function setupDevtools(app: App) {
         return;
       }
       const [name, index] = payload.nodeId.split(':');
+
+      if (!name || !index) {
+        return;
+      }
       const set = hookRegistry.get(name);
 
       if (!set) {

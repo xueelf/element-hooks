@@ -1,8 +1,8 @@
-import { isArray, isFunction } from 'radash';
 import {
   type Component,
   type FunctionalComponent,
   type Ref,
+  computed,
   shallowRef,
   useAttrs,
   watchEffect,
@@ -12,21 +12,14 @@ import { type GlobalComponentName } from './config';
 import { type HookOptions, HOOK_METADATA, useDevtools } from './devtools';
 
 export type BasicValue =
-  | string
-  | number
-  | boolean
-  | symbol
-  | object
-  | null
-  | undefined;
+  string | number | boolean | symbol | object | null | undefined;
 
-export type Recordable<T = any> = Record<PropertyKey, T>;
+export type Awaitable<T> = T | PromiseLike<T>;
+
+export type Recordable<T = unknown> = Record<string, T>;
 
 export type RenderComponent =
-  | Component
-  | FunctionalComponent
-  | GlobalComponentName
-  | (string & {});
+  Component | FunctionalComponent | GlobalComponentName | (string & {});
 
 export type RenderProps<T> = Recordable<BasicValue | ((value: T) => unknown)>;
 
@@ -50,31 +43,6 @@ export type Camelized<T> = {
   [K in keyof T as K extends string ? CamelCase<K> : K]: T[K];
 };
 
-export type NonPartial =
-  | readonly unknown[]
-  | Function
-  | Date
-  | Error
-  | RegExp
-  | Promise<unknown>
-  | Map<unknown, unknown>
-  | ReadonlyMap<unknown, unknown>
-  | Set<unknown>
-  | ReadonlySet<unknown>
-  | WeakMap<object, unknown>
-  | WeakSet<object>;
-
-/**
- * 将对象属性递归转换为可选。
- */
-export type DeepPartial<T> = T extends NonPartial
-  ? T
-  : T extends object
-    ? {
-        [P in keyof T]?: DeepPartial<T[P]>;
-      }
-    : T;
-
 export type InstanceController<T, E extends object = object> = {
   instance: Ref<T | null>;
 } & E;
@@ -86,16 +54,71 @@ export function createController<T extends object, E extends object = object>(
   return Object.assign({ instance }, extensions);
 }
 
-export type Setter<T> = {
-  (value: T): void;
-  (updater: (prev: T) => T): void;
-};
+export type Setter<T> = (value: T | ((prev: T) => T)) => void;
 
 export function unwrapSetter<T>(update: T | ((prev: T) => T), prev: T): T {
-  return isFunction(update) ? update(prev) : update;
+  return typeof update === 'function'
+    ? (update as (prev: T) => T)(prev)
+    : update;
 }
 
-export type HookStateOptions<T> = T & HookOptions;
+function isPromiseLike<T>(value: Awaitable<T>): value is PromiseLike<T> {
+  return (
+    value !== null &&
+    (typeof value === 'object' || typeof value === 'function') &&
+    'then' in value &&
+    typeof value.then === 'function'
+  );
+}
+
+type DataSetterCallback<T, P = void> = (payload: P) => Awaitable<T>;
+
+export function useDataSetter<T, P = void>(
+  updateData: (data: T) => void,
+  getPayload: () => P,
+) {
+  const pendingCount = shallowRef(0);
+  const loading = computed(() => pendingCount.value > 0);
+  let updateVersion = 0;
+
+  const setData = (
+    dataOrCallback: T | DataSetterCallback<T, P>,
+  ): void | Promise<void> => {
+    const currentVersion = ++updateVersion;
+    const commit = (data: T) => {
+      if (currentVersion === updateVersion) {
+        updateData(data);
+      }
+    };
+
+    if (typeof dataOrCallback !== 'function') {
+      commit(dataOrCallback);
+      return;
+    }
+
+    pendingCount.value += 1;
+    const stopLoading = () => {
+      pendingCount.value -= 1;
+    };
+
+    try {
+      const callback = dataOrCallback as DataSetterCallback<T, P>;
+      const data = callback(getPayload());
+
+      if (isPromiseLike(data)) {
+        return Promise.resolve(data).then(commit).finally(stopLoading);
+      }
+
+      commit(data);
+      stopLoading();
+    } catch (error) {
+      stopLoading();
+      throw error;
+    }
+  };
+
+  return { loading, setData };
+}
 
 /**
  * 创建组件状态管理。
@@ -103,28 +126,22 @@ export type HookStateOptions<T> = T & HookOptions;
  * - state: shallowRef，options 与 attrs 的扁平合并（attrs 优先），手动管理 render
  * - setState: 更新 options 源 → 触发 watchEffect → state 重赋值 → render
  * - initState: 在组件 setup 中调用，内部通过 useAttrs() 建立 watchEffect 自动同步
+ * - getCurrentState: 组件挂载前读取 options，挂载后读取合并 attrs 的 state
  */
-export function useState<T extends object>(initial: HookStateOptions<T>) {
-  const options = shallowRef<HookStateOptions<T>>(initial);
+export function useState<T extends HookOptions>(initial: T) {
+  const options = shallowRef<T>(initial);
   const state = shallowRef<T | null>(null);
-  const meta = Reflect.get(initial, HOOK_METADATA);
+  const meta = initial[HOOK_METADATA];
 
   if (meta && meta.name && !meta.internal) {
     useDevtools(meta.name, state);
   }
-  const cloneArrayValues = (target: Recordable) => {
-    for (const key of Object.keys(target)) {
-      const value = target[key];
-
-      if (isArray(value)) {
-        target[key] = [...value];
-      }
-    }
-    return target;
+  const setState: Setter<T> = update => {
+    options.value = unwrapSetter(update, options.value);
   };
 
-  const setState: Setter<HookStateOptions<T>> = update => {
-    options.value = unwrapSetter(update, options.value);
+  const getCurrentState = (): T => {
+    return state.value ?? options.value;
   };
 
   const initState = () => {
@@ -132,13 +149,13 @@ export function useState<T extends object>(initial: HookStateOptions<T>) {
 
     watchEffect(
       () => {
-        state.value = cloneArrayValues({ ...options.value, ...attrs });
+        state.value = { ...options.value, ...attrs };
       },
       { flush: 'sync' },
     );
   };
 
-  return [state, setState, initState] as const;
+  return [state, setState, initState, getCurrentState] as const;
 }
 
 export const resolveFunctionalProps = (
@@ -151,7 +168,7 @@ export const resolveFunctionalProps = (
     const value = props[key];
 
     // 以 on 开头，且后跟至少一个大写字母的键，被认为是事件类型
-    if (isFunction(value) && !/^on[A-Z]/.test(key)) {
+    if (typeof value === 'function' && !/^on[A-Z]/.test(key)) {
       result[key] = value(...args);
     } else {
       result[key] = value;

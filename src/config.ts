@@ -1,17 +1,16 @@
-import { assign, omit } from 'radash';
 import { type Component } from 'vue';
 
-import { type DialogOptions } from './composables/core/dialog';
-import { type FormOptions } from './composables/core/form';
-import { type TableOptions } from './composables/core/table';
-import { type PaginationOptions } from './composables/extra/ex-table';
+import { type DialogOptions } from './composables/dialog';
+import { type FormOptions } from './composables/form';
+import { type PaginationOptions } from './composables/grid';
+import { type TableOptions } from './composables/table';
 import { type Recordable } from './util';
 
 export interface GlobalComponents {}
 export type GlobalComponentName = keyof GlobalComponents;
 
 export type GlobalOptions = {
-  components?: Partial<Record<string, Component>>;
+  components?: Record<string, Component>;
   dialog?: DialogOptions;
   form?: FormOptions<Recordable>;
   table?: TableOptions<Recordable>;
@@ -28,20 +27,25 @@ export const setOptions = (options: GlobalOptions) => {
 
 export const getOptions = () => globalOptions;
 
-export function withOptions<K extends OptionKey, T extends Recordable>(
+export function withOptions<K extends OptionKey, T extends object>(
   source: T,
   key: K,
 ): NonNullable<GlobalOptions[K]> & T;
-export function withOptions<T extends Recordable>(
+export function withOptions<T extends object>(
   source: T,
 ): Omit<GlobalOptions, 'components'> & T;
-export function withOptions(source: Recordable, key?: OptionKey) {
-  const merged = key
-    ? assign(globalOptions[key] ?? {}, source)
-    : assign(omit(globalOptions, ['components']), source);
+export function withOptions(source: object, key?: OptionKey) {
+  const { components: _components, ...options } = globalOptions;
+  const merged: Record<PropertyKey, unknown> = {
+    ...(key ? globalOptions[key] : options),
+  };
 
-  for (const sym of Object.getOwnPropertySymbols(source)) {
-    Reflect.set(merged, sym, Reflect.get(source, sym));
+  for (const optionKey of Reflect.ownKeys(source)) {
+    const value = Reflect.get(source, optionKey);
+
+    if (value !== undefined) {
+      Reflect.set(merged, optionKey, value);
+    }
   }
   return merged;
 }
