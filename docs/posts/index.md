@@ -5,7 +5,7 @@ layout: home
 hero:
   name: 'Element Hooks'
   text: 'Using Hooks in Element Plus.'
-  tagline: 以 Hooks 的方式使用 Element Plus 组件
+  tagline: 以 Hook 的方式使用 Element Plus 组件
   image:
     src: /images/logo.svg
     alt: Element Hooks
@@ -19,9 +19,9 @@ hero:
 
 features:
   - title: 配置驱动
-    details: 通过声明式配置生成表单、表格、对话框等组件，减少模板代码，提升开发效率。
+    details: 使用声明式配置生成表单、表格和对话框。
   - title: 类型安全
-    details: 基于 TypeScript 编写，提供完整的类型推导与提示，在开发时即可捕获潜在错误。
-  - title: 无缝集成
-    details: 基于 Element Plus 封装，保留所有原始 Props、Slots 和事件，零学习成本迁移。
+    details: 基于 TypeScript 编写，提供完整的类型推导。
+  - title: 原生能力
+    details: 继续使用 Element Plus 的属性、插槽和事件。
 ---

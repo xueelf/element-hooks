@@ -2,16 +2,16 @@
 
 [![npm downloads](https://img.shields.io/npm/dm/element-hooks?style=flat-square&labelColor=FAFAFA&color=CB3837&logo=npm&logoColor=CB3837)](https://www.npmjs.com/package/element-hooks)
 [![license](https://img.shields.io/github/license/xueelf/element-hooks?style=flat-square&labelColor=FAFAFA&color=181717&logo=github&logoColor=181717)](https://github.com/xueelf/element-hooks/blob/master/LICENSE)
-[![element-plus](https://img.shields.io/badge/element--plus-%3E%3D2.11-409eff?style=flat-square&labelColor=FAFAFA&logo=element&logoColor=409eff)](https://element-plus.org/)
-[![typescript](https://img.shields.io/badge/TypeScript-%3E%3D5.0-3178c6?style=flat-square&labelColor=FAFAFA&logo=typescript&logoColor=3178c6)](https://www.typescriptlang.org/)
+[![element-plus](https://img.shields.io/badge/element--plus-%5E2.14.4-409eff?style=flat-square&labelColor=FAFAFA&logo=element&logoColor=409eff)](https://element-plus.org/)
+[![typescript](https://img.shields.io/badge/TypeScript-%5E6.0.3-3178c6?style=flat-square&labelColor=FAFAFA&logo=typescript&logoColor=3178c6)](https://www.typescriptlang.org/)
 
-以 Hooks 的方式使用 [Element Plus](https://element-plus.org/) 组件。
+以 Hook 的方式使用 [Element Plus](https://element-plus.org/) 组件。
 
 ## ✨ 特性
 
-- **配置驱动** — 通过声明式配置生成表单、表格、对话框等组件，减少模板代码，提升开发效率。
-- **类型安全** — 基于 TypeScript 编写，提供完整的类型推导与提示，在开发时即可捕获潜在错误。
-- **无缝集成** — 基于 Element Plus 封装，保留所有原始 Props、Slots 和事件，零学习成本迁移。
+- **配置驱动**：使用配置生成表单、表格和对话框。
+- **类型安全**：基于 TypeScript 编写，提供完整的类型推导。
+- **原生能力**：继续使用 Element Plus 的属性、插槽和事件。
 
 ## 📦 安装
 
@@ -33,11 +33,14 @@ bun add element-hooks
 
 ## 🚀 快速上手
 
-Element Hooks 提供两类 Hook：**组件 Hook** 和 **命令式 Hook**。
+Element Hooks 按能力来源分为原生能力和组合能力。
+公开 API 包含组件 Hook 和命令式 Hook。
 
 ### 全局配置
 
-推荐将 `ElementHooks` 作为插件去挂载，这样不仅可以设置跨局的默认 options 去减少重复配置，而且会自动**开启 Vue DevTools 支持**，以便开发时可视化追踪所有 Hook 的内部状态：
+推荐将 `ElementHooks` 注册为 Vue 插件。
+插件注册支持设置全局默认配置。
+它也会开启 Vue DevTools 支持。
 
 ```ts
 import ElementHooks from 'element-hooks';
@@ -62,14 +65,17 @@ app.use(ElementHooks, {
 app.mount('#app');
 ```
 
-全局默认项按 Element Plus 组件维度生效，例如 `form` 会同时作用于 `useForm` 与 `useGrid` 内部的 `ElForm`；各个 Hook 单次调用传入同名 options 时，会自动与之执行合并。
+全局默认项按 Element Plus 组件维度生效。
+例如，`form` 会作用于 `useForm` 和 `useGrid`。
+单次 Hook 调用的同名配置具有更高优先级。
 
 ### 组件 Hook
 
-组件 Hook（`useDialog`、`useForm`、`useTable`、`useGrid`）用于封装 Element Plus 的 UI 组件，返回一个元组 `[Component, controller]`：
+组件 Hook 用于封装 Element Plus 组件。
+它返回 `[Component, controller]` 元组。
 
-- **Component** — 可以直接在模板中使用的 Vue 组件，支持原始的 Props 和 Slots。
-- **controller** — 提供命令式操作的控制器对象，包含 `setState`、`instance` 等，可在任意逻辑中调用。
+- **Component**：可以在模板中使用的 Vue 组件。
+- **controller**：包含 `setState`、`instance` 等控制方法。
 
 #### useDialog
 
@@ -152,7 +158,8 @@ app.mount('#app');
 
 ### 命令式 Hook
 
-命令式 Hook（`useMessage`、`useMessageBox`）用于封装 Element Plus 的命令式 API，不涉及模板渲染，直接返回可调用的方法或对象。
+命令式 Hook 用于封装 Element Plus 的命令式 API。
+它不涉及模板渲染，直接返回可调用的方法。
 
 #### useMessage
 
@@ -186,16 +193,17 @@ app.mount('#app');
 
 #### useMessageBox
 
-封装 `ElMessageBox`，简化 `confirm` / `prompt` 的异步处理，不再需要 `try/catch`：
+封装 `ElMessageBox`的异步结果处理。
+`confirm` 和 `prompt` 的取消操作不会拒绝 Promise。
 
 ```vue
 <script setup lang="ts">
   import { useMessageBox } from 'element-hooks';
 
-  const messageBox = useMessageBox();
+  const { confirm } = useMessageBox();
 
   const handleDelete = async () => {
-    const confirmed = await messageBox.confirm('确定要删除吗？', '提示');
+    const confirmed = await confirm('确定要删除吗？', '提示');
 
     if (confirmed) {
       // 执行删除
@@ -206,7 +214,7 @@ app.mount('#app');
 
 ## 📖 文档
 
-完整文档和在线示例请访问：[element-hooks 文档站](https://element-hooks.js.org)
+完整文档和在线示例请访问 [Element Hooks 文档站](https://element-hooks.js.org)。
 
 ## 📝 License
 
