@@ -2,10 +2,10 @@
   import { useMessageBox } from 'element-hooks';
   import { type Action, ElMessage } from 'element-plus';
 
-  const messageBox = useMessageBox();
+  const { alert } = useMessageBox();
 
   const open = () => {
-    messageBox.alert('This is a message', 'Title', {
+    alert('This is a message', 'Title', {
       // if you want to disable its autofocus
       // autofocus: false,
       confirmButtonText: 'OK',

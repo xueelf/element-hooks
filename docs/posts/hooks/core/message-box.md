@@ -1,8 +1,10 @@
 # useMessageBox
 
-`useMessageBox` 用于封装 `ElMessageBox` 的命令式调用，适用于消息提示、确认消息与提交内容等场景。
+`useMessageBox` 用于封装 `ElMessageBox` 的命令式调用。
+它支持消息提示、确认消息和提交内容。
 
-它的设计目标并非替代 `ElMessageBox`，而是在常见业务流中提供更直接的结果处理方式：对 `confirm` 与 `prompt` 的取消/关闭场景进行统一封装，便于直接使用 `await` 编排流程。
+`confirm` 和 `prompt` 会统一处理取消或关闭结果。
+因此，调用方可以直接使用 `await` 处理结果。
 
 ## 消息提示 {#alert}
 
@@ -34,6 +36,36 @@
 <<< @/examples/message-box/Prompt.vue
 </ExampleCard>
 
+## 使用 VNode {#use-vnode}
+
+<ExampleCard>
+  <template #example>
+    <UseVNode />
+  </template>
+
+<<< @/examples/message-box/UseVNode.vue
+</ExampleCard>
+
+## 使用带有事件处理函数的 VNode {#use-vnode-with-action-handlers}
+
+<ExampleCard>
+  <template #example>
+    <UseVNodeWithActionHandlers />
+  </template>
+
+<<< @/examples/message-box/UseVNodeWithActionHandlers.vue
+</ExampleCard>
+
+## 个性化 {#customization}
+
+<ExampleCard>
+  <template #example>
+    <Customization />
+  </template>
+
+<<< @/examples/message-box/Customization.vue
+</ExampleCard>
+
 ## 使用 HTML 片段 {#use-html-string}
 
 <ExampleCard>
@@ -42,6 +74,16 @@
   </template>
 
 <<< @/examples/message-box/MessageBoxUseHTMLString.vue
+</ExampleCard>
+
+## 区分取消操作与关闭操作 {#distinguishing-cancel-and-close}
+
+<ExampleCard>
+  <template #example>
+    <DistinguishingCancelAndClose />
+  </template>
+
+<<< @/examples/message-box/DistinguishingCancelAndClose.vue
 </ExampleCard>
 
 ## 内容居中 {#centered-content}
@@ -80,14 +122,14 @@
 
 与 `ElMessageBox` 的函数调用方式一致，返回包含 `alert`、`confirm` 与 `prompt` 的方法对象。
 
-- **`alert`**：与 `ElMessageBox.alert` 行为一致，不做额外封装。
-- **`confirm`**：返回 `Promise<boolean>`，确认返回 `true`，取消/关闭返回 `false`。
-- **`prompt`**：返回 `Promise<string | null>`，确认返回输入值，取消/关闭返回 `null`。
+- **`alert`**：与 `ElMessageBox.alert` 行为一致。
+- **`confirm`**：确认时返回 `true`，否则返回 `false`。
+- **`prompt`**：确认时返回输入值，否则返回 `null`。
 
 ### 返回值方法
 
-| 方法名    | 描述                                            | 类型签名                                                |
-| --------- | ----------------------------------------------- | ------------------------------------------------------- | ------ |
-| `alert`   | 简单的提示框                                    | `ElMessageBoxShortcutMethod`                            |
-| `confirm` | 确认消息框，统一封装取消/关闭分支，不再抛出异常 | `(...args: MessageBoxMethodParams) => Promise<boolean>` |
-| `prompt`  | 提交内容框，统一封装取消/关闭分支，不再抛出异常 | `(...args: MessageBoxMethodParams) => Promise<string    | null>` |
+| 方法名    | 描述                                 | 类型签名                                                       |
+| --------- | ------------------------------------ | -------------------------------------------------------------- |
+| `alert`   | 简单的提示框                         | `ElMessageBoxShortcutMethod`                                   |
+| `confirm` | 确认消息框，取消或关闭时返回 `false` | `(...args: MessageBoxMethodParams) => Promise<boolean>`        |
+| `prompt`  | 提交内容框，取消或关闭时返回 `null`  | `(...args: MessageBoxMethodParams) => Promise<string \| null>` |

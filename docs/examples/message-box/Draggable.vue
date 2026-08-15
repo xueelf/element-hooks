@@ -2,10 +2,10 @@
   import { useMessageBox } from 'element-hooks';
   import { ElMessage } from 'element-plus';
 
-  const messageBox = useMessageBox();
+  const { confirm } = useMessageBox();
 
   const open = async () => {
-    const isConfirmed = await messageBox.confirm(
+    const isConfirmed = await confirm(
       'proxy will permanently delete the file. Continue?',
       'Warning',
       {
@@ -30,7 +30,7 @@
   };
 
   const open2 = async () => {
-    const isConfirmed = await messageBox.confirm(
+    const isConfirmed = await confirm(
       'proxy will permanently delete the file. Continue?',
       'Warning',
       {
@@ -56,7 +56,7 @@
   };
 
   const open3 = async () => {
-    const isConfirmed = await messageBox.confirm(
+    const isConfirmed = await confirm(
       'This message box has custom dragging styles. Try dragging it to see the effects!',
       'Custom Dragging Style',
       {

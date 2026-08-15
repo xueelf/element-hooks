@@ -2,10 +2,10 @@
   import { useMessageBox } from 'element-hooks';
   import { ElMessage } from 'element-plus';
 
-  const messageBox = useMessageBox();
+  const { prompt } = useMessageBox();
 
   const open = async () => {
-    const value = await messageBox.prompt('Please input your e-mail', 'Tip', {
+    const value = await prompt('Please input your e-mail', 'Tip', {
       confirmButtonText: 'OK',
       cancelButtonText: 'Cancel',
       inputPattern:

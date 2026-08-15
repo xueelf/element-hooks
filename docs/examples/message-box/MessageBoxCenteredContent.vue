@@ -2,10 +2,10 @@
   import { useMessageBox } from 'element-hooks';
   import { ElMessage } from 'element-plus';
 
-  const messageBox = useMessageBox();
+  const { confirm } = useMessageBox();
 
   const open = async () => {
-    const isConfirmed = await messageBox.confirm(
+    const isConfirmed = await confirm(
       'proxy will permanently delete the file. Continue?',
       'Warning',
       {
