@@ -11,9 +11,6 @@ import {
 import { type GlobalComponentName } from './config';
 import { type HookOptions, HOOK_METADATA, useDevtools } from './devtools';
 
-export type BasicValue =
-  string | number | boolean | symbol | object | null | undefined;
-
 export type Awaitable<T> = T | PromiseLike<T>;
 
 export type Recordable<T = unknown> = Record<string, T>;
@@ -21,7 +18,7 @@ export type Recordable<T = unknown> = Record<string, T>;
 export type RenderComponent =
   Component | FunctionalComponent | GlobalComponentName | (string & {});
 
-export type RenderProps<T> = Recordable<BasicValue | ((value: T) => unknown)>;
+export type RenderProps<T> = Recordable | ((value: T) => Recordable);
 
 export type RenderOptions<T> = {
   component: RenderComponent;
@@ -158,21 +155,12 @@ export function useState<T extends HookOptions>(initial: T) {
   return [state, setState, initState, getCurrentState] as const;
 }
 
-export const resolveFunctionalProps = (
-  props: Recordable = {},
-  ...args: unknown[]
-) => {
-  const result: Recordable = {};
-
-  for (const key in props) {
-    const value = props[key];
-
-    // 以 on 开头，且后跟至少一个大写字母的键，被认为是事件类型
-    if (typeof value === 'function' && !/^on[A-Z]/.test(key)) {
-      result[key] = value(...args);
-    } else {
-      result[key] = value;
-    }
+export function resolveRenderProps<T>(
+  props: RenderProps<T> | undefined,
+  value: T | null,
+) {
+  if (typeof props !== 'function') {
+    return props ?? {};
   }
-  return result;
-};
+  return value === null ? {} : props(value);
+}

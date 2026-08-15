@@ -18,7 +18,7 @@ import {
   type RenderOptions,
   type Setter,
   createController,
-  resolveFunctionalProps,
+  resolveRenderProps,
   unwrapSetter,
   useState,
 } from '#/util';
@@ -197,7 +197,7 @@ export function useForm<T extends object = Recordable>(
 
               if (formModel.value && prop) {
                 return h(renderComponent, {
-                  ...resolveFunctionalProps(render.props, formModel.value),
+                  ...resolveRenderProps(render.props, formModel.value),
                   modelValue: getProp(formModel.value, prop),
                   'onUpdate:modelValue': (value: unknown) => {
                     setProp(formModel.value, prop, value);
@@ -206,7 +206,7 @@ export function useForm<T extends object = Recordable>(
               }
               return h(
                 renderComponent,
-                resolveFunctionalProps(render.props, formModel.value),
+                resolveRenderProps(render.props, formModel.value),
               );
             };
           }

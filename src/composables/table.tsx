@@ -27,7 +27,7 @@ import {
   type RenderOptions,
   type Setter,
   createController,
-  resolveFunctionalProps,
+  resolveRenderProps,
   unwrapSetter,
   useDataSetter,
   useState,
@@ -195,7 +195,7 @@ export function useTable<T extends object = Recordable>(
               }
               return h(
                 renderComponent,
-                resolveFunctionalProps(render.props, scope.row),
+                resolveRenderProps(render.props, scope.row),
               );
             };
           }
