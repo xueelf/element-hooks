@@ -302,7 +302,16 @@ export function useGrid<
               [[vLoading, loading.value]],
             )}
             {paginationOptions && total > 0 && (
-              <div style={{ flexShrink: 0 }}>
+              <div
+                style={{
+                  flexShrink: 0,
+                  /*
+                   * 与 Element Plus FormItem 默认的 margin-bottom 保持一致。
+                   * Element Plus 未提供对应的 CSS 变量。
+                   */
+                  marginTop: '18px',
+                }}
+              >
                 <ElPagination
                   ref={paginationRef}
                   {...paginationProps}
