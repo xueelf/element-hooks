@@ -34,7 +34,9 @@
   });
 
   const submitForm = () => {
-    if (!instance.value) return;
+    if (!instance.value) {
+      return;
+    }
     instance.value.validate(valid => {
       if (valid) {
         console.log('submit!');
@@ -45,7 +47,9 @@
   };
 
   const resetForm = () => {
-    if (!instance.value) return;
+    if (!instance.value) {
+      return;
+    }
     instance.value.resetFields();
   };
 </script>

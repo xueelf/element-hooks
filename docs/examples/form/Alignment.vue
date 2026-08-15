@@ -55,9 +55,7 @@
       <el-radio-group
         v-model="labelPosition"
         aria-label="label position"
-        @change="
-          (val: FormProps['labelPosition']) => setState({ labelPosition: val })
-        "
+        @change="setState({ labelPosition })"
       >
         <el-radio-button value="left">Left</el-radio-button>
         <el-radio-button value="right">Right</el-radio-button>
@@ -68,9 +66,7 @@
       <el-radio-group
         v-model="itemLabelPosition"
         aria-label="item label position"
-        @change="
-          (val: FormItemProps['labelPosition']) => setItems(buildItems(val))
-        "
+        @change="setItems(buildItems(itemLabelPosition))"
       >
         <el-radio-button value="">Empty</el-radio-button>
         <el-radio-button value="left">Left</el-radio-button>

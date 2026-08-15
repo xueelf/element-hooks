@@ -1,6 +1,6 @@
 <script setup lang="ts">
   import { useForm } from 'element-hooks';
-  import { ElAlert, ElInput } from 'element-plus';
+  import { ElAlert, ElDivider, ElInput } from 'element-plus';
   import { h } from 'vue';
 
   const [Form] = useForm({

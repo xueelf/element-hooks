@@ -223,7 +223,9 @@
   });
 
   const submitForm = async () => {
-    if (!instance.value) return;
+    if (!instance.value) {
+      return;
+    }
     await instance.value.validate((valid, fields) => {
       if (valid) {
         console.log('submit!');
@@ -234,7 +236,9 @@
   };
 
   const resetForm = () => {
-    if (!instance.value) return;
+    if (!instance.value) {
+      return;
+    }
     instance.value.resetFields();
   };
 </script>

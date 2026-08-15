@@ -1,21 +1,25 @@
 <script setup lang="ts">
   import { useForm } from 'element-hooks';
-  import { type FormRules, ElInput } from 'element-plus';
+  import { type FormItemRule, type FormRules, ElInput } from 'element-plus';
 
-  const validatePass = (rule: any, value: any, callback: any) => {
+  type Validator = NonNullable<FormItemRule['validator']>;
+
+  const validatePass: Validator = (_rule, value, callback) => {
     if (value === '') {
       callback(new Error('Please input the password'));
     } else {
       const model = getModel();
       if (model?.checkPass !== '') {
-        if (!instance.value) return;
+        if (!instance.value) {
+          return;
+        }
         instance.value.validateField('checkPass');
       }
       callback();
     }
   };
 
-  const validatePass2 = (rule: any, value: any, callback: any) => {
+  const validatePass2: Validator = (_rule, value, callback) => {
     if (value === '') {
       callback(new Error('Please input the password again'));
     } else {
@@ -28,7 +32,7 @@
     }
   };
 
-  const checkAge = (rule: any, value: any, callback: any) => {
+  const checkAge: Validator = (_rule, value, callback) => {
     if (!value) {
       return callback(new Error('Please input the age'));
     }
@@ -92,7 +96,9 @@
   });
 
   const submitForm = () => {
-    if (!instance.value) return;
+    if (!instance.value) {
+      return;
+    }
     instance.value.validate(valid => {
       if (valid) {
         console.log('submit!');
@@ -103,7 +109,9 @@
   };
 
   const resetForm = () => {
-    if (!instance.value) return;
+    if (!instance.value) {
+      return;
+    }
     instance.value.resetFields();
   };
 </script>

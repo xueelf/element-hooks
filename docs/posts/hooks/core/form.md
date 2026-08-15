@@ -1,8 +1,10 @@
 # useForm
 
-`useForm` 为 `ElForm` 提供了声明式配置能力。通过 `items` 数组即可描述表单结构，并配合控制器完成模型更新与实例访问，显著减少 `<template>` 视图模板中的重复代码。
+`useForm` 为 `ElForm` 提供声明式配置。
+`items` 数组用于描述表单结构。
+控制器用于更新模型和访问组件实例。
 
-在保留原始表单能力（校验、重置、清空校验等）的同时，`useForm` 更适合在中后台页面中快速构建可维护的表单模块。
+`useForm` 保留校验、重置和清空校验等原生能力。
 
 ## 典型表单 {#basic-form}
 
@@ -96,7 +98,8 @@
 
 ## 纯元素节点 {#raw}
 
-有时我们只想在表单流里面渲染一段独立的提示文字或者分割线，而不希望它被 `el-form-item` 默认的间距和样式包裹。此时可以通过给表单项配置 `raw: true` 来移除外层 `el-form-item`，实现纯粹的节点渲染。
+`raw: true` 用于渲染不带 `el-form-item` 的节点。
+该配置适用于提示文字和分割线。
 
 <ExampleCard>
   <template #example>
@@ -108,34 +111,35 @@
 
 ## API {#api}
 
-### Options
+`useForm` 继承 `ElForm` 的属性，并增加以下配置。
 
-`useForm` 的配置项继承自 Element Plus `ElForm` 的 Props，并额外支持以下字段：
+- **`items`**：用于声明表单项的 `FormItem<T>[]`。
+- **`model`**：初始表单模型 `T`。未传入时返回 `null`。
 
-- **`items`**: `FormItem[]` —— 核心配置，用于声明表单项。
-- **`model`**: `Recordable` —— 表单数据模型（使用 `setModel` 更新）。
+### FormItem
 
-#### FormItem
+| 字段     | 说明                                      | 类型                                        |
+| -------- | ----------------------------------------- | ------------------------------------------- |
+| `raw`    | 是否为纯元素节点（不包裹 `el-form-item`） | `boolean`                                   |
+| `slot`   | 默认插槽名（`slots.default` 的简写）      | `string`                                    |
+| `slots`  | 具名插槽配置                              | `Partial<Record<FormItemSlotName, string>>` |
+| `render` | 渲染组件配置                              | `RenderOptions<T>`                          |
 
-| 字段     | 说明                                      | 类型                                                     |
-| -------- | ----------------------------------------- | -------------------------------------------------------- |
-| `raw`    | 是否为纯元素节点（不包裹 `el-form-item`） | `boolean`                                                |
-| `slot`   | 默认插槽名（`slots.default` 的简写）      | `string`                                                 |
-| `slots`  | 精细化插槽配置                            | `Record<string, string>`                                 |
-| `render` | 渲染组件配置                              | `{ component: Component \| string, props?: Recordable }` |
+#### `render.component`
 
-##### `render.component`
+`render.component` 可以使用全局组件名称。
+例如，`input` 可以映射到 `ElInput`。
 
-当 `render.component` 为字符串时，会从 `app.use(ElementHooks, { components })` 传入的全局组件映射中查找并渲染对应组件（例如 `components: { input: ElInput }` 对应 `render.component = 'input'`）。
+#### `render.props`
 
-##### `render.props`
+`render.props` 的属性值可以是函数。
+函数参数是当前表单模型 `model`。
+组件渲染时会执行该函数并追踪依赖。
 
-在 `render.props` 中，如果你需要使用**响应式变量**来给组件传参，或者需要根据当前表单的模型数据动态传参，可以将其写为一个函数。组件会在渲染时，自动执行该函数（**函数的默认参数为当前表单的模型数据 `model`**）并追踪依赖。
-
-这意味着当你的响应式数据或模型数据发生改变时，组件 Props 也会自动重新渲染，从而实现**动态传参**，无需再手动调用 `setState` 或 `setItems` 刷新整个表单项。
+依赖变化后，动态属性会自动更新。
 
 :::warning 注意事项
-动态传参的特性会过滤掉以 `on` 开头的事件属性。例如 `onClick` 或 `onChange` 等事件监听器，即使为函数也不会被自动执行。
+以 `on` 开头的事件属性不会自动执行。
 :::
 
 ```ts
@@ -158,16 +162,19 @@ const [Form] = useForm({
 });
 ```
 
-##### `render.slot`
+#### `slot`
 
 `slot` 是 `slots.default` 的简写形式。当同一个表单项同时定义了 `slot` 和 `render` 时，插槽优先。
 
 ### Controller
 
-| 方法       | 说明                                             | 参数                                    |
-| ---------- | ------------------------------------------------ | --------------------------------------- |
-| `setState` | 动态更新整体配置                                 | `(state: Partial<FormOptions>) => void` |
-| `setItems` | 动态更新表单项                                   | `(items: FormItem[]) => void`           |
-| `setModel` | 动态更新模型数据                                 | `(model: Recordable) => void`           |
-| `getModel` | 获取当前模型快照                                 | `() => Recordable`                      |
-| `instance` | 内部 ElForm 实例（可调用 `validate` 等原生方法） | `Ref<FormInstance>`                     |
+| 方法       | 说明                                             | 参数                              |
+| ---------- | ------------------------------------------------ | --------------------------------- |
+| `setState` | 动态更新整体配置                                 | `(state: FormOptions<T>) => void` |
+| `setItems` | 动态更新表单项                                   | `(items: FormItem<T>[]) => void`  |
+| `getItems` | 获取当前表单项                                   | `() => FormItem<T>[]`             |
+| `setModel` | 动态更新模型数据，传入 `null` 时清空             | `(model: T \| null) => void`      |
+| `getModel` | 获取当前模型数据                                 | `() => T \| null`                 |
+| `instance` | 内部 ElForm 实例（可调用 `validate` 等原生方法） | `Ref<FormInstance \| null>`       |
+
+`setState`、`setItems` 和 `setModel` 支持 `(prev) => next` 更新。
