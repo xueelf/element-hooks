@@ -31,7 +31,7 @@ export default defineConfig({
     logo: '/images/logo.svg',
     nav: [
       { text: '指南', link: '/guide/introduce', activeMatch: '^/guide/' },
-      { text: 'Hooks', link: '/hooks/introduce', activeMatch: '^/hooks/' },
+      { text: 'Hook', link: '/hooks/introduce', activeMatch: '^/hooks/' },
     ],
     sidebar: {
       '/guide/': [
@@ -53,10 +53,10 @@ export default defineConfig({
       '/hooks/': [
         {
           text: '概览',
-          items: [{ text: 'Hooks 介绍', link: '/hooks/introduce' }],
+          items: [{ text: 'Hook 介绍', link: '/hooks/introduce' }],
         },
         {
-          text: '核心功能 (Core)',
+          text: 'Element Plus 原生能力（Core Hooks）',
           items: [
             { text: 'useDialog', link: '/hooks/core/dialog' },
             { text: 'useForm', link: '/hooks/core/form' },
@@ -66,8 +66,8 @@ export default defineConfig({
           ],
         },
         {
-          text: '扩展组合 (Extra)',
-          items: [{ text: 'useExTable', link: '/hooks/extra/ex-table' }],
+          text: 'Element Hooks 组合能力（Composite Hooks）',
+          items: [{ text: 'useGrid', link: '/hooks/composite/grid' }],
         },
       ],
     },
