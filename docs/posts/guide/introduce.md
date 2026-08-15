@@ -2,23 +2,28 @@
 
 ## 什么是 Element Hooks？ {#what-is-element-hooks}
 
-Element Hooks 是一个基于 [Element Plus](https://element-plus.org/) 的 Vue 3 组合式 API 增强库，支持以**配置驱动**与**状态接管**的方式使用各类组件。
+Element Hooks 是 Vue 3 组合式 API 库。
+它基于 [Element Plus](https://element-plus.org/) 构建。
+它支持通过配置生成组件，并通过控制器管理状态。
 
-在传统的 Element Plus 使用场景中，通常需要在 `<template>` 视图模板中编写大量组件标签、属性与插槽声明。Element Hooks 引入了控制器模式，将原本的声明式渲染转变为相对灵活的脚本配置。它通过 Hook 返回 **Vue 组件（Component）**与**操作控制器（Controller）**，让你能以更加集中的逻辑结构来组织页面代码。
+Element Plus 通常在 `<template>` 中声明组件。
+Element Hooks 提供配置式表达，减少重复的模板结构。
+Hook 返回 Vue 组件和操作控制器。
 
 ## 核心特性 {#features}
 
-- **配置驱动** — 使用 JSON 对象配置生成 Table 列、Form 字段等视图结构，所有的响应式状态管理均由 Hook 内部闭包与控制器接管，彻底告别在 options 中传入并追踪响应式对象的历史负担。
-- **逻辑与视图分离** — 将弹窗状态、表格分页等数据移至控制器内，精简组件模板代码。
-- **友好的 TypeScript 支持** — 利用泛型与函数重载，在编写配置项时提供精准的属性与事件的自动补全。
-- **原生能力** — 保留 Element Plus 组件的 Props、Slots 与 Events，支持在 `<template>` 按需传入属性，且该属性拥有最高优先级。
-- **轻量封装** — 完全基于 Element Plus 现有能力和 Vue 的原生逻辑组合，不引入任何额外的独立依赖包。
+- **配置驱动**：使用对象配置生成表格列和表单项。
+- **逻辑与视图分离**：通过控制器集中管理组件状态。
+- **TypeScript 支持**：通过泛型和函数重载提供类型推导。
+- **原生能力**：保留 Element Plus 的属性、插槽和事件。
+- **轻量封装**：基于 Element Plus 和 Vue 的现有能力组合。
 
 ## 设计理念 {#design-philosophy}
 
 ### 逻辑集中管理
 
-以 `useTable` 为例，传统写法需要在 `<template>` 视图模板中逐个声明 `<el-table-column>`。当涉及权限判断或状态交互时，通常需要嵌套大量的 `v-if` 或 `v-else` 指令，这极大增加了模板代码的阅读负担。使用 Element Hooks 后，你可以仅传入初始的 `columns` 配置数组，并在代码逻辑中通过控制器暴露的 `setColumns` 等方法来灵活变更列配置：
+`useTable` 可以用 `columns` 配置声明表格列。
+调用方可以使用 `setColumns` 更新列配置。
 
 ```vue
 <script setup lang="ts">
@@ -43,9 +48,11 @@ Element Hooks 是一个基于 [Element Plus](https://element-plus.org/) 的 Vue 
 
 ### 保留原生能力
 
-Element Hooks 的定位是提供一种轻量的上层提效手段。组件 Hook 返回的实例本质上仍是常规的 Element Plus 组件。
+Element Hooks 是 Element Plus 的上层封装。
+Hook 返回的组件仍保留原生能力。
 
-在使用时，写在 `<template>` 视图的组件属性具有等同于原生的行为与更高的优先级。你既可以在 Hook 配置参数中统一设定基础选项，也可以在模板中按需覆盖独立属性与事件：
+`<template>` 中的属性具有更高优先级。
+因此，模板可以覆盖 Hook 的初始配置。
 
 ```vue
 <script setup lang="ts">
@@ -70,8 +77,8 @@ Element Hooks 的定位是提供一种轻量的上层提效手段。组件 Hook 
 
 ## 适用场景 {#when-to-use}
 
-- **中后台系统**：适用于包含大量增删改查（CRUD）列表、搜索表单以及相对标准弹窗交互的常见业务页面。
-- **复杂交互场景**：需要跨组件层级传递状态，或希望集中管理多个组件联动逻辑的视图。
-- **配置化开发体验**：倾向于使用脚本进行声明与属性设置，消解由于组件层级嵌套累积的模板杂乱感。
+- **中后台系统**：包含列表、搜索表单和弹窗的页面。
+- **复杂交互场景**：需要集中管理多个组件的视图。
+- **配置化开发**：倾向使用脚本配置组件的项目。
 
-更深入的设计分类及 Hooks 列表请阅读 [Hooks 介绍](/hooks/introduce)。
+详细分类和 Hook 列表请阅读 [Hook 介绍](/hooks/introduce)。

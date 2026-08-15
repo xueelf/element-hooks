@@ -2,11 +2,12 @@
 
 ## 安装 {#installation}
 
-Element Hooks 基于 [Element Plus](https://element-plus.org/) 构建。开始使用前，请确认项目已满足以下依赖条件：
+Element Hooks 基于 [Element Plus](https://element-plus.org/) 构建。
+开始使用前，请确认项目满足以下依赖条件。
 
-- [Vue](https://vuejs.org/) >= 3.0
-- [Element Plus](https://element-plus.org/) >= 2.11
-- [TypeScript](https://www.typescriptlang.org/) >= 5.0（推荐，非必需）
+- [Vue](https://vuejs.org/) `^3.3.7`
+- [Element Plus](https://element-plus.org/) `^2.14.4`
+- [TypeScript](https://www.typescriptlang.org/) `^6.0.3`
 
 ::: code-group
 
@@ -30,7 +31,9 @@ bun add element-hooks
 
 ## 引入插件 {#plugin-registration}
 
-在绝大多数场景下，强烈建议将 Element Hooks 作为 Vue 插件进行注册。这不仅允许你进行[全局配置](/guide/global-options)，还能自动开启针对 **Vue DevTools** 的扩展支持，以便在开发时直观地审查和追踪各个 Hook 的内部状态树。
+推荐将 Element Hooks 注册为 Vue 插件。
+插件注册支持 [全局配置](/guide/global-options)。
+它也会开启 Vue DevTools 支持。
 
 ```ts{9}
 import { createApp } from 'vue';
@@ -48,7 +51,9 @@ app.mount('#app');
 
 ## 基本用法 {#basic-usage}
 
-在页面中，你只需要引入所需的 Hook 并执行它，通常会返回一个由**组件（Component）**与**控制器（Controller）**组成的元组。你可以在 `setup` 中调用控制逻辑，并在 `<template>` 视图声明挂载的组件标签：
+Hook 通常返回组件和控制器元组。
+在 `<script setup>` 中调用控制方法。
+在 `<template>` 中渲染返回的组件。
 
 ```vue
 <script setup lang="ts">
@@ -71,19 +76,21 @@ app.mount('#app');
 </template>
 ```
 
-完整的可用特性与介绍，请参阅后续的 [Hooks 介绍](/hooks/introduce)。
+完整的功能说明请参阅 [Hook 介绍](/hooks/introduce)。
 
 ## 自动导入 {#auto-import}
 
-如果你在项目中使用了 [unplugin-auto-import](https://github.com/unplugin/unplugin-auto-import)，可以通过引入 `element-hooks/composables` 默认对象的所有键名，将其添加至 `imports` 配置中实现 Hooks 的自动导入。
+项目可以使用 [unplugin-auto-import](https://github.com/unplugin/unplugin-auto-import) 自动导入 Hook。
+先导入 `element-hooks/composables` 的默认对象。
+再将它的所有键名添加到 `imports` 配置。
 
 ::: code-group
 
 ```ts [Vite]
+import ElementHooksComposables from 'element-hooks/composables';
+import AutoImport from 'unplugin-auto-import/vite';
 // vite.config.ts
 import { defineConfig } from 'vite';
-import AutoImport from 'unplugin-auto-import/vite';
-import ElementHooksComposables from 'element-hooks/composables';
 
 export default defineConfig({
   plugins: [
@@ -105,5 +112,5 @@ export default defineConfig({
 
 了解了基本的应用方式，你可以进一步研究：
 
-- [Hooks 介绍](/hooks/introduce) — 了解 Element Hooks 的 API 边界与分类。
-- [全局配置](/guide/global-options) — 设置应用级的统一风格。
+- [Hook 介绍](/hooks/introduce)：了解 Element Hooks 的 API 边界和分类。
+- [全局配置](/guide/global-options)：设置应用级的统一风格。

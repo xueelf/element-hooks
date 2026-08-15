@@ -2,7 +2,8 @@
 
 ## Vue 插件注册 {#vue-plugin}
 
-你可以将 `ElementHooks` 作为 Vue 插件安装，并传入全局默认配置。这样在后续使用任何 Hook 时，都会优先继承相关的全局配置，从而统一站内组件的基础交互和表单排版风格。
+将 `ElementHooks` 注册为 Vue 插件时，可以传入全局配置。
+后续的 Hook 调用会继承对应配置。
 
 ```ts
 import ElementHooks from 'element-hooks';
@@ -24,7 +25,7 @@ app.use(ElementHooks, {
 
 ## 方法动态设置 {#method-setting}
 
-Element Hooks 也提供了暴露在外的 `setOptions` 与 `getOptions` 方法用于命令式地读写全局配置：
+`setOptions` 和 `getOptions` 可以动态读写全局配置。
 
 ```ts
 import { getOptions, setOptions } from 'element-hooks';
@@ -44,24 +45,31 @@ const globalOptions = getOptions();
 
 ## 配置项 {#config}
 
-全局 `options` 支持以下字段：
+全局配置支持以下字段。
 
-- **components** — 给 `useForm` 的 `render.component` 提供全局组件映射（例如自动将 `"input"` 字符串映射至 `ElInput` 组件）。
-- **dialog** — `useDialog` 默认的基础 options。
-- **form** — `useForm` 与 `useExTable` 内部表单的默认 options。
-- **table** — `useTable` 与 `useExTable` 内部表格的默认 options。
-- **pagination** — `useExTable` 中 `ElPagination` 模块的全局默认 options。
+- **`components`**：为 `render.component` 提供全局组件映射。
+- **`dialog`**：`useDialog` 的默认配置。
+- **`form`**：`useForm` 和 `useGrid` 的表单默认配置。
+- **`table`**：`useTable` 和 `useGrid` 的表格默认配置。
+- **`pagination`**：`useGrid` 的分页默认配置。
 
 :::tip 合并规则
-在单次 Hook 调用时传入的同名 options，会使用**深合并**（Deep Merge）机制与全局配置合并，且单次调用的参数具有更高优先级。
+单次 Hook 调用会与全局配置浅合并。
+单次调用具有更高优先级。
+局部值为 `undefined` 时，继续使用全局默认值。
+数组、函数、组件和嵌套对象会整体替换。
+
+`useGrid` 只会合并已启用模块的全局配置。
+全局配置不会自动启用表单或分页。
 :::
 
 ## TypeScript {#typescript}
 
-为了在使用全局注册的组件（如 `useForm` 中的 `render.component`）时能够自动获得代码补全，你可以通过 TypeScript 的模块扩展（Module Augmentation）向 `GlobalComponents` 接口注入你的全局组件名称：
+可以通过 TypeScript 的模块扩展补充全局组件类型。
+这会为 `render.component` 提供代码补全。
 
 ```ts
-import { Component } from 'vue';
+import type { Component } from 'vue';
 
 declare module 'element-hooks' {
   interface GlobalComponents {
@@ -71,4 +79,5 @@ declare module 'element-hooks' {
 }
 ```
 
-这段代码可以直接添加到你的任何 `.ts` 文件中，例如 `config.ts`，也可以添加到一个 `.d.ts` 文件中。确保这个文件包含在项目的 `tsconfig.json` 中的 "file" 或 "include" 字段内。
+这段声明可以放在 `.ts` 或 `.d.ts` 文件中。
+请确保 `tsconfig.json` 的 `files` 或 `include` 包含该文件。
