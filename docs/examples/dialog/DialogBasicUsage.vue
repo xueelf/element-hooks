@@ -1,14 +1,12 @@
 <script setup lang="ts">
   import { useDialog, useMessageBox } from 'element-hooks';
 
-  const messageBox = useMessageBox();
+  const { confirm } = useMessageBox();
   const [Dialog, { open, close }] = useDialog({
     width: 500,
     title: 'Tips',
     async beforeClose(done) {
-      const isConfirmed = await messageBox.confirm(
-        'Are you sure to close this dialog?',
-      );
+      const isConfirmed = await confirm('Are you sure to close this dialog?');
       if (isConfirmed) {
         done();
       }
