@@ -1,8 +1,8 @@
 <script setup lang="ts">
-  import { useTable } from 'element-hooks';
+  import { type TableRow, useTable } from 'element-hooks';
   import { ref } from 'vue';
 
-  interface User {
+  interface User extends TableRow {
     date: string;
     name: string;
     address: string;
@@ -33,7 +33,7 @@
 
   const currentRow = ref<User | null>(null);
 
-  const [Table, { instance }] = useTable({
+  const [Table, { instance }] = useTable<User>({
     data: tableData,
     highlightCurrentRow: true,
     columns: [

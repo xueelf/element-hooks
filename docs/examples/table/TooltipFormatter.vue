@@ -45,21 +45,22 @@
   const [Table] = useTable({
     data: tableData,
     showOverflowTooltip: true,
-    tooltipFormatter: tableRowFormatter as any,
+    tooltipFormatter: tableRowFormatter,
     columns: [
       { prop: 'address', label: 'extends table formatter', width: 240 },
       {
         prop: 'tags',
         label: 'formatter object',
         width: 240,
-        tooltipFormatter: (({ row }: any) => row.tags.join(', ')) as any,
+        tooltipFormatter: ({ row }: TableTooltipData<TableData>) =>
+          row.tags.join(', '),
         slot: 'tags',
       },
       {
         prop: 'url',
         label: 'with vnode',
         width: 240,
-        tooltipFormatter: withVNode as any,
+        tooltipFormatter: withVNode,
       },
     ],
   });

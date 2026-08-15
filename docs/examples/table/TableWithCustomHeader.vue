@@ -1,8 +1,8 @@
 <script setup lang="ts">
-  import { useTable } from 'element-hooks';
+  import { type TableRow, useTable } from 'element-hooks';
   import { ref, watch } from 'vue';
 
-  interface User {
+  interface User extends TableRow {
     date: string;
     name: string;
     address: string;
@@ -39,7 +39,7 @@
     console.log(index, row);
   };
 
-  const [Table, { setData }] = useTable({
+  const [Table, { setData }] = useTable<User>({
     data: tableData,
     columns: [
       { label: 'Date', prop: 'date' },

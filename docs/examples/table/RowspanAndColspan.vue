@@ -1,8 +1,8 @@
 <script setup lang="ts">
-  import { useTable } from 'element-hooks';
+  import { type TableRow, useTable } from 'element-hooks';
   import { type TableColumnCtx } from 'element-plus';
 
-  interface User {
+  interface User extends TableRow {
     id: string;
     name: string;
     amount1: string;
@@ -55,7 +55,7 @@
     },
   ];
 
-  const [Table] = useTable({
+  const [Table] = useTable<User>({
     data: tableData,
     spanMethod({ rowIndex, columnIndex }: SpanMethodProps) {
       if (rowIndex % 2 === 0) {
@@ -76,7 +76,7 @@
     ],
   });
 
-  const [ObjectSpanTable] = useTable({
+  const [ObjectSpanTable] = useTable<User>({
     data: tableData,
     spanMethod({ rowIndex, columnIndex }: SpanMethodProps) {
       if (columnIndex === 0) {

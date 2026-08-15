@@ -1,7 +1,7 @@
 <script setup lang="ts">
-  import { useTable } from 'element-hooks';
+  import { type TableRow, useTable } from 'element-hooks';
 
-  interface User {
+  interface User extends TableRow {
     id: number;
     date: string;
     name: string;
@@ -102,7 +102,7 @@
     }, 1000);
   };
 
-  const [Table] = useTable({
+  const [Table] = useTable<User>({
     data: tableData,
     rowKey: 'id',
     border: true,
@@ -114,7 +114,7 @@
     ],
   });
 
-  const [LazyTable] = useTable({
+  const [LazyTable] = useTable<User>({
     data: tableDataLazy,
     rowKey: 'id',
     border: true,

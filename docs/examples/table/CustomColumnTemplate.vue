@@ -1,8 +1,8 @@
 <script setup lang="ts">
   import { Timer } from '@element-plus/icons-vue';
-  import { useTable } from 'element-hooks';
+  import { type TableRow, useTable } from 'element-hooks';
 
-  interface User {
+  interface User extends TableRow {
     date: string;
     name: string;
     address: string;

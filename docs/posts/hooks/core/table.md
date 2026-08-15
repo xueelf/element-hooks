@@ -1,6 +1,8 @@
 # useTable
 
-`useTable` 通过配置驱动 `ElTable`，你可以使用列定义数组代替 `<template>` 视图模板中的多层 `el-table-column` 嵌套，并通过控制器统一管理表格状态。
+`useTable` 通过配置驱动 `ElTable`。
+列定义数组可以替代多层 `el-table-column` 结构。
+控制器用于统一管理表格状态。
 
 这种方式在列较多、交互复杂或需要动态切换列配置的场景中更具可维护性。
 
@@ -42,6 +44,16 @@
   </template>
 
 <<< @/examples/table/TableWithStatus.vue
+</ExampleCard>
+
+## 始终显示悬浮提示 {#table-with-show-overflow-tooltip}
+
+<ExampleCard>
+  <template #example>
+    <TableWithShowOverflowTooltip />
+  </template>
+
+<<< @/examples/table/TableWithShowOverflowTooltip.vue
 </ExampleCard>
 
 ## 固定表头 {#table-with-fixed-header}
@@ -92,6 +104,16 @@
   </template>
 
 <<< @/examples/table/GroupingTableHead.vue
+</ExampleCard>
+
+## 固定表头 {#table-with-fixed-group-header}
+
+<ExampleCard>
+  <template #example>
+    <TableWithFixedGroupHeader />
+  </template>
+
+<<< @/examples/table/TableWithFixedGroupHeader.vue
 </ExampleCard>
 
 ## 单选 {#single-select}
@@ -174,6 +196,36 @@
 <<< @/examples/table/TreeDataAndLazyMode.vue
 </ExampleCard>
 
+## 可选择的树形数据 {#selectable-tree}
+
+<ExampleCard>
+  <template #example>
+    <SelectableTree />
+  </template>
+
+<<< @/examples/table/SelectableTree.vue
+</ExampleCard>
+
+## 尾部合计行 {#summary-row}
+
+<ExampleCard>
+  <template #example>
+    <SummaryRow />
+  </template>
+
+<<< @/examples/table/SummaryRow.vue
+</ExampleCard>
+
+## 合并列或行 {#rowspan-and-colspan}
+
+<ExampleCard>
+  <template #example>
+    <RowspanAndColspan />
+  </template>
+
+<<< @/examples/table/RowspanAndColspan.vue
+</ExampleCard>
+
 ## 自定义索引 {#custom-index}
 
 <ExampleCard>
@@ -194,16 +246,6 @@
 <<< @/examples/table/TableLayout.vue
 </ExampleCard>
 
-## 合并列或行 {#rowspan-and-colspan}
-
-<ExampleCard>
-  <template #example>
-    <RowspanAndColspan />
-  </template>
-
-<<< @/examples/table/RowspanAndColspan.vue
-</ExampleCard>
-
 ## 自定义悬浮提示 {#tooltip-formatter}
 
 <ExampleCard>
@@ -214,58 +256,39 @@
 <<< @/examples/table/TooltipFormatter.vue
 </ExampleCard>
 
-## 始终显示悬浮提示 {#table-with-show-overflow-tooltip}
-
-<ExampleCard>
-  <template #example>
-    <TableWithShowOverflowTooltip />
-  </template>
-
-<<< @/examples/table/TableWithShowOverflowTooltip.vue
-</ExampleCard>
-
-## 尾部合计行 {#summary-row}
-
-<ExampleCard>
-  <template #example>
-    <SummaryRow />
-  </template>
-
-<<< @/examples/table/SummaryRow.vue
-</ExampleCard>
-
 ## API {#api}
 
-### Options
+`useTable` 继承 `ElTable` 的属性，并增加以下配置。
 
-`useTable` 的配置项继承自 Element Plus `ElTable` 的 Props，并额外增加以下字段：
+- **`columns`**：用于声明表格列的 `TableColumn<T>[]`。
+- **`data`**：表格数据 `T[]`。
 
-- **`columns`**: `TableColumn[]` —— 核心配置，用于声明表格列。
-- **`data`**: `T[]` —— 表格数据。
+### TableColumn
 
-#### TableColumn
+属性与 `ElTableColumn` 一致，并增加以下配置。
 
-属性与 `ElTableColumn` 的 props 一致，同时额外支持：
+| 字段       | 说明                                                          | 类型                                           |
+| ---------- | ------------------------------------------------------------- | ---------------------------------------------- |
+| `slot`     | 默认插槽名（`slots.default` 的简写）                          | `string`                                       |
+| `slots`    | 具名插槽配置（`default`、`header`、`filterIcon` 和 `expand`） | `Partial<Record<TableColumnSlotName, string>>` |
+| `children` | 子列配置（用于多级表头）                                      | `TableColumn<T>[]`                             |
+| `render`   | 渲染组件配置                                                  | `RenderOptions<T>`                             |
 
-| 字段       | 说明                                                       | 类型                                                     |
-| ---------- | ---------------------------------------------------------- | -------------------------------------------------------- |
-| `slot`     | 默认插槽名（`slots.default` 的简写）                       | `string`                                                 |
-| `slots`    | 具名插槽配置 (`default`, `header`, `filterIcon`, `expand`) | `Record<string, string>`                                 |
-| `children` | 子列配置 (用于多级表头)                                    | `TableColumn[]`                                          |
-| `render`   | 渲染组件配置                                               | `{ component: Component \| string, props?: Recordable }` |
+#### `render.component`
 
-##### `render.component`
+`render.component` 可以使用全局组件名称。
+例如，`tag` 可以映射到 `ElTag`。
 
-当 `render.component` 为字符串时，会从 `app.use(ElementHooks, { components })` 传入的全局组件映射中查找并渲染对应组件（例如 `components: { tag: ElTag }` 对应 `render.component = 'tag'`）。
+#### `render.props`
 
-##### `render.props`
+`render.props` 的属性值可以是函数。
+函数参数是当前行数据 `row`。
+组件渲染时会执行该函数并追踪依赖。
 
-在 `render.props` 中，如果你需要使用**响应式变量**来给组件传参，或者需要根据当前行的数据动态传参，可以将其写为一个函数。组件会在渲染时自动执行该函数（**函数的默认参数为当前行的数据 `row`**）并追踪依赖。
-
-这意味着当你的响应式数据或当前行数据发生改变时，组件 Props 也会自动重新渲染，从而实现**动态传参**，无需再手动调用 `setState` 或 `setColumns` 刷新整个列表项配置。
+依赖变化后，动态属性会自动更新。
 
 :::warning 注意事项
-动态传参的特性会过滤掉以 `on` 开头的事件属性。例如 `onClick` 或 `onChange` 等事件监听器，即使为函数也不会被自动执行。
+以 `on` 开头的事件属性不会自动执行。
 :::
 
 ```ts
@@ -288,17 +311,28 @@ const [Table] = useTable({
 });
 ```
 
-##### `render.slot`
+#### `slot`
 
 `slot` 是 `slots.default` 的简写形式。当同一个列同时定义了 `slot` 和 `render` 时，插槽优先。
 
 ### Controller
 
-| 方法         | 说明                                            | 参数                                     |
-| ------------ | ----------------------------------------------- | ---------------------------------------- |
-| `setState`   | 动态更新表格整体配置                            | `(state: Partial<TableOptions>) => void` |
-| `setColumns` | 动态更新列定义                                  | `(columns: TableColumn[]) => void`       |
-| `getColumns` | 获取当前列定义快照                              | `() => TableColumn[]`                    |
-| `setData`    | 动态更新表格数据                                | `(data: T[]) => void`                    |
-| `getData`    | 获取当前数据快照                                | `() => T[]`                              |
-| `instance`   | 内部 ElTable 实例（可调用排序、选择等原生方法） | `Ref<TableInstance>`                     |
+| 方法         | 说明                                            | 参数                                  |
+| ------------ | ----------------------------------------------- | ------------------------------------- |
+| `setState`   | 动态更新表格整体配置                            | `(state: TableOptions<T>) => void`    |
+| `setColumns` | 动态更新列定义                                  | `(columns: TableColumn<T>[]) => void` |
+| `getColumns` | 获取当前列定义                                  | `() => TableColumn<T>[]`              |
+| `setData`    | 更新数据，支持同步和异步回调函数                | `(data: T[] \| () => Awaitable<T[]>)` |
+| `getData`    | 获取当前数据                                    | `() => T[]`                           |
+| `instance`   | 内部 ElTable 实例（可调用排序、选择等原生方法） | `Ref<TableInstance \| null>`          |
+
+`setData` 接收回调函数时会立即执行一次。
+回调函数返回 Promise 时会显示 `v-loading`。
+错误会继续向调用方抛出。
+并发调用只会提交最近一次结果。
+所有回调函数完成后，加载状态才会结束。
+
+`T` 必须满足 `object` 约束。
+默认类型 `TableRow` 是 `Record<string, unknown>`。
+
+`setState` 和 `setColumns` 支持 `(prev) => next` 函数式更新。

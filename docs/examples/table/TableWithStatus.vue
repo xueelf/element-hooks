@@ -1,7 +1,7 @@
 <script setup lang="ts">
-  import { useTable } from 'element-hooks';
+  import { type TableRow, useTable } from 'element-hooks';
 
-  interface User {
+  interface User extends TableRow {
     date: string;
     name: string;
     address: string;
@@ -35,7 +35,7 @@
         address: 'No. 189, Grove St, Los Angeles',
       },
     ],
-    rowClassName({ rowIndex }) {
+    rowClassName({ rowIndex }: { rowIndex: number }) {
       if (rowIndex === 1) {
         return 'warning-row';
       } else if (rowIndex === 3) {

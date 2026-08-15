@@ -1,8 +1,8 @@
 <script setup lang="ts">
-  import { useTable } from 'element-hooks';
+  import { type TableRow, useTable } from 'element-hooks';
   import { reactive } from 'vue';
 
-  interface User {
+  interface User extends TableRow {
     id: number;
     date: string;
     name: string;
@@ -58,7 +58,7 @@
     },
   ];
 
-  const [Table] = useTable({
+  const [Table] = useTable<User>({
     data: tableData,
     rowKey: 'id',
     defaultExpandAll: true,

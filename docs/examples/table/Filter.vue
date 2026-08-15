@@ -1,7 +1,7 @@
 <script setup lang="ts">
-  import { useTable } from 'element-hooks';
+  import { type TableRow, useTable } from 'element-hooks';
 
-  interface User {
+  interface User extends TableRow {
     date: string;
     name: string;
     address: string;
@@ -35,7 +35,7 @@
     },
   ];
 
-  const [Table, { instance }] = useTable({
+  const [Table, { instance }] = useTable<User>({
     data: tableData,
     rowKey: 'date',
     columns: [

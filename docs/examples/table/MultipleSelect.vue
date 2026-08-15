@@ -1,8 +1,8 @@
 <script setup lang="ts">
-  import { useTable } from 'element-hooks';
+  import { type TableRow, useTable } from 'element-hooks';
   import { ref } from 'vue';
 
-  interface User {
+  interface User extends TableRow {
     id: number;
     date: string;
     name: string;
@@ -58,7 +58,7 @@
 
   const selectable = (row: User) => ![1, 2].includes(row.id);
 
-  const [Table, { instance }] = useTable({
+  const [Table, { instance }] = useTable<User>({
     data: tableData,
     rowKey: 'id',
     columns: [
@@ -88,10 +88,10 @@
     <template #date="scope">{{ scope.row.date }}</template>
   </Table>
   <div style="margin-top: 20px">
-    <el-button @click="toggleSelection([tableData[1], tableData[2]])">
+    <el-button @click="toggleSelection([tableData[1]!, tableData[2]!])">
       Toggle selection status of second and third rows
     </el-button>
-    <el-button @click="toggleSelection([tableData[1], tableData[2]], false)">
+    <el-button @click="toggleSelection([tableData[1]!, tableData[2]!], false)">
       Toggle selection status based on selectable
     </el-button>
     <el-button @click="toggleSelection()">Clear selection</el-button>

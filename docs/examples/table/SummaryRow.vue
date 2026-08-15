@@ -1,9 +1,9 @@
 <script setup lang="ts">
-  import { useTable } from 'element-hooks';
+  import { type TableRow, useTable } from 'element-hooks';
   import { type TableColumnCtx } from 'element-plus';
   import { type VNode, h } from 'vue';
 
-  interface Product {
+  interface Product extends TableRow {
     id: string;
     name: string;
     amount1: string;
@@ -11,9 +11,9 @@
     amount3: number;
   }
 
-  interface SummaryMethodProps<T extends Record<string, any> = Product> {
-    columns: TableColumnCtx<T>[];
-    data: T[];
+  interface SummaryMethodProps {
+    columns: TableColumnCtx<Product>[];
+    data: Product[];
   }
 
   const tableData: Product[] = [
@@ -54,7 +54,7 @@
     },
   ];
 
-  const [Table] = useTable({
+  const [Table] = useTable<Product>({
     data: tableData,
     border: true,
     showSummary: true,
@@ -67,7 +67,7 @@
     ],
   });
 
-  const [CustomSummaryTable] = useTable({
+  const [CustomSummaryTable] = useTable<Product>({
     data: tableData,
     border: true,
     height: 200,
