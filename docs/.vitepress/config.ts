@@ -144,7 +144,7 @@ export default defineConfig({
     css: {
       preprocessorOptions: {
         scss: {
-          additionalData: `@use '~/theme/styles/element.scss';`,
+          additionalData: `@use '~/docs/.vitepress/theme/styles/element.scss';`,
         },
       },
     },
