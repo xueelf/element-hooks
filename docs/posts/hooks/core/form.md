@@ -112,9 +112,10 @@
 ## API {#api}
 
 `useForm` 继承 `ElForm` 的属性，并增加以下配置。
+传入 options 时，入参类型为 `SetRequired<FormOptions<T>, 'model'>`。
 
 - **`items`**：用于声明表单项的 `FormItem<T>[]`。
-- **`model`**：初始表单模型 `T`。未传入时返回 `null`。
+- **`model`**：初始表单模型 `T`。传入 options 时必填；无参调用时，`getModel()` 返回 `null`。
 
 ### FormItem
 
@@ -132,30 +133,30 @@
 
 #### `render.props`
 
-`render.props` 的属性值可以是函数。
+`render.props` 可以是属性对象，也可以是返回完整属性对象的函数。
 函数参数是当前表单模型 `model`。
 组件渲染时会执行该函数并追踪依赖。
 
 依赖变化后，动态属性会自动更新。
 
-:::warning 注意事项
-以 `on` 开头的事件属性不会自动执行。
-:::
+属性对象及函数返回值中的事件、格式化器等函数属性会原样传递给组件。
 
 ```ts
 import { ElSelect } from 'element-plus';
+import { ref } from 'vue';
 
 const options = ref([]);
 const [Form] = useForm({
+  model: { status: 'active' },
   items: [
     {
       render: {
         component: ElSelect,
-        props: {
-          options: () => options.value,
+        props: model => ({
+          options: options.value,
           // model 为当前表单数据
-          disabled: model => model.status !== 'active',
-        },
+          disabled: model.status !== 'active',
+        }),
       },
     },
   ],
@@ -173,8 +174,9 @@ const [Form] = useForm({
 | `setState` | 动态更新整体配置                                 | `(state: FormOptions<T>) => void` |
 | `setItems` | 动态更新表单项                                   | `(items: FormItem<T>[]) => void`  |
 | `getItems` | 获取当前表单项                                   | `() => FormItem<T>[]`             |
-| `setModel` | 动态更新模型数据，传入 `null` 时清空             | `(model: T \| null) => void`      |
+| `setModel` | 动态更新或初始化模型数据                         | `(model: T) => void`              |
 | `getModel` | 获取当前模型数据                                 | `() => T \| null`                 |
 | `instance` | 内部 ElForm 实例（可调用 `validate` 等原生方法） | `Ref<FormInstance \| null>`       |
 
 `setState`、`setItems` 和 `setModel` 支持 `(prev) => next` 更新。
+模型尚未初始化时，`setModel` 只能直接传入模型对象。

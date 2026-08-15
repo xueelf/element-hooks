@@ -106,16 +106,17 @@ await setData(async payload => {
 
 ### Controller
 
-| 方法            | 说明                                 | 参数                                                                     |
-| --------------- | ------------------------------------ | ------------------------------------------------------------------------ |
-| `setState`      | 更新 `Grid` 的整体状态               | `(state: GridOptions<D, M>) => void`                                     |
-| `setData`       | 更新数据，支持同步和异步回调函数     | `(data: GridData<D> \| GridDataCallback<D, M>) => void \| Promise<void>` |
-| `setModel`      | 更新表单模型数据，传入 `null` 时清空 | `(model: M \| null) => void`                                             |
-| `getModel`      | 获取当前表单数据                     | `() => M \| null`                                                        |
-| `setItems`      | 更新表单项配置                       | `(items: FormItem<M>[]) => void`                                         |
-| `setColumns`    | 更新表格列配置                       | `(columns: TableColumn<D>[]) => void`                                    |
-| `getData`       | 获取当前表格渲染的数据               | `() => D[]`                                                              |
-| `getPagination` | 只读获取当前页码与每页条数           | `() => { currentPage?: number; pageSize?: number }`                      |
-| `instance`      | 获取内部表单、表格和分页实例         | `Ref<GridInstance \| null>`                                              |
+| 方法            | 说明                             | 参数                                                                     |
+| --------------- | -------------------------------- | ------------------------------------------------------------------------ |
+| `setState`      | 更新 `Grid` 的整体状态           | `(state: GridOptions<D, M>) => void`                                     |
+| `setData`       | 更新数据，支持同步和异步回调函数 | `(data: GridData<D> \| GridDataCallback<D, M>) => void \| Promise<void>` |
+| `setModel`      | 更新或初始化表单模型数据         | `(model: M) => void`                                                     |
+| `getModel`      | 获取当前表单数据                 | `() => M \| null`                                                        |
+| `setItems`      | 更新表单项配置                   | `(items: FormItem<M>[]) => void`                                         |
+| `setColumns`    | 更新表格列配置                   | `(columns: TableColumn<D>[]) => void`                                    |
+| `getData`       | 获取当前表格渲染的数据           | `() => D[]`                                                              |
+| `getPagination` | 只读获取当前页码与每页条数       | `() => { currentPage?: number; pageSize?: number }`                      |
+| `instance`      | 获取内部表单、表格和分页实例     | `Ref<GridInstance \| null>`                                              |
 
 `setState`、`setModel`、`setItems` 和 `setColumns` 支持函数式更新。
+模型尚未初始化时，`setModel` 只能直接传入模型对象。

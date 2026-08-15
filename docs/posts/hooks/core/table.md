@@ -281,15 +281,13 @@
 
 #### `render.props`
 
-`render.props` 的属性值可以是函数。
+`render.props` 可以是属性对象，也可以是返回完整属性对象的函数。
 函数参数是当前行数据 `row`。
 组件渲染时会执行该函数并追踪依赖。
 
 依赖变化后，动态属性会自动更新。
 
-:::warning 注意事项
-以 `on` 开头的事件属性不会自动执行。
-:::
+属性对象及函数返回值中的事件、格式化器等函数属性会原样传递给组件。
 
 ```ts
 import { ElTag } from 'element-plus';
@@ -301,10 +299,10 @@ const [Table] = useTable({
       label: '性别',
       render: {
         component: ElTag,
-        props: {
+        props: row => ({
           // row 为当前行的数据
-          type: row => (row.gender === '男' ? 'primary' : 'danger'),
-        },
+          type: row.gender === '男' ? 'primary' : 'danger',
+        }),
       },
     },
   ],
