@@ -1,15 +1,19 @@
 import { type DialogInstance, ElDialog } from 'element-plus';
 import { defineComponent, ref } from 'vue';
 
-import { withOptions } from '@/config';
-import { type HookOptions, HOOK_METADATA } from '@/devtools';
+import { withOptions } from '#/config';
+import {
+  type HookComponentProps,
+  type HookOptions,
+  HOOK_METADATA,
+} from '#/devtools';
 import {
   type Camelized,
   type Setter,
   createController,
   unwrapSetter,
   useState,
-} from '@/util';
+} from '#/util';
 
 export type DialogSlotName = 'default' | 'header' | 'footer';
 
@@ -22,6 +26,8 @@ export type DialogOptions = HookOptions &
       >
     >
   >;
+
+export type DialogProps = HookComponentProps<DialogOptions>;
 
 export function useDialog(options: DialogOptions = {}) {
   const name = 'Dialog';
@@ -63,7 +69,7 @@ export function useDialog(options: DialogOptions = {}) {
     getVisible,
   });
 
-  const Dialog = defineComponent<DialogOptions>({
+  const Dialog = defineComponent<DialogProps>({
     name,
     inheritAttrs: false,
     setup(_, { slots }) {
