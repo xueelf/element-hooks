@@ -1,25 +1,26 @@
 {
   "compilerOptions": {
     /* Language and Environment */
-    "target": "esnext",
-    "lib": ["dom", "esnext"],
+    "target": "ESNext",
+    "lib": ["DOM", "ESNext"],
     "jsx": "preserve",
     "jsxImportSource": "vue",
     "moduleDetection": "force",
+    "types": ["bun"],
 
     /* Modules */
-    "module": "esnext",
+    "module": "Preserve",
     "moduleResolution": "bundler",
     "paths": {
-      "~/*": ["./docs/.vitepress/*"],
-      "@/*": ["./src/*"],
-      "element-hooks": ["./src/index"],
-      "package.json": ["./package.json"],
+      "~/*": ["./*"],
+      "#/*": ["./src/*"],
+      "element-hooks": ["./src/index"]
     },
     "allowImportingTsExtensions": true,
 
     /* Emit */
     "noEmit": true,
+    "outDir": "dist",
 
     /* Interop Constraints */
     "verbatimModuleSyntax": true,
@@ -29,16 +30,11 @@
     /* Type Checking */
     "strict": true,
     "noFallthroughCasesInSwitch": true,
+    "noUncheckedIndexedAccess": true,
+    "noImplicitOverride": true,
 
     /* Completeness */
-    "skipLibCheck": true,
+    "skipLibCheck": true
   },
-  "include": [
-    "docs/**/*.ts",
-    "docs/**/*.vue",
-    "scripts/**/*.ts",
-    "scripts/**/*.tsx",
-    "src/**/*.ts",
-    "src/**/*.tsx",
-  ],
+  "include": ["*.config.ts", "docs", "scripts", "src"]
 }

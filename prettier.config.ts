@@ -1,4 +1,5 @@
 import { type Config } from 'prettier';
+import { type SortOptions } from 'prettier-plugin-sort';
 
 export default {
   tabWidth: 2,
@@ -10,13 +11,5 @@ export default {
   endOfLine: 'lf',
   vueIndentScriptAndStyle: true,
   plugins: ['prettier-plugin-sort'],
-  importOrderGroups: [
-    'builtin',
-    'external',
-    'internal',
-    'parent',
-    'sibling',
-    'index',
-  ],
-  importOrderTypeImports: 'inline-first',
-} satisfies Config;
+  esmImportTypeStyle: 'inline-first',
+} satisfies Config & SortOptions;

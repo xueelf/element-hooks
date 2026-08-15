@@ -1,8 +1,9 @@
-import { version } from 'package.json';
 import { type Plugin } from 'vue';
 
 import { type GlobalOptions, setOptions } from './config';
 import { setupDevtools } from './devtools';
+
+import { version } from '~/package.json';
 
 type ElementHooksPlugin = Plugin<[options?: GlobalOptions]> & {
   version: string;
