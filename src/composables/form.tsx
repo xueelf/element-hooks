@@ -4,10 +4,14 @@ import {
   ElForm,
   ElFormItem,
 } from 'element-plus';
-import { defineComponent, h, ref, toRaw, watch } from 'vue';
+import { type VNodeChild, defineComponent, h, ref, toRaw, watch } from 'vue';
 
-import { getComponent, withOptions } from '@/config';
-import { type HookOptions, HOOK_METADATA } from '@/devtools';
+import { getComponent, withOptions } from '#/config';
+import {
+  type HookComponentProps,
+  type HookOptions,
+  HOOK_METADATA,
+} from '#/devtools';
 import {
   type Camelized,
   type Recordable,
@@ -17,13 +21,16 @@ import {
   resolveFunctionalProps,
   unwrapSetter,
   useState,
-} from '@/util';
+} from '#/util';
 
-export type FormItemSlotName = 'default' | 'label' | 'error';
+const formItemSlotNames = ['default', 'label', 'error'] as const;
+export type FormItemSlotName = (typeof formItemSlotNames)[number];
+type FormItemSlot = (...args: never[]) => VNodeChild;
 
-export type FormItem<T extends Recordable = Recordable> = Partial<
+export type FormItem<T extends object = Recordable> = Partial<
   Omit<FormItemProps, 'prop'>
 > & {
+  key?: string | number;
   prop?: string | string[];
   slot?: string;
   slots?: Partial<Record<FormItemSlotName, string>>;
@@ -31,23 +38,28 @@ export type FormItem<T extends Recordable = Recordable> = Partial<
   raw?: boolean;
 };
 
-export type FormOptions<T extends Recordable> = HookOptions &
+export type FormOptions<T extends object> = HookOptions &
   Partial<Camelized<Omit<FormInstance['$props'], 'ref' | 'model'>>> & {
     model?: T;
     items?: FormItem<T>[];
   };
 
-function getProp(targetObject: Recordable, path: string | string[]) {
+export type FormProps<T extends object> = HookComponentProps<FormOptions<T>>;
+
+function getProp(targetObject: object, path: string | string[]) {
   const pathKeys = Array.isArray(path) ? path : path.split('.');
 
-  return pathKeys.reduce(
-    (currentLevel, key: string) => (currentLevel ?? {})[key],
+  return pathKeys.reduce<unknown>(
+    (value, key) =>
+      typeof value === 'object' && value !== null
+        ? Reflect.get(value, key)
+        : undefined,
     targetObject,
   );
 }
 
 function setProp(
-  targetObject: Recordable,
+  targetObject: object,
   path: string | string[],
   value: unknown,
 ) {
@@ -57,20 +69,22 @@ function setProp(
   if (!lastKey) {
     return;
   }
-  const targetParent = pathKeys.reduce(
-    (currentLevel: Recordable, key: string) => {
-      if (currentLevel[key] === undefined) {
-        Reflect.set(currentLevel, key, {});
-      }
-      return currentLevel[key];
-    },
-    targetObject,
-  );
+  const targetParent = pathKeys.reduce<object>((target, key) => {
+    const currentValue = Reflect.get(target, key);
+
+    if (typeof currentValue === 'object' && currentValue !== null) {
+      return currentValue;
+    }
+    const nextValue = {};
+
+    Reflect.set(target, key, nextValue);
+    return nextValue;
+  }, targetObject);
 
   Reflect.set(targetParent, lastKey, value);
 }
 
-export function useForm<T extends Recordable = Recordable>(
+export function useForm<T extends object = Recordable>(
   options: FormOptions<T> = {},
 ) {
   const name = 'Form';
@@ -81,7 +95,8 @@ export function useForm<T extends Recordable = Recordable>(
     internal: options[HOOK_METADATA]?.internal,
   });
 
-  const [formState, setState, initState] = useState<FormOptions<T>>(merged);
+  const [formState, setState, initState, getCurrentState] =
+    useState<FormOptions<T>>(merged);
   const formModel = ref<T | null>(null);
   const formInstance = ref<FormInstance | null>(null);
 
@@ -93,18 +108,18 @@ export function useForm<T extends Recordable = Recordable>(
   };
 
   const getItems = (): FormItem<T>[] => {
-    return formState.value?.items ?? [];
+    return getCurrentState().items ?? [];
   };
 
-  const setModel: Setter<(typeof options)['model']> = update => {
+  const setModel: Setter<T | null> = update => {
     setState(prev => ({
       ...prev,
-      model: unwrapSetter(update, prev.model),
+      model: unwrapSetter(update, prev.model ?? null) ?? undefined,
     }));
   };
 
   const getModel = (): T | null => {
-    return toRaw(formModel.value);
+    return toRaw(getCurrentState().model ?? null);
   };
 
   const formController = createController(formInstance, {
@@ -115,20 +130,22 @@ export function useForm<T extends Recordable = Recordable>(
     getModel,
   });
 
-  const Form = defineComponent<FormOptions<T>>({
+  const Form = defineComponent<FormProps<T>>({
     name,
     inheritAttrs: false,
     setup(_, { slots }) {
       initState();
-      formModel.value = formState.value?.model ?? null;
 
       watch(
         () => formState.value?.model,
         model => {
-          if (model && model !== toRaw(formModel.value)) {
-            formModel.value = model;
+          const nextModel = model ?? null;
+
+          if (nextModel !== toRaw(formModel.value)) {
+            formModel.value = nextModel;
           }
         },
+        { immediate: true },
       );
 
       const Item = (itemOptions: FormItem<T>) => {
@@ -140,22 +157,22 @@ export function useForm<T extends Recordable = Recordable>(
           ...itemProps
         } = itemOptions;
         const itemSlotOptions = { ...rawItemSlots };
-        const itemSlots: Recordable = {};
 
         if (slot) {
           itemSlotOptions.default = slot;
         }
-        Object.keys(itemSlotOptions).forEach(key => {
-          const slotName: FormItemSlotName = Reflect.get(itemSlotOptions, key);
+        const itemSlots = formItemSlotNames.reduce<
+          Partial<Record<FormItemSlotName, FormItemSlot>>
+        >((result, key) => {
+          const slotName = itemSlotOptions[key];
+          const scopedSlot = slotName ? slots[slotName] : undefined;
 
-          if (slots[slotName]) {
-            itemSlots[key] = (scope: Recordable) => {
-              return (
-                <>{slots[slotName]?.({ ...scope, model: formModel.value })}</>
-              );
-            };
+          if (scopedSlot) {
+            result[key] = (scope: Recordable) =>
+              scopedSlot({ ...scope, model: formModel.value });
           }
-        });
+          return result;
+        }, {});
 
         if (render) {
           if (itemSlots.default) {
@@ -196,7 +213,7 @@ export function useForm<T extends Recordable = Recordable>(
         }
 
         if (raw) {
-          return itemSlots.default?.();
+          return <>{itemSlots.default?.()}</>;
         }
         return <ElFormItem {...itemProps}>{itemSlots}</ElFormItem>;
       };
@@ -211,7 +228,18 @@ export function useForm<T extends Recordable = Recordable>(
           <ElForm ref={formInstance} {...formProps} model={formModel.value}>
             {{
               default: () =>
-                items.map((item: FormItem<T>) => <Item {...item} />),
+                items.map((item, index) => (
+                  <Item
+                    {...item}
+                    key={
+                      item.key ??
+                      (Array.isArray(item.prop)
+                        ? item.prop.join('.')
+                        : item.prop) ??
+                      index
+                    }
+                  />
+                )),
               ...slots,
             }}
           </ElForm>
