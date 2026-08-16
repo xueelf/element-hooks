@@ -33,13 +33,14 @@ import {
   useState,
 } from '#/util';
 
-const tableColumnSlotNames = [
-  'default',
-  'header',
-  'filterIcon',
-  'expand',
+const tableColumnSlots = [
+  ['default', 'default'],
+  ['header', 'header'],
+  ['filterIcon', 'filter-icon'],
+  ['expand', 'expand'],
 ] as const;
-export type TableColumnSlotName = (typeof tableColumnSlotNames)[number];
+export type TableColumnSlotName = (typeof tableColumnSlots)[number][0];
+type TableColumnNativeSlotName = (typeof tableColumnSlots)[number][1];
 type TableColumnSlot = (...args: never[]) => VNodeChild;
 
 export type ColumnDefaultScope<T extends object> = {
@@ -165,14 +166,14 @@ export function useTable<T extends object = Recordable>(
         if (slot) {
           columnSlotOptions.default = slot;
         }
-        const columnSlots = tableColumnSlotNames.reduce<
-          Partial<Record<TableColumnSlotName, TableColumnSlot>>
-        >((result, key) => {
+        const columnSlots = tableColumnSlots.reduce<
+          Partial<Record<TableColumnNativeSlotName, TableColumnSlot>>
+        >((result, [key, nativeKey]) => {
           const slotName = columnSlotOptions[key];
           const scopedSlot = slotName ? slots[slotName] : undefined;
 
           if (scopedSlot) {
-            result[key] = (scope: ColumnScope<T>) => scopedSlot(scope);
+            result[nativeKey] = (scope: ColumnScope<T>) => scopedSlot(scope);
           }
           return result;
         }, {});
