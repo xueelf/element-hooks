@@ -1,10 +1,7 @@
 # useMessageBox
 
-`useMessageBox` 用于封装 `ElMessageBox` 的命令式调用。
-它支持消息提示、确认消息和提交内容。
-
-`confirm` 和 `prompt` 会统一处理取消或关闭结果。
-因此，调用方可以直接使用 `await` 处理结果。
+`useMessageBox` 返回 `ElMessageBox` 的 `alert`、`confirm` 和 `prompt` 方法。
+取消或关闭时，`confirm` 返回 `false`，`prompt` 返回 `null`。
 
 ## 消息提示 {#alert}
 
@@ -118,15 +115,15 @@
 
 ## API {#api}
 
-### useMessageBox
+### useMessageBox {#use-message-box}
 
-与 `ElMessageBox` 的函数调用方式一致，返回包含 `alert`、`confirm` 与 `prompt` 的方法对象。
+调用参数与 `ElMessageBox` 对应方法一致。
 
-- **`alert`**：与 `ElMessageBox.alert` 行为一致。
-- **`confirm`**：确认时返回 `true`，否则返回 `false`。
-- **`prompt`**：确认时返回输入值，否则返回 `null`。
+- **`alert`** — 与 `ElMessageBox.alert` 行为一致。
+- **`confirm`** — 确认时返回 `true`，否则返回 `false`。
+- **`prompt`** — 确认时返回输入值，否则返回 `null`。
 
-### 返回值方法
+### 返回值方法 {#returned-methods}
 
 | 方法名    | 描述                                 | 类型签名                                                       |
 | --------- | ------------------------------------ | -------------------------------------------------------------- |

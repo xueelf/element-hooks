@@ -1,10 +1,10 @@
 # useTable
 
-`useTable` 通过配置驱动 `ElTable`。
-列定义数组可以替代多层 `el-table-column` 结构。
-控制器用于统一管理表格状态。
+`useTable` 使用 `columns` 数组定义表格列。
+Controller 用于更新表格配置和数据。
+生成的 Table 组件仍支持 `ElTable` 的属性、插槽和事件。
 
-这种方式在列较多、交互复杂或需要动态切换列配置的场景中更具可维护性。
+这种方式适合列较多或需要动态调整列配置的表格。
 
 ## 基础表格 {#basic-table}
 
@@ -46,7 +46,7 @@
 <<< @/examples/table/TableWithStatus.vue
 </ExampleCard>
 
-## 始终显示悬浮提示 {#table-with-show-overflow-tooltip}
+## 显示溢出工具提示的表格 {#table-with-show-overflow-tooltip}
 
 <ExampleCard>
   <template #example>
@@ -206,7 +206,7 @@
 <<< @/examples/table/SelectableTree.vue
 </ExampleCard>
 
-## 尾部合计行 {#summary-row}
+## 表尾合计行 {#summary-row}
 
 <ExampleCard>
   <template #example>
@@ -216,7 +216,7 @@
 <<< @/examples/table/SummaryRow.vue
 </ExampleCard>
 
-## 合并列或行 {#rowspan-and-colspan}
+## 合并行或列 {#rowspan-and-colspan}
 
 <ExampleCard>
   <template #example>
@@ -246,7 +246,7 @@
 <<< @/examples/table/TableLayout.vue
 </ExampleCard>
 
-## 自定义悬浮提示 {#tooltip-formatter}
+## Tooltip 自定义 {#tooltip-formatter}
 
 <ExampleCard>
   <template #example>
@@ -258,12 +258,12 @@
 
 ## API {#api}
 
-`useTable` 继承 `ElTable` 的属性，并增加以下配置。
+`useTable` 支持 `ElTable` 的属性，并增加以下配置。
 
-- **`columns`**：用于声明表格列的 `TableColumn<T>[]`。
-- **`data`**：表格数据 `T[]`。
+- **`columns`** — 用于声明表格列的 `TableColumn<T>[]`。
+- **`data`** — 表格数据 `T[]`。
 
-### TableColumn
+### TableColumn {#table-column}
 
 属性与 `ElTableColumn` 一致，并增加以下配置。
 
@@ -274,22 +274,22 @@
 | `children` | 子列配置（用于多级表头）                                      | `TableColumn<T>[]`                             |
 | `render`   | 渲染组件配置                                                  | `RenderOptions<T>`                             |
 
-#### `render.component`
+#### `render.component` {#render-component}
 
 `render.component` 可以使用全局组件名称。
 例如，`tag` 可以映射到 `ElTag`。
 
-#### `render.props`
+#### `render.props` {#render-props}
 
-`render.props` 可以是属性对象，也可以是返回完整属性对象的函数。
+`render.props` 可以是属性对象，也可以是返回属性对象的函数。
 函数参数是当前行数据 `row`。
-组件渲染时会执行该函数并追踪依赖。
+组件会在渲染时执行该函数。
+函数中使用的响应式数据变化后，组件属性会自动更新。
 
-依赖变化后，动态属性会自动更新。
-
-属性对象及函数返回值中的事件、格式化器等函数属性会原样传递给组件。
+事件、格式化器等函数属性会直接传给组件。
 
 ```ts
+import { useTable } from 'element-hooks';
 import { ElTag } from 'element-plus';
 
 const [Table] = useTable({
@@ -309,26 +309,27 @@ const [Table] = useTable({
 });
 ```
 
-#### `slot`
+#### `slot` {#slot}
 
 `slot` 是 `slots.default` 的简写形式。当同一个列同时定义了 `slot` 和 `render` 时，插槽优先。
 
-### Controller
+### Controller {#controller}
 
-| 方法         | 说明                                            | 参数                                  |
-| ------------ | ----------------------------------------------- | ------------------------------------- |
-| `setState`   | 动态更新表格整体配置                            | `(state: TableOptions<T>) => void`    |
-| `setColumns` | 动态更新列定义                                  | `(columns: TableColumn<T>[]) => void` |
-| `getColumns` | 获取当前列定义                                  | `() => TableColumn<T>[]`              |
-| `setData`    | 更新数据，支持同步和异步回调函数                | `(data: T[] \| () => Awaitable<T[]>)` |
-| `getData`    | 获取当前数据                                    | `() => T[]`                           |
-| `instance`   | 内部 ElTable 实例（可调用排序、选择等原生方法） | `Ref<TableInstance \| null>`          |
+| 方法         | 说明                                            | 参数                                                    |
+| ------------ | ----------------------------------------------- | ------------------------------------------------------- |
+| `setState`   | 动态更新表格整体配置                            | `(state: TableOptions<T>) => void`                      |
+| `setColumns` | 动态更新列定义                                  | `(columns: TableColumn<T>[]) => void`                   |
+| `getColumns` | 获取当前列定义                                  | `() => TableColumn<T>[]`                                |
+| `setData`    | 直接或通过函数式更新数据                        | `(data: T[] \| ((prev: T[]) => T[])) => void`           |
+| `loadData`   | 执行一次同步或异步数据加载                      | `(loader: TableDataLoader<T>) => void \| Promise<void>` |
+| `getData`    | 获取当前数据                                    | `() => T[]`                                             |
+| `instance`   | 内部 ElTable 实例（可调用排序、选择等原生方法） | `Ref<TableInstance \| null>`                            |
 
-`setData` 接收回调函数时会立即执行一次。
-回调函数返回 Promise 时会显示 `v-loading`。
+`loadData` 会调用传入的加载函数，并使用返回结果更新表格数据。
+加载函数返回 `PromiseLike`（包括 `Promise`）时会显示 `v-loading`。
 错误会继续向调用方抛出。
-并发调用只会提交最近一次结果。
-所有回调函数完成后，加载状态才会结束。
+加载函数结束后，`v-loading` 会自动关闭。
+需要串行加载时，调用方应逐次 `await loadData(...)`。
 
 `T` 必须满足 `object` 约束。
 默认类型 `Recordable` 是 `Record<string, unknown>`。

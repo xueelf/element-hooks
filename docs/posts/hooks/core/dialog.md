@@ -1,9 +1,7 @@
 # useDialog
 
-`useDialog` 封装 `ElDialog` 的状态控制。
-它保留原生属性、插槽和事件。
-
-Hook 内部统一管理对话框的可见状态。
+`useDialog` 通过 Controller 管理 `ElDialog` 的显示状态。
+生成的 Dialog 组件仍支持原生属性、插槽和事件。
 
 ## 基础用法 {#basic-usage}
 
@@ -127,14 +125,14 @@ Hook 内部统一管理对话框的可见状态。
 
 ## API {#api}
 
-### Options
+### Options {#options}
 
-`useDialog` 继承 `ElDialog` 的属性。
+`useDialog` 支持 `ElDialog` 的属性。
 `modelValue` 由 Hook 内部管理，因此不对外暴露。
 
 更多属性请参考 [Element Plus Dialog Props](https://element-plus.org/zh-CN/component/dialog.html#attributes)。
 
-### Controller
+### Controller {#controller}
 
 | 方法         | 说明                                             | 参数                             |
 | ------------ | ------------------------------------------------ | -------------------------------- |

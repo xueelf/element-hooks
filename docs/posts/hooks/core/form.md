@@ -1,8 +1,7 @@
 # useForm
 
-`useForm` 为 `ElForm` 提供声明式配置。
-`items` 数组用于描述表单结构。
-控制器用于更新模型和访问组件实例。
+`useForm` 使用 `items` 数组描述表单项。
+Controller 用于更新模型和访问 `ElForm` 实例。
 
 `useForm` 保留校验、重置和清空校验等原生能力。
 
@@ -111,13 +110,13 @@
 
 ## API {#api}
 
-`useForm` 继承 `ElForm` 的属性，并增加以下配置。
-传入 options 时，入参类型为 `SetRequired<FormOptions<T>, 'model'>`。
+`useForm` 支持 `ElForm` 的属性，并增加以下配置。
+调用 `useForm(options)` 时，入参类型为 `SetRequired<FormOptions<T>, 'model'>`。
 
-- **`items`**：用于声明表单项的 `FormItem<T>[]`。
-- **`model`**：初始表单模型 `T`。传入 options 时必填；无参调用时，`getModel()` 返回 `null`。
+- **`items`** — 用于声明表单项的 `FormItem<T>[]`。
+- **`model`** — 初始表单模型 `T`。调用 `useForm(options)` 时必填。无参调用 `useForm()` 时，`getModel()` 返回 `null`。
 
-### FormItem
+### FormItem {#form-item}
 
 | 字段     | 说明                                      | 类型                                        |
 | -------- | ----------------------------------------- | ------------------------------------------- |
@@ -126,26 +125,26 @@
 | `slots`  | 具名插槽配置                              | `Partial<Record<FormItemSlotName, string>>` |
 | `render` | 渲染组件配置                              | `RenderOptions<T>`                          |
 
-#### `render.component`
+#### `render.component` {#render-component}
 
 `render.component` 可以使用全局组件名称。
 例如，`input` 可以映射到 `ElInput`。
 
-#### `render.props`
+#### `render.props` {#render-props}
 
-`render.props` 可以是属性对象，也可以是返回完整属性对象的函数。
+`render.props` 可以是属性对象，也可以是返回属性对象的函数。
 函数参数是当前表单模型 `model`。
-组件渲染时会执行该函数并追踪依赖。
+组件会在渲染时执行该函数。
+函数中使用的响应式数据变化后，组件属性会自动更新。
 
-依赖变化后，动态属性会自动更新。
-
-属性对象及函数返回值中的事件、格式化器等函数属性会原样传递给组件。
+事件、格式化器等函数属性会直接传给组件。
 
 ```ts
+import { useForm } from 'element-hooks';
 import { ElSelect } from 'element-plus';
 import { ref } from 'vue';
 
-const options = ref([]);
+const selectOptions = ref([]);
 const [Form] = useForm({
   model: { status: 'active' },
   items: [
@@ -153,7 +152,7 @@ const [Form] = useForm({
       render: {
         component: ElSelect,
         props: model => ({
-          options: options.value,
+          options: selectOptions.value,
           // model 为当前表单数据
           disabled: model.status !== 'active',
         }),
@@ -163,11 +162,11 @@ const [Form] = useForm({
 });
 ```
 
-#### `slot`
+#### `slot` {#slot}
 
 `slot` 是 `slots.default` 的简写形式。当同一个表单项同时定义了 `slot` 和 `render` 时，插槽优先。
 
-### Controller
+### Controller {#controller}
 
 | 方法       | 说明                                             | 参数                              |
 | ---------- | ------------------------------------------------ | --------------------------------- |

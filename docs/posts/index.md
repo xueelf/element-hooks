@@ -19,9 +19,11 @@ hero:
 
 features:
   - title: 配置驱动
-    details: 使用声明式配置生成表单、表格和对话框。
-  - title: 类型安全
-    details: 基于 TypeScript 编写，提供完整的类型推导。
-  - title: 原生能力
-    details: 继续使用 Element Plus 的属性、插槽和事件。
+    details: 通过配置描述组件结构，减少重复的模板代码。
+  - title: 状态管理
+    details: 组件状态由 Hook 管理，无需额外绑定 v-model 或维护响应式变量。
+  - title: 原生兼容
+    details: Element Plus 组件的 props 可直接作为 Hook options 使用。
+  - title: 组合能力
+    details: 组合多个 Element Plus 组件，复用常见的布局和交互逻辑。
 ---

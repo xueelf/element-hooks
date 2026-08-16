@@ -39,7 +39,7 @@ const options = {
 };
 const [Dialog, { setState }] = useDialog(options);
 
-// 由于 shallowRef 浅层对比的特性，这不会触发 render 更新
+// shallowRef 只追踪顶层引用，这不会触发渲染更新
 options.title = '新标题';
 
 // 正确方式是调用 setState 传入新的对象引用
@@ -48,7 +48,7 @@ setState({ title: '新标题', width: 800 });
 
 ## 快捷方法 {#shortcuts}
 
-`useDialog` 控制器通过 `setState` 更新整体配置。
+`useDialog` 的 Controller 通过 `setState` 更新全部配置。
 它同样支持直接设值和函数式更新。
 
 ```ts
@@ -60,7 +60,7 @@ const [Dialog, { setState }] = useDialog({
 // 1. 普通传参，全量覆盖（不推荐用于复杂配置）
 setState({ title: '新标题', fullscreen: true });
 
-// 2. 函数式更新，实现针对性修改并合并历史（推荐）
+// 2. 函数式更新，只修改 title 并保留其他配置（推荐）
 setState(prev => ({ ...prev, title: '新标题' }));
 ```
 
@@ -83,14 +83,15 @@ setTitle(prevTitle => `${prevTitle} - Subtitle`);
 | ----------- | --------------------- | ---------------------------------------------------------------- |
 | `useDialog` | `setTitle(title)`     | `setState(prev => ({ ...prev, title }))`                         |
 | `useTable`  | `setColumns(columns)` | `setState(prev => ({ ...prev, columns }))`                       |
-| `useTable`  | `setData(data)`       | 写入 `data`，并使在途回调结果失效                                |
+| `useTable`  | `setData(data)`       | 写入 `data`                                                      |
 | `useForm`   | `setItems(items)`     | `setState(prev => ({ ...prev, items }))`                         |
 | `useForm`   | `setModel(model)`     | `setState(prev => ({ ...prev, model }))`                         |
 | `useGrid`   | `setItems(items)`     | `setState(prev => ({ ...prev, form: { ...prev.form, items } }))` |
 | `useGrid`   | `setModel(model)`     | `setState(prev => ({ ...prev, form: { ...prev.form, model } }))` |
 | `useGrid`   | `setColumns(columns)` | `setState(prev => ({ ...prev, columns }))`                       |
-| `useGrid`   | `setData(data)`       | 写入 `data`，并使在途回调结果失效                                |
+| `useGrid`   | `setData(data)`       | 写入 `data`                                                      |
 
-`setData` 还支持同步回调函数和异步回调函数。
-异步回调函数执行期间会自动管理加载状态。
-`useGrid` 的回调参数包含表单模型和分页参数。
+`loadData` 支持同步和异步加载函数。
+异步加载函数执行期间会自动管理加载状态。
+`useGrid` 的加载函数参数包含表单模型和分页参数。
+需要串行加载时，调用方应逐次 `await loadData(...)`。

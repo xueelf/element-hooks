@@ -1,18 +1,17 @@
 # Hook 介绍
 
-Element Hooks 提供 Element Plus 的组合式封装。
-组件 Hook 通过对象配置生成组件。
-命令式 Hook 用于处理交互提示。
+Element Hooks 为 Element Plus 提供 Vue 组合式 API 风格的 Hook。
+组件 Hook 返回可渲染的组件和 Controller。
+命令式 Hook 直接返回可调用的方法。
 
-根据能力来源和组合关系，所有 Hook 分为两类。
+按照能力来源，Hook 分为 Core Hooks 和 Composite Hooks。
 
 ## 设计模式 {#design-pattern}
 
 Hook 配置应使用普通对象。
 不要将 `ref` 或 `reactive` 作为配置对象。
 
-后续状态变化由控制器管理。
-调用方应使用控制器的读取和更新方法。
+初始化后，应通过 Controller 读取或更新状态。
 
 ```ts
 // 错误示范：传入响应式对象
@@ -25,7 +24,7 @@ options.title = '';
 ```
 
 ```ts
-// 正确示范：传递普通对象，通过控制器接管状态
+// 正确示范：传递普通对象，通过 Controller 更新状态
 const [Dialog, { setTitle }] = useDialog({
   title: '标题',
 });
@@ -33,44 +32,41 @@ const [Dialog, { setTitle }] = useDialog({
 setTitle('');
 ```
 
-## 副作用与原理说明 {#side-effects-and-principles}
+## 响应式配置的问题 {#side-effects-and-principles}
 
-Element Hooks 内部使用 `shallowRef` 和 `watchEffect`。
-因此，响应式配置可能仍会触发视图更新。
-
-这是 Vue 依赖收集产生的副作用。
-该写法绕过了控制器，不符合 Hook 的状态约定。
+Element Hooks 使用 `watchEffect` 同步 Hook 配置和组件属性。
+传入响应式对象时，`watchEffect` 仍可能追踪其中的字段。
+这种写法虽然可以更新视图，但状态不再只由 Controller 修改。
 
 ## Hook 分类 {#hook-categories}
 
-### Element Plus 原生能力（Core Hooks）
+### Core Hooks {#core-hook-categories}
 
-该分类封装 Element Plus 的原生组件或服务。
+Core Hooks 直接对应 Element Plus 的组件或服务。
 
-- **组件 Hook**：返回可渲染的组件和控制器。
-- **命令式 Hook**：封装 `ElMessage` 等命令式 API。
+- **组件 Hook** — 返回可渲染的组件和 Controller。
+- **命令式 Hook** — 直接返回 `ElMessage` 等服务的方法。
 
-### Element Hooks 组合能力（Composite Hooks）
+### Composite Hooks {#composite-hook-categories}
 
-该分类组合多个 Core Hook，形成更高层能力。
+组合 Hook 将多个 Core Hook 集成到同一个组件中。
+这类 Hook 直接使用组件名称，例如 `useGrid`，不增加 `useEx*` 前缀。
 
-- **组合 Hook**：以领域能力命名并组合 Core Hook。
-
-`useGrid` 组合 `ElForm`、`ElTable` 和 `ElPagination`。
-它不接管业务请求。
+例如，`useGrid` 将 `useForm`、`useTable` 和 `ElPagination` 组合为列表组件。
+数据请求仍由调用方管理。
 
 ## Hook 索引 {#hooks-index}
 
 以下列出当前公开的 Hook。
 
-### Element Plus 原生能力（Core Hooks）
+### Core Hooks {#core-hook-index}
 
-- [**useDialog**](/hooks/core/dialog)：提供 `open` 和 `close` 方法。
-- [**useForm**](/hooks/core/form)：提供配置驱动的表单。
-- [**useTable**](/hooks/core/table)：提供配置驱动的表格。
-- [**useMessage**](/hooks/core/message)：统一 `ElMessage` 的 Hook API。
-- [**useMessageBox**](/hooks/core/message-box)：统一处理确认和取消结果。
+- [**useDialog**](/hooks/core/dialog) — 提供 `open` 和 `close` 方法。
+- [**useForm**](/hooks/core/form) — 使用 `items` 数组描述表单项。
+- [**useTable**](/hooks/core/table) — 使用 `columns` 数组描述表格列。
+- [**useMessage**](/hooks/core/message) — 以 Hook 形式返回 `ElMessage`。
+- [**useMessageBox**](/hooks/core/message-box) — 为确认、取消和关闭操作返回明确结果。
 
-### Element Hooks 组合能力（Composite Hooks）
+### Composite Hooks {#composite-hook-index}
 
-- [**useGrid**](/hooks/composite/grid)：组合搜索表单、表格和分页。
+- [**useGrid**](/hooks/composite/grid) — 组合搜索表单、表格和分页。

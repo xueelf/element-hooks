@@ -2,13 +2,15 @@
 
 ## Vue 插件注册 {#vue-plugin}
 
-将 `ElementHooks` 注册为 Vue 插件时，可以传入全局配置。
-后续的 Hook 调用会继承对应配置。
+注册 `ElementHooks` 时，可以传入全局配置。
+后续调用 Hook 时会使用对应的全局配置。
 
 ```ts
 import ElementHooks from 'element-hooks';
 import { ElInput, ElSelect } from 'element-plus';
 import { createApp } from 'vue';
+
+import App from './App.vue';
 
 const app = createApp(App);
 
@@ -23,7 +25,7 @@ app.use(ElementHooks, {
 });
 ```
 
-## 方法动态设置 {#method-setting}
+## 通过方法设置 {#method-setting}
 
 `setOptions` 和 `getOptions` 可以动态读写全局配置。
 
@@ -47,26 +49,26 @@ const globalOptions = getOptions();
 
 全局配置支持以下字段。
 
-- **`components`**：为 `render.component` 提供全局组件映射。
-- **`dialog`**：`useDialog` 的默认配置。
-- **`form`**：`useForm` 和 `useGrid` 的表单默认配置。
-- **`table`**：`useTable` 和 `useGrid` 的表格默认配置。
-- **`pagination`**：`useGrid` 的分页默认配置。
+- **`components`** — 为 `render.component` 提供全局组件映射。
+- **`dialog`** — `useDialog` 的默认配置。
+- **`form`** — `useForm` 和 `useGrid` 的表单默认配置。
+- **`table`** — `useTable` 和 `useGrid` 的表格默认配置。
+- **`pagination`** — `useGrid` 的分页默认配置。
 
 :::tip 合并规则
-单次 Hook 调用会与全局配置浅合并。
-单次调用具有更高优先级。
-局部值为 `undefined` 时，继续使用全局默认值。
-数组、函数、组件和嵌套对象会整体替换。
+每次调用 Hook 时，局部配置会与全局配置浅合并。
+局部配置的同名属性优先级更高。
+局部值为 `undefined` 时，不会覆盖全局默认值。
+数组、函数、组件和嵌套对象会替换全局配置中的同名属性。
 
-`useGrid` 只会合并已启用模块的全局配置。
-全局配置不会自动启用表单或分页。
+`useGrid` 始终使用全局 `table` 配置。
+只有传入 `form` 或 `pagination` 时，才会使用对应的全局配置。
 :::
 
 ## TypeScript {#typescript}
 
-可以通过 TypeScript 的模块扩展补充全局组件类型。
-这会为 `render.component` 提供代码补全。
+可以通过 TypeScript 模块扩展声明全局组件类型。
+声明后，`render.component` 会提供对应的代码补全。
 
 ```ts
 import type { Component } from 'vue';

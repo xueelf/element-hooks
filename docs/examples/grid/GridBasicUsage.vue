@@ -34,12 +34,12 @@
   }
 
   function onPaginationChange() {
-    const { currentPage, pageSize } = getPagination();
-
-    setData(getPage(currentPage, pageSize));
+    return loadData(({ currentPage, pageSize }) => {
+      return getPage(currentPage, pageSize);
+    });
   }
 
-  const [Grid, { getPagination, setData }] = useGrid({
+  const [Grid, { loadData }] = useGrid({
     data: getPage(),
     columns: [
       { prop: 'date', label: 'Date', width: '180' },

@@ -41,14 +41,11 @@
     },
   ];
 
-  const delay = (duration: number) =>
-    new Promise<void>(resolve => window.setTimeout(resolve, duration));
-
   async function load() {
-    await setData(async payload => {
-      await delay(500);
+    await loadData(async params => {
+      await new Promise(resolve => setTimeout(resolve, 500));
 
-      const { currentPage = 1, pageSize = 2, region, user } = payload;
+      const { currentPage, pageSize, region, user } = params;
       const filtered = sourceData.filter(row => {
         return (
           (!user || row.name.includes(user)) &&
@@ -69,7 +66,7 @@
     return load();
   }
 
-  const [Grid, { instance, setData }] = useGrid<Row, SearchModel>({
+  const [Grid, { instance, loadData }] = useGrid<Row, SearchModel>({
     form: {
       model: { user: '', region: '' },
       inline: true,

@@ -9,13 +9,13 @@
 
 ## ✨ 特性
 
-- **配置驱动**：使用配置生成表单、表格和对话框。
-- **类型安全**：基于 TypeScript 编写，提供完整的类型推导。
-- **原生能力**：继续使用 Element Plus 的属性、插槽和事件。
+- **配置驱动** — 使用配置生成表单、表格和对话框。
+- **类型安全** — 基于 TypeScript 编写，提供完整的类型推导。
+- **原生能力** — 继续使用 Element Plus 的属性、插槽和事件。
 
 ## 📦 安装
 
-请确保你的项目中已经安装了 Vue 3 和 Element Plus。
+请确保项目中已经安装 Vue 3 和 Element Plus。
 
 ```sh
 # npm
@@ -33,14 +33,14 @@ bun add element-hooks
 
 ## 🚀 快速上手
 
-Element Hooks 按能力来源分为原生能力和组合能力。
-公开 API 包含组件 Hook 和命令式 Hook。
+Element Hooks 不仅封装 Element Plus 的原生组件和服务，还可以将多个 Hook 组合成一个组件。
+公开 API 按调用方式分为组件 Hook 和命令式 Hook。
 
 ### 全局配置
 
 推荐将 `ElementHooks` 注册为 Vue 插件。
-插件注册支持设置全局默认配置。
-它也会开启 Vue DevTools 支持。
+注册插件时可以设置全局默认配置。
+插件同时会启用 Vue DevTools 支持。
 
 ```ts
 import ElementHooks from 'element-hooks';
@@ -65,21 +65,20 @@ app.use(ElementHooks, {
 app.mount('#app');
 ```
 
-全局默认项按 Element Plus 组件维度生效。
+全局默认项按组件分别生效。
 例如，`form` 会作用于 `useForm` 和 `useGrid`。
 单次 Hook 调用的同名配置具有更高优先级。
 
 ### 组件 Hook
 
-组件 Hook 用于封装 Element Plus 组件。
-它返回 `[Component, controller]` 元组。
+组件 Hook 返回 `[Component, controller]` 元组。
 
-- **Component**：可以在模板中使用的 Vue 组件。
-- **controller**：包含 `setState`、`instance` 等控制方法。
+- **Component** — 可以在模板中使用的 Vue 组件。
+- **Controller** — 包含 `setState`、`instance` 等控制方法。
 
 #### useDialog
 
-通过 `open` / `close` 命令式控制对话框，无需手动管理 `v-model`：
+通过 `open` 和 `close` 命令式控制对话框，无需手动管理 `v-model`：
 
 ```vue
 <script setup lang="ts">
@@ -111,7 +110,7 @@ app.mount('#app');
   import { useForm } from 'element-hooks';
   import { ElInput } from 'element-plus';
 
-  const [Form, { getModel }] = useForm({
+  const [Form] = useForm({
     labelWidth: 'auto',
     model: { name: '', desc: '' },
     items: [
@@ -158,8 +157,7 @@ app.mount('#app');
 
 ### 命令式 Hook
 
-命令式 Hook 用于封装 Element Plus 的命令式 API。
-它不涉及模板渲染，直接返回可调用的方法。
+命令式 Hook 不渲染组件，而是直接返回可调用的方法。
 
 #### useMessage
 
@@ -193,8 +191,8 @@ app.mount('#app');
 
 #### useMessageBox
 
-封装 `ElMessageBox`的异步结果处理。
-`confirm` 和 `prompt` 的取消操作不会拒绝 Promise。
+`confirm` 取消时返回 `false`，`prompt` 取消时返回 `null`。
+两种情况都不会拒绝 `Promise`。
 
 ```vue
 <script setup lang="ts">

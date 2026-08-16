@@ -1,10 +1,7 @@
 # useMessage
 
-`useMessage` 对 `ElMessage` 进行轻量封装。
-它适用于操作后的即时反馈场景。
-
-它保持 `ElMessage` 的调用方式。
-它同时支持函数调用和状态快捷方法。
+`useMessage` 直接返回 `ElMessage`，用于显示操作反馈。
+可以直接调用返回值，也可以使用 `success`、`warning` 等快捷方法。
 
 ## 基础用法 {#basic-usage}
 
@@ -80,7 +77,7 @@
 
 `useMessage` 无需参数，直接返回 `ElMessage` 实例函数。
 
-你可以直接调用完整的 `ElMessage` 方法集，包括函数调用形式与各类状态快捷方法。
+`useMessage()` 的返回值可以像 `ElMessage` 一样直接调用，也可以调用 `success`、`warning`、`error` 等方法。
 
 ```ts
 import { useMessage } from 'element-hooks';

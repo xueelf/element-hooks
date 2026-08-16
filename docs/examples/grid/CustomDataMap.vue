@@ -8,12 +8,9 @@
     name: string;
   };
 
-  const delay = (duration: number) =>
-    new Promise<void>(resolve => window.setTimeout(resolve, duration));
-
   async function load() {
-    await setData(async ({ currentPage = 1, pageSize = 10 }) => {
-      await delay(500);
+    await loadData(async ({ currentPage, pageSize }) => {
+      await new Promise(resolve => setTimeout(resolve, 500));
 
       return {
         records: Array.from({ length: pageSize }, (_, index) => ({
@@ -26,7 +23,7 @@
     });
   }
 
-  const [Grid, { setData }] = useGrid<Row>({
+  const [Grid, { loadData }] = useGrid<Row>({
     columns: [
       { prop: 'date', label: 'Date', width: '180' },
       { prop: 'name', label: 'Name', width: '180' },

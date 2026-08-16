@@ -56,7 +56,7 @@ export default defineConfig({
           items: [{ text: 'Hook 介绍', link: '/hooks/introduce' }],
         },
         {
-          text: 'Element Plus 原生能力（Core Hooks）',
+          text: 'Core Hooks',
           items: [
             { text: 'useDialog', link: '/hooks/core/dialog' },
             { text: 'useForm', link: '/hooks/core/form' },
@@ -66,7 +66,7 @@ export default defineConfig({
           ],
         },
         {
-          text: 'Element Hooks 组合能力（Composite Hooks）',
+          text: 'Composite Hooks',
           items: [{ text: 'useGrid', link: '/hooks/composite/grid' }],
         },
       ],
