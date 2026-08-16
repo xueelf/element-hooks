@@ -7,14 +7,19 @@ import {
 import { addUnit } from 'element-plus/es/utils/dom/style';
 import { type Slot, computed, defineComponent, ref, withDirectives } from 'vue';
 
-import { type FormOptions, useForm } from '#/composables/form';
-import { type TableOptions, useTable } from '#/composables/table';
+import { type FormItem, type FormOptions, useForm } from '#/composables/form';
+import {
+  type TableColumn,
+  type TableOptions,
+  useTable,
+} from '#/composables/table';
 import { withOptions } from '#/config';
 import { type HookComponentProps, HOOK_METADATA } from '#/devtools';
 import {
   type Awaitable,
   type Camelized,
   type Recordable,
+  type SetRequired,
   type Setter,
   createController,
   unwrapSetter,
@@ -35,7 +40,7 @@ export type PaginationOptions = PaginationProps & {
   };
 };
 
-export type GridResponse = Recordable;
+export type GridResponse = object;
 
 export type GridData<D extends object> = D[] | GridResponse;
 
@@ -44,11 +49,9 @@ export type GridPaginationParams = {
   pageSize: number;
 };
 
-export type GridLoadParams<M extends object> = Omit<
-  M,
-  keyof GridPaginationParams
-> &
-  GridPaginationParams;
+export type GridLoadParams<M extends object> = [M] extends [never]
+  ? GridPaginationParams
+  : Omit<M, keyof GridPaginationParams> & GridPaginationParams;
 
 export type GridDataLoader<D extends object, M extends object> = (
   params: GridLoadParams<M>,
@@ -57,11 +60,12 @@ export type GridDataLoader<D extends object, M extends object> = (
 export type GridOptions<
   D extends object = Recordable,
   M extends object = Recordable,
-> = Omit<TableOptions<D>, 'data' | 'height' | 'maxHeight'> & {
+> = Omit<TableOptions<D>, 'columns' | 'data' | 'height' | 'maxHeight'> & {
+  columns?: TableColumn<D>[];
   data?: GridData<D>;
   height?: string | number;
   maxHeight?: string | number;
-  form?: FormOptions<M>;
+  form?: SetRequired<FormOptions<M>, 'model'>;
   pagination?: PaginationOptions;
 };
 
@@ -69,6 +73,20 @@ export type GridProps<
   D extends object = Recordable,
   M extends object = Recordable,
 > = HookComponentProps<GridOptions<D, M>>;
+
+type GridOptionsWithoutForm<D extends object> = Omit<
+  GridOptions<D, never>,
+  'form'
+> & { form?: never };
+
+type GridOptionsWithForm<D extends object, M extends object> = SetRequired<
+  GridOptions<D, M>,
+  'form'
+>;
+
+type GridResult<D extends object, M extends object> = ReturnType<
+  typeof createGrid<D, M>
+>;
 
 export type GridInstance = {
   form: FormInstance | null;
@@ -88,6 +106,22 @@ function createLoadParams(
 }
 
 export function useGrid<
+  D extends object = Recordable,
+  M extends object = Recordable,
+>(options: GridOptionsWithForm<D, M>): GridResult<D, M>;
+export function useGrid<D extends object = Recordable>(
+  options?: GridOptionsWithoutForm<D>,
+): GridResult<D, never>;
+export function useGrid<
+  D extends object = Recordable,
+  M extends object = Recordable,
+>(
+  options?: GridOptionsWithForm<D, M> | GridOptionsWithoutForm<D>,
+): GridResult<D, M> | GridResult<D, never> {
+  return createGrid(options);
+}
+
+function createGrid<
   D extends object = Recordable,
   M extends object = Recordable,
 >(options: GridOptions<D, M> = {}) {
@@ -123,8 +157,8 @@ export function useGrid<
     }
     const { result = 'result', total = 'total' } =
       getCurrentState().pagination?.props ?? {};
-    const resolvedData = source[result];
-    const resolvedTotal = source[total];
+    const resolvedData = Reflect.get(source, result);
+    const resolvedTotal = Reflect.get(source, total);
 
     return {
       result: Array.isArray(resolvedData) ? resolvedData : [],
@@ -177,19 +211,25 @@ export function useGrid<
     setResolvedData(unwrapSetter(update, getCurrentState().data ?? []));
   };
 
-  const setItems: Setter<
-    NonNullable<typeof options.form>['items']
-  > = update => {
-    setState(prev => ({
-      ...prev,
-      form: { ...prev.form, items: unwrapSetter(update, prev.form?.items) },
-    }));
+  const setItems: Setter<FormItem<M>[]> = update => {
+    setState(prev => {
+      if (!prev.form) {
+        throw new Error('[useGrid] Cannot update items without a form.');
+      }
+      return {
+        ...prev,
+        form: {
+          ...prev.form,
+          items: unwrapSetter(update, prev.form.items ?? []),
+        },
+      };
+    });
   };
 
-  const setColumns: Setter<(typeof options)['columns']> = update => {
+  const setColumns: Setter<TableColumn<D>[]> = update => {
     setState(prev => ({
       ...prev,
-      columns: unwrapSetter(update, prev.columns),
+      columns: unwrapSetter(update, prev.columns ?? []),
     }));
   };
 

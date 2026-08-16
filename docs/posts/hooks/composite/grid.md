@@ -68,14 +68,14 @@ await loadData(async params => {
 
 每次调用 `loadData` 时，传入的加载函数只会执行一次。
 分页变化不会自动重新执行之前的加载函数。
-加载函数的参数是表单模型和分页参数的浅拷贝。
+传入 `form` 时，加载函数的参数包含表单模型和分页参数。
+未传入 `form` 时，参数只包含 `currentPage` 和 `pageSize`。
+声明模型泛型 `M` 时，必须同时传入包含 `model` 的 `form` 配置。
 分页字段会覆盖表单中的同名字段。
 `currentPage` 和 `pageSize` 未配置时采用 `ElPagination` 的默认值。
 
 `GridData<D>` 也可以接收对象形式的响应。
-该对象必须满足 `GridResponse` 约束。
-该类型等同于 `Record<string, unknown>`。
-使用 `interface` 定义响应类型时，可以显式继承 `GridResponse`。
+响应对象可以使用 `interface` 或 `type` 定义，无需声明字符串索引签名。
 
 加载函数结束后，加载状态会自动关闭。
 需要串行加载时，调用方应逐次 `await loadData(...)`。
@@ -91,12 +91,12 @@ await loadData(async params => {
 
 ### Options {#options}
 
-| 参数         | 说明                                       | 类型                | 默认值 |
-| ------------ | ------------------------------------------ | ------------------- | ------ |
-| `data`       | 表格数据，可以是数组或包含结果及总数的对象 | `GridData<D>`       | -      |
-| `columns`    | 表格列配置                                 | `TableColumn<D>[]`  | `[]`   |
-| `form`       | 表单配置，参考 `useForm`                   | `FormOptions<M>`    | -      |
-| `pagination` | 分页配置，参考 `ElPagination`              | `PaginationOptions` | -      |
+| 参数         | 说明                                       | 类型                                   | 默认值 |
+| ------------ | ------------------------------------------ | -------------------------------------- | ------ |
+| `data`       | 表格数据，可以是数组或包含结果及总数的对象 | `GridData<D>`                          | -      |
+| `columns`    | 表格列配置                                 | `TableColumn<D>[]`                     | `[]`   |
+| `form`       | 表单配置，参考 `useForm`                   | `SetRequired<FormOptions<M>, 'model'>` | -      |
+| `pagination` | 分页配置，参考 `ElPagination`              | `PaginationOptions`                    | -      |
 
 可以通过 `app.use(ElementHooks, { pagination })` 设置全局分页默认项。
 
