@@ -150,11 +150,7 @@ export function useForm<T extends object = Recordable>(
       watch(
         () => formState.value?.model,
         model => {
-          const nextModel = model ?? null;
-
-          if (nextModel !== toRaw(formModel.value)) {
-            formModel.value = nextModel;
-          }
+          formModel.value = model ?? null;
         },
         { immediate: true },
       );
