@@ -168,14 +168,14 @@ const [Form] = useForm({
 
 ### Controller {#controller}
 
-| 方法       | 说明                                             | 参数                              |
-| ---------- | ------------------------------------------------ | --------------------------------- |
-| `setState` | 动态更新整体配置                                 | `(state: FormOptions<T>) => void` |
-| `setItems` | 动态更新表单项                                   | `(items: FormItem<T>[]) => void`  |
-| `getItems` | 获取当前表单项                                   | `() => FormItem<T>[]`             |
-| `setModel` | 动态更新或初始化模型数据                         | `(model: T) => void`              |
-| `getModel` | 获取当前模型数据                                 | `() => T \| null`                 |
-| `instance` | 内部 ElForm 实例（可调用 `validate` 等原生方法） | `Ref<FormInstance \| null>`       |
+| 方法       | 说明                                             | 参数                                                    |
+| ---------- | ------------------------------------------------ | ------------------------------------------------------- |
+| `setState` | 动态更新整体配置                                 | `(state: SetRequired<FormOptions<T>, 'model'>) => void` |
+| `setItems` | 动态更新表单项                                   | `(items: FormItem<T>[]) => void`                        |
+| `getItems` | 获取当前表单项                                   | `() => FormItem<T>[]`                                   |
+| `setModel` | 动态更新或初始化模型数据                         | `(model: T) => void`                                    |
+| `getModel` | 获取当前模型数据                                 | `() => T \| null`                                       |
+| `instance` | 内部 ElForm 实例（可调用 `validate` 等原生方法） | `Ref<FormInstance \| null>`                             |
 
 `setState`、`setItems` 和 `setModel` 支持 `(prev) => next` 更新。
-模型尚未初始化时，`setModel` 只能直接传入模型对象。
+模型尚未初始化时，应先通过 `setModel` 传入模型对象。

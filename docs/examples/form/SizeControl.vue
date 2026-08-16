@@ -94,14 +94,17 @@
 
   const onSizeChange = (val: string | number | boolean | undefined) => {
     size.value = val as ComponentSize;
-    setState({ size: val as ComponentSize });
+    setState(prev => ({ ...prev, size: val as ComponentSize }));
   };
 
   const onLabelPositionChange = (
     val: string | number | boolean | undefined,
   ) => {
     labelPosition.value = val as FormProps['labelPosition'];
-    setState({ labelPosition: val as FormProps['labelPosition'] });
+    setState(prev => ({
+      ...prev,
+      labelPosition: val as FormProps['labelPosition'],
+    }));
   };
 
   const onSubmit = () => {

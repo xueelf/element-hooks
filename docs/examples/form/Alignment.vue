@@ -55,7 +55,7 @@
       <el-radio-group
         v-model="labelPosition"
         aria-label="label position"
-        @change="setState({ labelPosition })"
+        @change="setState(prev => ({ ...prev, labelPosition }))"
       >
         <el-radio-button value="left">Left</el-radio-button>
         <el-radio-button value="right">Right</el-radio-button>

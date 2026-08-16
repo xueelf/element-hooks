@@ -101,15 +101,15 @@ export function useForm<T extends object = Recordable>(
     internal: options[HOOK_METADATA]?.internal,
   });
 
-  const [formState, setState, initState, getCurrentState] =
+  const [formState, setFormState, initState, getCurrentState] =
     useState<FormOptions<T>>(merged);
   const formModel = ref<T | null>(null);
   const formInstance = ref<FormInstance | null>(null);
 
-  const setItems: Setter<(typeof options)['items']> = update => {
-    setState(prev => ({
+  const setItems: Setter<FormItem<T>[]> = update => {
+    setFormState(prev => ({
       ...prev,
-      items: unwrapSetter(update, prev.items),
+      items: unwrapSetter(update, prev.items ?? []),
     }));
   };
 
@@ -118,7 +118,7 @@ export function useForm<T extends object = Recordable>(
   };
 
   const setModel: Setter<T> = update => {
-    setState(prev => {
+    setFormState(prev => {
       if (prev.model === undefined) {
         if (typeof update === 'function') {
           throw new Error('[useForm] Cannot update an uninitialized model.');
@@ -126,6 +126,20 @@ export function useForm<T extends object = Recordable>(
         return { ...prev, model: update };
       }
       return { ...prev, model: unwrapSetter(update, prev.model) };
+    });
+  };
+
+  const setState: Setter<SetRequired<FormOptions<T>, 'model'>> = update => {
+    setFormState(prev => {
+      if (typeof update !== 'function') {
+        return update;
+      }
+      if (prev.model === undefined) {
+        throw new Error(
+          '[useForm] Cannot update state before model is initialized.',
+        );
+      }
+      return update({ ...prev, model: prev.model });
     });
   };
 
