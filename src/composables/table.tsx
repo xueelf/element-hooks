@@ -29,7 +29,7 @@ import {
   createController,
   resolveRenderProps,
   unwrapSetter,
-  useDataSetter,
+  useDataLoader,
   useState,
 } from '#/util';
 
@@ -75,7 +75,7 @@ export type TableColumn<T extends object = Recordable> = Partial<
 
 export type TableData<T extends object> = T[];
 
-export type TableDataCallback<T extends object> = () => Awaitable<TableData<T>>;
+export type TableDataLoader<T extends object> = () => Awaitable<TableData<T>>;
 
 export type TableOptions<T extends object> = HookOptions &
   Partial<Camelized<Omit<TableInstance['$props'], 'ref' | 'data'>>> & {
@@ -111,24 +111,26 @@ export function useTable<T extends object = Recordable>(
     return getCurrentState().columns ?? [];
   };
 
-  const { loading, setData: setResolvedData } = useDataSetter<
-    TableData<T>,
-    void
-  >(
+  const {
+    loading,
+    setData: setResolvedData,
+    loadData: loadResolvedData,
+  } = useDataLoader<TableData<T>>(
     data => {
       setState(prev => ({ ...prev, data }));
     },
     () => undefined,
   );
 
-  function setData(data: TableData<T>): void;
-  function setData(callback: () => TableData<T>): void;
-  function setData(callback: () => PromiseLike<TableData<T>>): Promise<void>;
-  function setData(callback: TableDataCallback<T>): void | Promise<void>;
-  function setData(
-    dataOrCallback: TableData<T> | TableDataCallback<T>,
-  ): void | Promise<void> {
-    return setResolvedData(dataOrCallback);
+  const setData: Setter<TableData<T>> = update => {
+    setResolvedData(unwrapSetter(update, getCurrentState().data ?? []));
+  };
+
+  function loadData(loader: () => TableData<T>): void;
+  function loadData(loader: () => PromiseLike<TableData<T>>): Promise<void>;
+  function loadData(loader: TableDataLoader<T>): void | Promise<void>;
+  function loadData(loader: TableDataLoader<T>) {
+    return loadResolvedData(loader);
   }
 
   const getData = (): TableData<T> => {
@@ -140,6 +142,7 @@ export function useTable<T extends object = Recordable>(
     setColumns,
     getColumns,
     setData,
+    loadData,
     getData,
   });
 

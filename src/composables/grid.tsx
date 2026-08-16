@@ -18,7 +18,7 @@ import {
   type Setter,
   createController,
   unwrapSetter,
-  useDataSetter,
+  useDataLoader,
   useState,
 } from '#/util';
 
@@ -39,19 +39,19 @@ export type GridResponse = Recordable;
 
 export type GridData<D extends object> = D[] | GridResponse;
 
-export type GridPaginationPayload = {
-  currentPage?: number;
-  pageSize?: number;
+export type GridPaginationParams = {
+  currentPage: number;
+  pageSize: number;
 };
 
-export type GridDataPayload<M extends object> = Omit<
+export type GridLoadParams<M extends object> = Omit<
   M,
-  keyof GridPaginationPayload
+  keyof GridPaginationParams
 > &
-  GridPaginationPayload;
+  GridPaginationParams;
 
-export type GridDataCallback<D extends object, M extends object> = (
-  payload: GridDataPayload<M>,
+export type GridDataLoader<D extends object, M extends object> = (
+  params: GridLoadParams<M>,
 ) => Awaitable<GridData<D>>;
 
 export type GridOptions<
@@ -76,11 +76,14 @@ export type GridInstance = {
   pagination: PaginationInstance | null;
 };
 
-function mergePayload<M extends object>(
+function createLoadParams<M extends object>(
   model: M | null,
-  pagination: GridPaginationPayload,
-): GridDataPayload<M>;
-function mergePayload(model: object | null, pagination: GridPaginationPayload) {
+  pagination: GridPaginationParams,
+): GridLoadParams<M>;
+function createLoadParams(
+  model: object | null,
+  pagination: GridPaginationParams,
+) {
   return { ...(model ?? {}), ...pagination };
 }
 
@@ -150,38 +153,29 @@ export function useGrid<
     return getCurrentState().form?.model ?? null;
   };
 
-  const getPagination = (): GridPaginationPayload => {
-    const paginationState = getCurrentState().pagination;
+  const getPagination = (): GridPaginationParams => {
+    const pagination = getCurrentState().pagination;
 
     return {
-      currentPage: paginationState?.currentPage,
-      pageSize: paginationState?.pageSize,
+      currentPage: pagination?.currentPage ?? 1,
+      pageSize: pagination?.pageSize ?? 10,
     };
   };
 
-  const { loading, setData: setResolvedData } = useDataSetter<
-    GridData<D>,
-    GridDataPayload<M>
-  >(
+  const {
+    loading,
+    setData: setResolvedData,
+    loadData,
+  } = useDataLoader<GridData<D>, GridLoadParams<M>>(
     data => {
       setState(prev => ({ ...prev, data }));
     },
-    () => mergePayload(getModel(), getPagination()),
+    () => createLoadParams(getModel(), getPagination()),
   );
 
-  function setData(nextData: GridData<D>): void;
-  function setData(
-    callback: (payload: GridDataPayload<M>) => GridData<D>,
-  ): void;
-  function setData(
-    callback: (payload: GridDataPayload<M>) => PromiseLike<GridData<D>>,
-  ): Promise<void>;
-  function setData(callback: GridDataCallback<D, M>): void | Promise<void>;
-  function setData(
-    dataOrCallback: GridData<D> | GridDataCallback<D, M>,
-  ): void | Promise<void> {
-    return setResolvedData(dataOrCallback);
-  }
+  const setData: Setter<GridData<D>> = update => {
+    setResolvedData(unwrapSetter(update, getCurrentState().data ?? []));
+  };
 
   const setItems: Setter<
     NonNullable<typeof options.form>['items']
@@ -233,6 +227,7 @@ export function useGrid<
   const gridController = createController(gridInstance, {
     setState,
     setData,
+    loadData,
     setItems,
     setColumns,
     setModel,

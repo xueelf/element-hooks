@@ -2,7 +2,6 @@ import {
   type Component,
   type FunctionalComponent,
   type Ref,
-  computed,
   shallowRef,
   useAttrs,
   watchEffect,
@@ -71,53 +70,38 @@ function isPromiseLike<T>(value: Awaitable<T>): value is PromiseLike<T> {
   );
 }
 
-type DataSetterCallback<T, P = void> = (payload: P) => Awaitable<T>;
+type DataLoader<T, P> = (params: P) => Awaitable<T>;
 
-export function useDataSetter<T, P = void>(
+export function useDataLoader<T, P = undefined>(
   updateData: (data: T) => void,
-  getPayload: () => P,
+  getParams: () => P,
 ) {
-  const pendingCount = shallowRef(0);
-  const loading = computed(() => pendingCount.value > 0);
-  let updateVersion = 0;
+  const loading = shallowRef(false);
 
-  const setData = (
-    dataOrCallback: T | DataSetterCallback<T, P>,
-  ): void | Promise<void> => {
-    const currentVersion = ++updateVersion;
-    const commit = (data: T) => {
-      if (currentVersion === updateVersion) {
-        updateData(data);
-      }
-    };
+  function loadData(loader: (params: P) => T): void;
+  function loadData(loader: (params: P) => PromiseLike<T>): Promise<void>;
+  function loadData(loader: DataLoader<T, P>): void | Promise<void>;
+  function loadData(loader: DataLoader<T, P>) {
+    loading.value = true;
 
-    if (typeof dataOrCallback !== 'function') {
-      commit(dataOrCallback);
-      return;
-    }
-
-    pendingCount.value += 1;
     const stopLoading = () => {
-      pendingCount.value -= 1;
+      loading.value = false;
     };
 
     try {
-      const callback = dataOrCallback as DataSetterCallback<T, P>;
-      const data = callback(getPayload());
+      const data = loader(getParams());
 
       if (isPromiseLike(data)) {
-        return Promise.resolve(data).then(commit).finally(stopLoading);
+        return Promise.resolve(data).then(updateData).finally(stopLoading);
       }
-
-      commit(data);
+      updateData(data);
       stopLoading();
     } catch (error) {
       stopLoading();
       throw error;
     }
-  };
-
-  return { loading, setData };
+  }
+  return { loading, setData: updateData, loadData };
 }
 
 /**
