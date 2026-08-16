@@ -20,7 +20,7 @@ export type SetRequired<Type, Keys extends keyof Type> = Omit<Type, Keys> &
 export type RenderComponent =
   Component | FunctionalComponent | GlobalComponentName | (string & {});
 
-export type RenderProps<T> = Recordable | ((value: T) => Recordable);
+export type RenderProps<T> = object | ((value: T) => object);
 
 export type RenderOptions<T> = {
   component: RenderComponent;
@@ -145,7 +145,7 @@ export function useState<T extends HookOptions>(initial: T) {
 export function resolveRenderProps<T>(
   props: RenderProps<T> | undefined,
   value: T | null,
-) {
+): object {
   if (typeof props !== 'function') {
     return props ?? {};
   }

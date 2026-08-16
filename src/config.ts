@@ -4,16 +4,15 @@ import { type DialogOptions } from './composables/dialog';
 import { type FormOptions } from './composables/form';
 import { type PaginationOptions } from './composables/grid';
 import { type TableOptions } from './composables/table';
-import { type Recordable } from './util';
 
 export interface GlobalComponents {}
 export type GlobalComponentName = keyof GlobalComponents;
 
 export type GlobalOptions = {
-  components?: Record<string, Component>;
+  components?: object;
   dialog?: DialogOptions;
-  form?: FormOptions<Recordable>;
-  table?: TableOptions<Recordable>;
+  form?: FormOptions<object>;
+  table?: TableOptions<object>;
   pagination?: PaginationOptions;
 };
 
@@ -50,6 +49,8 @@ export function withOptions(source: object, key?: OptionKey) {
   return merged;
 }
 
-export const getComponent = (name: string) => {
-  return globalOptions.components?.[name];
+export const getComponent = (name: string): Component | undefined => {
+  return globalOptions.components
+    ? Reflect.get(globalOptions.components, name)
+    : undefined;
 };
