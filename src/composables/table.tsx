@@ -101,10 +101,10 @@ export function useTable<T extends object = Recordable>(
     useState<TableOptions<T>>(merged);
   const tableInstance = ref<TableInstance | null>(null);
 
-  const setColumns: Setter<(typeof options)['columns']> = update => {
+  const setColumns: Setter<TableColumn<T>[]> = update => {
     setState(prev => ({
       ...prev,
-      columns: unwrapSetter(update, prev.columns),
+      columns: unwrapSetter(update, prev.columns ?? []),
     }));
   };
 
