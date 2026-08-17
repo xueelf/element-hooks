@@ -23,7 +23,6 @@ import {
 import {
   type Awaitable,
   type Camelized,
-  type Recordable,
   type RenderOptions,
   type Setter,
   createController,
@@ -57,6 +56,7 @@ export type ColumnFilterIconScope = {
 };
 export type ColumnExpandScope = {
   expanded: boolean;
+  expandable: boolean;
 };
 export type ColumnScope<T extends object> =
   | ColumnDefaultScope<T>
@@ -64,7 +64,7 @@ export type ColumnScope<T extends object> =
   | ColumnFilterIconScope
   | ColumnExpandScope;
 
-export type TableColumn<T extends object = Recordable> = Partial<
+export type TableColumn<T extends object = object> = Partial<
   Omit<TableColumnCtx<T>, 'children'>
 > & {
   key?: string | number;
@@ -79,16 +79,37 @@ export type TableData<T extends object> = T[];
 export type TableDataLoader<T extends object> = () => Awaitable<TableData<T>>;
 
 export type TableOptions<T extends object> = HookOptions &
-  Partial<Camelized<Omit<TableInstance['$props'], 'ref' | 'data'>>> & {
+  Partial<Camelized<Omit<Parameters<typeof ElTable<T>>[0], 'ref' | 'data'>>> & {
     data?: TableData<T>;
     columns?: TableColumn<T>[];
   };
 
 export type TableProps<T extends object> = HookComponentProps<TableOptions<T>>;
 
-export function useTable<T extends object = Recordable>(
+type InternalTableOptions<T extends object> = TableOptions<T> & {
+  [HOOK_METADATA]: { internal: true };
+};
+
+type DefaultTableOptions = Omit<TableOptions<object>, 'data'> & {
+  data?: never[];
+};
+
+type TableResult<T extends object> = ReturnType<typeof createTable<T>>;
+
+export function useTable<T extends object>(
+  options: InternalTableOptions<T>,
+): ReturnType<typeof createTable<T>>;
+export function useTable(options?: DefaultTableOptions): TableResult<object>;
+export function useTable<T extends object>(
+  options?: TableOptions<T>,
+): TableResult<T>;
+export function useTable<T extends object = object>(
   options: TableOptions<T> = {},
 ) {
+  return createTable(options);
+}
+
+function createTable<T extends object = object>(options: TableOptions<T> = {}) {
   const name = 'Table';
   const merged = withOptions(options, 'table');
 

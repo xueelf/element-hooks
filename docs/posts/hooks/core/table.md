@@ -332,6 +332,7 @@ const [Table] = useTable({
 需要串行加载时，调用方应逐次 `await loadData(...)`。
 
 `T` 必须满足 `object` 约束。
-默认类型 `Recordable` 是 `Record<string, unknown>`。
+未提供具体行类型时默认使用 `object`，空数组不会将行类型固定为 `never`。
+需要访问行数据字段时，应传入泛型或使用带有明确类型的数组。
 
 `setState` 和 `setColumns` 支持 `(prev) => next` 函数式更新。
