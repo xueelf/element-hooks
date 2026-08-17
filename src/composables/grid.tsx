@@ -18,8 +18,6 @@ import { type HookComponentProps, HOOK_METADATA } from '#/devtools';
 import {
   type Awaitable,
   type Camelized,
-  type Recordable,
-  type SetRequired,
   type Setter,
   createController,
   unwrapSetter,
@@ -57,40 +55,54 @@ export type GridDataLoader<D extends object, M extends object> = (
   params: GridLoadParams<M>,
 ) => Awaitable<GridData<D>>;
 
-export type GridOptions<
-  D extends object = Recordable,
-  M extends object = Recordable,
-> = Omit<TableOptions<D>, 'columns' | 'data' | 'height' | 'maxHeight'> & {
+type GridBaseOptions<D extends object> = Omit<
+  TableOptions<D>,
+  'columns' | 'data' | 'height' | 'maxHeight'
+> & {
   columns?: TableColumn<D>[];
   data?: GridData<D>;
   height?: string | number;
   maxHeight?: string | number;
-  form?: SetRequired<FormOptions<M>, 'model'>;
   pagination?: PaginationOptions;
 };
 
+type GridOptionsWithoutForm<D extends object> = GridBaseOptions<D> & {
+  form?: never;
+};
+
+type DefaultGridOptions = Omit<GridOptionsWithoutForm<object>, 'data'> & {
+  data?: never[];
+};
+
+type GridOptionsWithForm<
+  D extends object,
+  M extends object,
+> = GridBaseOptions<D> & {
+  form: FormOptions<M>;
+};
+
+export type GridOptions<D extends object = object, M extends object = never> = [
+  M,
+] extends [never]
+  ? GridOptionsWithoutForm<D>
+  : GridOptionsWithForm<D, M>;
+
+type GridState<D extends object, M extends object> = GridBaseOptions<D> & {
+  form?: FormOptions<M>;
+};
+
 export type GridProps<
-  D extends object = Recordable,
-  M extends object = Recordable,
-> = HookComponentProps<GridOptions<D, M>>;
-
-type GridOptionsWithoutForm<D extends object> = Omit<
-  GridOptions<D, never>,
-  'form'
-> & { form?: never };
-
-type GridOptionsWithForm<D extends object, M extends object> = SetRequired<
-  GridOptions<D, M>,
-  'form'
->;
+  D extends object = object,
+  M extends object = never,
+> = HookComponentProps<GridState<D, M>>;
 
 type GridResult<D extends object, M extends object> = ReturnType<
-  typeof createGrid<D, M>
+  typeof createGrid<[D] extends [never] ? object : D, M>
 >;
 
 export type GridInstance = {
   form: FormInstance | null;
-  table: TableInstance | null;
+  table: TableInstance;
   pagination: PaginationInstance | null;
 };
 
@@ -105,26 +117,24 @@ function createLoadParams(
   return { ...(model ?? {}), ...pagination };
 }
 
-export function useGrid<
-  D extends object = Recordable,
-  M extends object = Recordable,
->(options: GridOptionsWithForm<D, M>): GridResult<D, M>;
-export function useGrid<D extends object = Recordable>(
+export function useGrid<D extends object, M extends object>(
+  options: GridOptionsWithForm<D, M>,
+): GridResult<D, M>;
+export function useGrid(
+  options?: DefaultGridOptions,
+): GridResult<object, never>;
+export function useGrid<D extends object>(
   options?: GridOptionsWithoutForm<D>,
 ): GridResult<D, never>;
-export function useGrid<
-  D extends object = Recordable,
-  M extends object = Recordable,
->(
+export function useGrid<D extends object = object, M extends object = object>(
   options?: GridOptionsWithForm<D, M> | GridOptionsWithoutForm<D>,
-): GridResult<D, M> | GridResult<D, never> {
+): readonly [unknown, unknown] {
   return createGrid(options);
 }
 
-function createGrid<
-  D extends object = Recordable,
-  M extends object = Recordable,
->(options: GridOptions<D, M> = {}) {
+function createGrid<D extends object = object, M extends object = never>(
+  options: GridOptionsWithForm<D, M> | GridOptionsWithoutForm<D> = {},
+) {
   const name = 'Grid';
   const { form, pagination, data, ...table } = options;
   const tableOptions = withOptions(table, 'table');
@@ -133,8 +143,8 @@ function createGrid<
     ? withOptions(pagination, 'pagination')
     : undefined;
 
-  const [gridState, setState, initState, getCurrentState] = useState<
-    GridOptions<D, M>
+  const [gridState, setGridState, initState, getCurrentState] = useState<
+    GridState<D, M>
   >({
     ...tableOptions,
     [HOOK_METADATA]: {
@@ -177,11 +187,17 @@ function createGrid<
     },
   });
   const paginationRef = ref<PaginationInstance | null>(null);
-  const gridInstance = computed<GridInstance>(() => ({
-    form: formController.instance.value,
-    table: tableController.instance.value,
-    pagination: paginationRef.value,
-  }));
+  const gridInstance = computed<GridInstance | null>(() => {
+    const table = tableController.instance.value;
+
+    return table
+      ? {
+          form: formController.instance.value,
+          table,
+          pagination: paginationRef.value,
+        }
+      : null;
+  });
 
   const getModel = (): M | null => {
     return getCurrentState().form?.model ?? null;
@@ -202,7 +218,7 @@ function createGrid<
     loadData,
   } = useDataLoader<GridData<D>, GridLoadParams<M>>(
     data => {
-      setState(prev => ({ ...prev, data }));
+      setGridState(prev => ({ ...prev, data }));
     },
     () => createLoadParams(getModel(), getPagination()),
   );
@@ -212,7 +228,7 @@ function createGrid<
   };
 
   const setItems: Setter<FormItem<M>[]> = update => {
-    setState(prev => {
+    setGridState(prev => {
       if (!prev.form) {
         throw new Error('[useGrid] Cannot update items without a form.');
       }
@@ -227,14 +243,14 @@ function createGrid<
   };
 
   const setColumns: Setter<TableColumn<D>[]> = update => {
-    setState(prev => ({
+    setGridState(prev => ({
       ...prev,
       columns: unwrapSetter(update, prev.columns ?? []),
     }));
   };
 
   const setModel: Setter<M> = update => {
-    setState(prev => {
+    setGridState(prev => {
       if (prev.form?.model === undefined) {
         if (typeof update === 'function') {
           throw new Error('[useGrid] Cannot update an uninitialized model.');
@@ -254,7 +270,7 @@ function createGrid<
   const updatePagination = (
     update: Partial<Pick<PaginationOptions, 'currentPage' | 'pageSize'>>,
   ) => {
-    setState(prev => ({
+    setGridState(prev => ({
       ...prev,
       pagination: { ...prev.pagination, ...update },
     }));
@@ -262,6 +278,10 @@ function createGrid<
 
   const getData = (): D[] => {
     return resolveData(getCurrentState().data).result;
+  };
+
+  const setState: Setter<GridOptions<D, M>> = update => {
+    setGridState(prev => unwrapSetter(update, prev as GridOptions<D, M>));
   };
 
   const gridController = createController(gridInstance, {

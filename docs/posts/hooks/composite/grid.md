@@ -70,7 +70,8 @@ await loadData(async params => {
 分页变化不会自动重新执行之前的加载函数。
 传入 `form` 时，加载函数的参数包含表单模型和分页参数。
 未传入 `form` 时，参数只包含 `currentPage` 和 `pageSize`。
-声明模型泛型 `M` 时，必须同时传入包含 `model` 的 `form` 配置。
+有表单且需要显式声明行类型时，应同时声明 `D` 和 `M`。
+不写泛型时，`D` 和 `M` 会分别从 `data` 和 `form.model` 推导。
 分页字段会覆盖表单中的同名字段。
 `currentPage` 和 `pageSize` 未配置时采用 `ElPagination` 的默认值。
 
@@ -91,12 +92,17 @@ await loadData(async params => {
 
 ### Options {#options}
 
-| 参数         | 说明                                       | 类型                                   | 默认值 |
-| ------------ | ------------------------------------------ | -------------------------------------- | ------ |
-| `data`       | 表格数据，可以是数组或包含结果及总数的对象 | `GridData<D>`                          | -      |
-| `columns`    | 表格列配置                                 | `TableColumn<D>[]`                     | `[]`   |
-| `form`       | 表单配置，参考 `useForm`                   | `SetRequired<FormOptions<M>, 'model'>` | -      |
-| `pagination` | 分页配置，参考 `ElPagination`              | `PaginationOptions`                    | -      |
+`GridOptions<D>` 不包含表单配置。
+使用表单时应声明为 `GridOptions<D, M>`，此时 `form` 为必填项。
+未提供具体行类型时，`D` 默认使用 `object`。
+传入空数组不会将行类型固定为 `never`。
+
+| 参数         | 说明                                       | 类型                | 默认值 |
+| ------------ | ------------------------------------------ | ------------------- | ------ |
+| `data`       | 表格数据，可以是数组或包含结果及总数的对象 | `GridData<D>`       | -      |
+| `columns`    | 表格列配置                                 | `TableColumn<D>[]`  | `[]`   |
+| `form`       | 表单配置，参考 `useForm`                   | `FormOptions<M>`    | -      |
+| `pagination` | 分页配置，参考 `ElPagination`              | `PaginationOptions` | -      |
 
 可以通过 `app.use(ElementHooks, { pagination })` 设置全局分页默认项。
 
