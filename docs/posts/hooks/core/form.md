@@ -111,10 +111,12 @@ Controller 用于更新模型和访问 `ElForm` 实例。
 ## API {#api}
 
 `useForm` 支持 `ElForm` 的属性，并增加以下配置。
-调用 `useForm(options)` 时，入参类型为 `SetRequired<FormOptions<T>, 'model'>`。
+调用 `useForm(options)` 时，`FormOptions<T>` 必须包含 `model`。
 
 - **`items`** — 用于声明表单项的 `FormItem<T>[]`。
 - **`model`** — 初始表单模型 `T`。调用 `useForm(options)` 时必填。无参调用 `useForm()` 时，`getModel()` 返回 `null`。
+
+无参调用时，`T` 默认使用 `object`。需要通过 `getModel()` 访问模型字段时，应为 `useForm` 指定泛型。
 
 ### FormItem {#form-item}
 
@@ -168,14 +170,14 @@ const [Form] = useForm({
 
 ### Controller {#controller}
 
-| 方法       | 说明                                             | 参数                                                    |
-| ---------- | ------------------------------------------------ | ------------------------------------------------------- |
-| `setState` | 动态更新整体配置                                 | `(state: SetRequired<FormOptions<T>, 'model'>) => void` |
-| `setItems` | 动态更新表单项                                   | `(items: FormItem<T>[]) => void`                        |
-| `getItems` | 获取当前表单项                                   | `() => FormItem<T>[]`                                   |
-| `setModel` | 动态更新或初始化模型数据                         | `(model: T) => void`                                    |
-| `getModel` | 获取当前模型数据                                 | `() => T \| null`                                       |
-| `instance` | 内部 ElForm 实例（可调用 `validate` 等原生方法） | `Ref<FormInstance \| null>`                             |
+| 方法       | 说明                                             | 参数                              |
+| ---------- | ------------------------------------------------ | --------------------------------- |
+| `setState` | 动态更新整体配置                                 | `(state: FormOptions<T>) => void` |
+| `setItems` | 动态更新表单项                                   | `(items: FormItem<T>[]) => void`  |
+| `getItems` | 获取当前表单项                                   | `() => FormItem<T>[]`             |
+| `setModel` | 动态更新或初始化模型数据                         | `(model: T) => void`              |
+| `getModel` | 获取当前模型数据                                 | `() => T \| null`                 |
+| `instance` | 内部 ElForm 实例（可调用 `validate` 等原生方法） | `Ref<FormInstance \| null>`       |
 
 `setState`、`setItems` 和 `setModel` 支持 `(prev) => next` 更新。
 模型尚未初始化时，应先通过 `setModel` 传入模型对象。

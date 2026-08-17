@@ -16,7 +16,6 @@ import {
   type Camelized,
   type Recordable,
   type RenderOptions,
-  type SetRequired,
   type Setter,
   createController,
   resolveRenderProps,
@@ -28,7 +27,7 @@ const formItemSlotNames = ['default', 'label', 'error'] as const;
 export type FormItemSlotName = (typeof formItemSlotNames)[number];
 type FormItemSlot = (...args: never[]) => VNodeChild;
 
-export type FormItem<T extends object = Recordable> = Partial<
+export type FormItem<T extends object = object> = Partial<
   Omit<FormItemProps, 'prop'>
 > & {
   key?: string | number;
@@ -41,13 +40,15 @@ export type FormItem<T extends object = Recordable> = Partial<
 
 export type FormOptions<T extends object> = HookOptions &
   Partial<Camelized<Omit<FormInstance['$props'], 'ref' | 'model'>>> & {
-    model?: T;
-    items?: FormItem<T>[];
+    model: T;
+    items?: FormItem<NoInfer<T>>[];
   };
 
-export type FormProps<T extends object> = HookComponentProps<FormOptions<T>>;
+type FormState<T extends object> = Partial<FormOptions<T>>;
 
-type InternalFormOptions<T extends object> = FormOptions<T> & {
+export type FormProps<T extends object> = HookComponentProps<FormState<T>>;
+
+type InternalFormOptions<T extends object> = FormState<T> & {
   [HOOK_METADATA]: { internal: true };
 };
 
@@ -89,10 +90,10 @@ function setProp(
   Reflect.set(targetParent, lastKey, value);
 }
 
-export function useForm<T extends object = Recordable>(
-  input?: SetRequired<FormOptions<T>, 'model'> | InternalFormOptions<T>,
+export function useForm<T extends object = object>(
+  input?: FormOptions<T> | InternalFormOptions<T>,
 ) {
-  const options: FormOptions<T> = input ?? {};
+  const options: FormState<T> = input ?? {};
   const name = 'Form';
   const merged = withOptions(options, 'form');
 
@@ -102,7 +103,7 @@ export function useForm<T extends object = Recordable>(
   });
 
   const [formState, setFormState, initState, getCurrentState] =
-    useState<FormOptions<T>>(merged);
+    useState<FormState<T>>(merged);
   const formModel = ref<T | null>(null);
   const formInstance = ref<FormInstance | null>(null);
 
@@ -129,7 +130,7 @@ export function useForm<T extends object = Recordable>(
     });
   };
 
-  const setState: Setter<SetRequired<FormOptions<T>, 'model'>> = update => {
+  const setState: Setter<FormOptions<T>> = update => {
     setFormState(prev => {
       if (typeof update !== 'function') {
         return update;
