@@ -30,15 +30,15 @@ export default defineConfig({
     // https://vitepress.dev/reference/default-theme-config
     logo: '/images/logo.svg',
     nav: [
-      { text: '指南', link: '/guide/introduce', activeMatch: '^/guide/' },
-      { text: 'Hook', link: '/hooks/introduce', activeMatch: '^/hooks/' },
+      { text: '指南', link: '/guide/introduction', activeMatch: '^/guide/' },
+      { text: 'Hook', link: '/hooks/introduction', activeMatch: '^/hooks/' },
     ],
     sidebar: {
       '/guide/': [
         {
           text: '基础',
           items: [
-            { text: '简介', link: '/guide/introduce' },
+            { text: '简介', link: '/guide/introduction' },
             { text: '快速上手', link: '/guide/quick-start' },
           ],
         },
@@ -53,7 +53,7 @@ export default defineConfig({
       '/hooks/': [
         {
           text: '概览',
-          items: [{ text: 'Hook 介绍', link: '/hooks/introduce' }],
+          items: [{ text: 'Hook 介绍', link: '/hooks/introduction' }],
         },
         {
           text: 'Core Hooks',

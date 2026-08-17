@@ -1,7 +1,6 @@
 # useMessage
 
-`useMessage` 直接返回 `ElMessage`，用于显示操作反馈。
-可以直接调用返回值，也可以使用 `success`、`warning` 等快捷方法。
+`useMessage` 返回 `$message` 全局方法，用法与 `ElMessage` 完全一致。可以直接调用返回值，也可以使用 `success`、`warning` 等快捷方法。
 
 ## 基础用法 {#basic-usage}
 
@@ -75,7 +74,7 @@
 
 ## API {#api}
 
-`useMessage` 无需参数，直接返回 `ElMessage` 实例函数。
+`useMessage` 无需参数，直接返回 `$message` 全局方法。
 
 `useMessage()` 的返回值可以像 `ElMessage` 一样直接调用，也可以调用 `success`、`warning`、`error` 等方法。
 

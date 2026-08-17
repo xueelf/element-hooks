@@ -50,7 +50,7 @@
     });
 
     items.push({
-      slot: 'buttons',
+      slot: 'actions',
     });
 
     return items;
@@ -125,7 +125,7 @@
         Delete
       </el-button>
     </template>
-    <template #buttons>
+    <template #actions>
       <el-button type="primary" @click="submitForm">Submit</el-button>
       <el-button @click="addDomain">New domain</el-button>
       <el-button @click="resetForm">Reset</el-button>

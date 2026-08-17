@@ -41,7 +41,7 @@
     },
   ];
 
-  async function load() {
+  async function handleSearch() {
     await loadData(async params => {
       await new Promise(resolve => setTimeout(resolve, 500));
 
@@ -61,9 +61,9 @@
     });
   }
 
-  function onReset() {
+  function handleReset() {
     instance.value?.form?.resetFields();
-    return load();
+    return handleSearch();
   }
 
   const [Grid, { instance, loadData }] = useGrid<Row, SearchModel>({
@@ -115,8 +115,8 @@
       currentPage: 1,
       pageSize: 2,
       layout: 'prev, pager, next',
-      onCurrentChange: load,
-      onSizeChange: load,
+      onCurrentChange: handleSearch,
+      onSizeChange: handleSearch,
     },
   });
 </script>
@@ -128,11 +128,11 @@
         type="primary"
         :loading="loading"
         :disabled="loading"
-        @click="load"
+        @click="handleSearch"
       >
         Query
       </el-button>
-      <el-button :disabled="loading" @click="onReset">Reset</el-button>
+      <el-button :disabled="loading" @click="handleReset">Reset</el-button>
     </template>
   </Grid>
 </template>

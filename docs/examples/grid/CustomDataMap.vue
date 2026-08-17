@@ -8,7 +8,7 @@
     name: string;
   };
 
-  async function load() {
+  async function handleLoadRecords() {
     await loadData(async ({ currentPage, pageSize }) => {
       await new Promise(resolve => setTimeout(resolve, 500));
 
@@ -37,12 +37,12 @@
         result: 'records',
         total: 'count',
       },
-      onCurrentChange: load,
-      onSizeChange: load,
+      onCurrentChange: handleLoadRecords,
+      onSizeChange: handleLoadRecords,
     },
   });
 
-  onMounted(load);
+  onMounted(handleLoadRecords);
 </script>
 
 <template>

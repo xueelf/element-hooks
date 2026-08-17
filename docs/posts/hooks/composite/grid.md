@@ -1,13 +1,10 @@
 # useGrid
 
-`useGrid` 将 `useForm`、`useTable` 和 `ElPagination` 组合为列表组件。
-它管理布局、表格数据、分页和加载状态，数据请求仍由调用方管理。
+`useGrid` 聚合 `ElForm`、`ElTable` 和 `ElPagination`，通过一个 Controller 管理查询条件、表格数据和分页状态。调用方负责请求数据，并通过 `setData` 或 `loadData` 更新表格。异步加载数据时，会自动处理 Loading。
 
 ## 基础用法 {#basic-usage}
 
-配置 `columns`、`data` 和 `pagination` 即可启用分页。
-分页变化只会更新内部状态并触发事件。
-调用方需在事件中使用 `loadData` 加载数据。
+`columns` 用于设置表格列，`data` 用于设置初始数据。传入 `pagination` 后会显示分页器。分页变化只会更新内部状态并触发事件，调用方需在事件中使用 `loadData` 加载数据。
 
 <ExampleCard>
   <template #example>
@@ -17,15 +14,11 @@
 <<< @/examples/grid/GridBasicUsage.vue
 </ExampleCard>
 
-## 搜索表单 {#with-search-form}
+## 查询表单 {#with-search-form}
 
-传入 `form` 配置即可显示搜索表单。
-调用加载函数时，`loadData` 会传入表单模型和分页参数。
-加载函数返回 `PromiseLike`（包括 `Promise`）时，`useGrid` 会自动管理加载状态。
+传入 `form` 配置即可显示查询表单。调用加载函数时，`loadData` 会传入表单模型和分页参数。`loadData` 执行异步加载函数时会显示 Loading，函数结束后会关闭 Loading。
 
-表单插槽会接收 `loading` 参数。
-调用方可以使用该参数控制自定义按钮。
-加载状态不会遮挡表单区域。
+表单插槽会接收 `loading` 参数，调用方可以使用该参数控制自定义按钮。加载状态不会遮挡表单区域。
 
 <ExampleCard>
   <template #example>
@@ -37,8 +30,7 @@
 
 ## 自定义数据映射 {#custom-data-map}
 
-默认数据字段是 `result` 和 `total`。
-`pagination.props` 可以将其他响应字段映射为这两个字段。
+默认数据字段是 `result` 和 `total`，`pagination.props` 可以将其他响应字段映射为这两个字段。
 
 <ExampleCard>
   <template #example>
@@ -50,13 +42,12 @@
 
 ## 数据更新 {#data-updates}
 
-`setData` 直接写入数据，也支持函数式更新。
-`loadData` 调用同步或异步加载函数，并将返回值写入数据。
+`setData` 直接写入数据，也支持函数式更新。`loadData` 调用同步或异步加载函数，并将返回值写入数据。
 
 ```ts
 setData(rows);
 
-setData(previousRows => [...previousRows, row]);
+setData(data => (Array.isArray(data) ? [...data, row] : [row]));
 
 loadData(params => getRows(params));
 
@@ -66,36 +57,23 @@ await loadData(async params => {
 });
 ```
 
-每次调用 `loadData` 时，传入的加载函数只会执行一次。
-分页变化不会自动重新执行之前的加载函数。
-传入 `form` 时，加载函数的参数包含表单模型和分页参数。
-未传入 `form` 时，参数只包含 `currentPage` 和 `pageSize`。
-有表单且需要显式声明行类型时，应同时声明 `D` 和 `M`。
-不写泛型时，`D` 和 `M` 会分别从 `data` 和 `form.model` 推导。
-分页字段会覆盖表单中的同名字段。
-`currentPage` 和 `pageSize` 未配置时采用 `ElPagination` 的默认值。
+每次调用 `loadData` 时，传入的加载函数只会执行一次。分页变化不会自动重新执行之前的加载函数。传入 `form` 时，加载函数的参数包含表单模型和分页参数，未传入 `form` 时，参数只包含 `currentPage` 和 `pageSize`。有表单且需要显式声明行类型时，应同时声明 `D` 和 `M`。不写泛型时，`D` 和 `M` 会分别从 `data` 和 `form.model` 推导。分页字段会覆盖表单中的同名字段。`currentPage` 和 `pageSize` 未配置时采用 `ElPagination` 的默认值。
 
-`GridData<D>` 也可以接收对象形式的响应。
-响应对象可以使用 `interface` 或 `type` 定义，无需声明字符串索引签名。
+`GridData<D>` 也可以接收对象形式的响应。响应对象可以使用 `interface` 或 `type` 定义，无需声明字符串索引签名。
 
-加载函数结束后，加载状态会自动关闭。
 需要串行加载时，调用方应逐次 `await loadData(...)`。
 
-:::tip 加载范围
-加载函数返回 `PromiseLike`（包括 `Promise`）时，页面才会显示加载状态。
-加载状态仅覆盖表格区域，并在加载期间禁用分页。
-错误会继续向调用方抛出。
-`useGrid` 不负责消息提示或重试。
+:::tip [加载范围]
+加载函数返回 `PromiseLike`（包括 `Promise`）时，页面才会显示加载状态。加载状态仅覆盖表格区域，并在加载期间禁用分页，函数结束后会自动关闭。错误会继续向调用方抛出。`useGrid` 不负责消息提示或重试。
 :::
 
 ## API {#api}
 
 ### Options {#options}
 
-`GridOptions<D>` 不包含表单配置。
-使用表单时应声明为 `GridOptions<D, M>`，此时 `form` 为必填项。
-未提供具体行类型时，`D` 默认使用 `object`。
-传入空数组不会将行类型固定为 `never`。
+`useGrid` 支持 `ElTable` 的属性，并增加以下配置。
+
+`GridOptions<D>` 不包含表单配置。使用表单时应声明为 `GridOptions<D, M>`，此时 `form` 为必填项。未提供具体行类型时，`D` 默认使用 `object`，传入空数组不会将行类型固定为 `never`。
 
 | 参数         | 说明                                       | 类型                | 默认值 |
 | ------------ | ------------------------------------------ | ------------------- | ------ |
@@ -112,18 +90,17 @@ await loadData(async params => {
 
 ### Controller {#controller}
 
-| 方法            | 说明                         | 参数                                                                  |
-| --------------- | ---------------------------- | --------------------------------------------------------------------- |
-| `setState`      | 更新 `Grid` 的整体状态       | `(state: GridOptions<D, M>) => void`                                  |
-| `setData`       | 直接或通过函数式更新数据     | `(data: GridData<D> \| ((prev: GridData<D>) => GridData<D>)) => void` |
-| `loadData`      | 执行一次同步或异步数据加载   | `(loader: GridDataLoader<D, M>) => void \| Promise<void>`             |
-| `setModel`      | 更新或初始化表单模型数据     | `(model: M) => void`                                                  |
-| `getModel`      | 获取当前表单数据             | `() => M \| null`                                                     |
-| `setItems`      | 更新表单项配置               | `(items: FormItem<M>[]) => void`                                      |
-| `setColumns`    | 更新表格列配置               | `(columns: TableColumn<D>[]) => void`                                 |
-| `getData`       | 获取当前表格渲染的数据       | `() => D[]`                                                           |
-| `getPagination` | 获取当前页码和每页条数       | `() => GridPaginationParams`                                          |
-| `instance`      | 获取内部表单、表格和分页实例 | `Ref<GridInstance \| null>`                                           |
+| 成员            | 说明                       | 类型                                                                                     |
+| --------------- | -------------------------- | ---------------------------------------------------------------------------------------- |
+| `setState`      | 更新 `Grid` 的整体状态     | `(state: GridOptions<D, M> \| ((prev: GridOptions<D, M>) => GridOptions<D, M>)) => void` |
+| `setData`       | 更新表格数据               | `(data: GridData<D> \| ((prev: GridData<D>) => GridData<D>)) => void`                    |
+| `loadData`      | 执行一次同步或异步数据加载 | `(loader: GridDataLoader<D, M>) => void \| Promise<void>`                                |
+| `setModel`      | 更新或初始化表单模型数据   | `(model: M \| ((prev: M) => M)) => void`                                                 |
+| `getModel`      | 获取当前表单数据           | `() => M \| null`                                                                        |
+| `setItems`      | 更新表单项配置             | `(items: FormItem<M>[] \| ((prev: FormItem<M>[]) => FormItem<M>[])) => void`             |
+| `setColumns`    | 更新表格列配置             | `(columns: TableColumn<D>[] \| ((prev: TableColumn<D>[]) => TableColumn<D>[])) => void`  |
+| `getData`       | 获取当前表格渲染的数据     | `() => D[]`                                                                              |
+| `getPagination` | 获取当前页码和每页条数     | `() => GridPaginationParams`                                                             |
+| `instance`      | 表单、表格和分页实例       | `Ref<GridInstance \| null>`                                                              |
 
-`setState`、`setModel`、`setItems` 和 `setColumns` 支持函数式更新。
 模型尚未初始化时，`setModel` 只能直接传入模型对象。

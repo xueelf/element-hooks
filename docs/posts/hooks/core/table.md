@@ -1,10 +1,8 @@
 # useTable
 
-`useTable` 使用 `columns` 数组定义表格列。
-Controller 用于更新表格配置和数据。
-生成的 Table 组件仍支持 `ElTable` 的属性、插槽和事件。
+`useTable` 使用 `columns` 数组定义表格列。`setColumns` 用于更新表格列，`setData` 用于更新表格数据。`Table` 组件支持 `ElTable` 原有的属性、插槽和事件。
 
-这种方式适合列较多或需要动态调整列配置的表格。
+`columns` 配置适合列较多或需要动态调整列的表格。
 
 ## 基础表格 {#basic-table}
 
@@ -269,6 +267,7 @@ Controller 用于更新表格配置和数据。
 
 | 字段       | 说明                                                          | 类型                                           |
 | ---------- | ------------------------------------------------------------- | ---------------------------------------------- |
+| `key`      | 表格列的唯一标识                                              | `string \| number`                             |
 | `slot`     | 默认插槽名（`slots.default` 的简写）                          | `string`                                       |
 | `slots`    | 具名插槽配置（`default`、`header`、`filterIcon` 和 `expand`） | `Partial<Record<TableColumnSlotName, string>>` |
 | `children` | 子列配置（用于多级表头）                                      | `TableColumn<T>[]`                             |
@@ -276,15 +275,11 @@ Controller 用于更新表格配置和数据。
 
 #### `render.component` {#render-component}
 
-`render.component` 可以使用全局组件名称。
-例如，`tag` 可以映射到 `ElTag`。
+`render.component` 可以使用全局组件名称，例如 `tag` 可以映射到 `ElTag`。
 
 #### `render.props` {#render-props}
 
-`render.props` 可以是属性对象，也可以是返回属性对象的函数。
-函数参数是当前行数据 `row`。
-组件会在渲染时执行该函数。
-函数中使用的响应式数据变化后，组件属性会自动更新。
+`render.props` 可以是属性对象，也可以是返回属性对象的函数。函数参数是当前行数据 `row`，组件会在渲染时执行该函数。函数中使用的响应式数据变化后，组件属性会自动更新。
 
 事件、格式化器等函数属性会直接传给组件。
 
@@ -315,24 +310,16 @@ const [Table] = useTable({
 
 ### Controller {#controller}
 
-| 方法         | 说明                                            | 参数                                                    |
-| ------------ | ----------------------------------------------- | ------------------------------------------------------- |
-| `setState`   | 动态更新表格整体配置                            | `(state: TableOptions<T>) => void`                      |
-| `setColumns` | 动态更新列定义                                  | `(columns: TableColumn<T>[]) => void`                   |
-| `getColumns` | 获取当前列定义                                  | `() => TableColumn<T>[]`                                |
-| `setData`    | 直接或通过函数式更新数据                        | `(data: T[] \| ((prev: T[]) => T[])) => void`           |
-| `loadData`   | 执行一次同步或异步数据加载                      | `(loader: TableDataLoader<T>) => void \| Promise<void>` |
-| `getData`    | 获取当前数据                                    | `() => T[]`                                             |
-| `instance`   | 内部 ElTable 实例（可调用排序、选择等原生方法） | `Ref<TableInstance \| null>`                            |
+| 成员         | 说明                       | 类型                                                                                    |
+| ------------ | -------------------------- | --------------------------------------------------------------------------------------- |
+| `setState`   | 更新表格整体配置           | `(state: TableOptions<T> \| ((prev: TableOptions<T>) => TableOptions<T>)) => void`      |
+| `setColumns` | 更新列定义                 | `(columns: TableColumn<T>[] \| ((prev: TableColumn<T>[]) => TableColumn<T>[])) => void` |
+| `getColumns` | 获取当前列定义             | `() => TableColumn<T>[]`                                                                |
+| `setData`    | 更新表格数据               | `(data: T[] \| ((prev: T[]) => T[])) => void`                                           |
+| `loadData`   | 执行一次同步或异步数据加载 | `(loader: TableDataLoader<T>) => void \| Promise<void>`                                 |
+| `getData`    | 获取当前数据               | `() => T[]`                                                                             |
+| `instance`   | `ElTable` 组件实例         | `Ref<TableInstance \| null>`                                                            |
 
-`loadData` 会调用传入的加载函数，并使用返回结果更新表格数据。
-加载函数返回 `PromiseLike`（包括 `Promise`）时会显示 `v-loading`。
-错误会继续向调用方抛出。
-加载函数结束后，`v-loading` 会自动关闭。
-需要串行加载时，调用方应逐次 `await loadData(...)`。
+`loadData` 会调用传入的加载函数，并使用返回结果更新表格数据。加载函数返回 `PromiseLike`（包括 `Promise`）时会显示 `v-loading`。错误会继续向调用方抛出。加载函数结束后，`v-loading` 会自动关闭。需要串行加载时，调用方应逐次 `await loadData(...)`。
 
-`T` 必须满足 `object` 约束。
-未提供具体行类型时默认使用 `object`，空数组不会将行类型固定为 `never`。
-需要访问行数据字段时，应传入泛型或使用带有明确类型的数组。
-
-`setState` 和 `setColumns` 支持 `(prev) => next` 函数式更新。
+`T` 必须满足 `object` 约束。未提供具体行类型时默认使用 `object`，空数组不会将行类型固定为 `never`。需要访问行数据字段时，应传入泛型或使用带有明确类型的数组。

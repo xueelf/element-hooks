@@ -217,7 +217,7 @@
         render: { component: ElInput, props: { type: 'textarea' } },
       },
       {
-        slot: 'buttons',
+        slot: 'actions',
       },
     ],
   });
@@ -271,7 +271,7 @@
         </el-form-item>
       </el-col>
     </template>
-    <template #buttons>
+    <template #actions>
       <el-button type="primary" @click="submitForm"> Create </el-button>
       <el-button @click="resetForm">Reset</el-button>
     </template>

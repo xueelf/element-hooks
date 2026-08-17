@@ -1,55 +1,53 @@
 # 状态管理
 
-Element Hooks 的状态更新方法参考 React `useState`。
-这些方法支持直接设值和函数式更新。
+Element Hooks 的状态管理借鉴了 React Hooks 的设计思路。组件状态由 Hook 维护，并通过 Controller 提供的方法更新。
 
 ## 认识 React {#react}
 
-在 React 中，`useState` 提供两种状态更新方式。
+在 Vue 中，`ref()` 返回的响应式值通过 `.value` 读取和修改。React 不会直接修改状态变量，而是调用 Hook 返回的方法更新状态。以 `useState()` 为例，它会返回当前状态和对应的 `set` 函数。调用 `set` 函数时，可以传入下一个状态，也可以传入更新函数。
 
-1. **普通设值（直接覆盖）**
-   直接传入新的状态值。
+1. **传入下一个状态** — 使用新值替换当前状态。
 
    ```ts
    const [count, setCount] = useState(114);
-   setCount(514); // 直接传入新值 514
+
+   setCount(514);
    ```
 
-2. **函数式更新**
-   传入回调函数时，参数是上一个状态。
-   回调函数的返回值会成为新状态。
+2. **传入更新函数** — 根据当前状态计算并返回下一个状态。
 
    ```ts
    const [user, setUser] = useState({ name: 'Yuki', age: 16 });
-   setUser(prev => ({ ...prev, age: 18 })); // 展开旧值并覆盖 age 属性，返回新对象
+
+   setUser(prev => ({ ...prev, age: prev.age + 1 }));
    ```
 
 ## 不可变性 {#immutability}
 
-Element Hooks 使用 Vue 的 `shallowRef` 存储配置状态。
-调用更新方法时，应传入新的顶层引用。
-
-直接修改深层属性不会更新顶层引用。
-因此，视图不会重新渲染。
+Element Hooks 使用 Vue 的 `shallowRef()` 保存配置。`shallowRef()` 只追踪 `.value` 的变化，不会追踪对象内部属性的修改。因此，更新对象或数组时，需要返回一个新的对象或数组。
 
 ```ts
-const options = {
+const [Dialog, { setState }] = useDialog({
   title: '提示',
   width: 500,
-};
-const [Dialog, { setState }] = useDialog(options);
+});
 
-// shallowRef 只追踪顶层引用，这不会触发渲染更新
-options.title = '新标题';
+// 错误：修改原对象后仍然返回它
+setState(options => {
+  options.title = '新标题';
+  return options;
+});
 
-// 正确方式是调用 setState 传入新的对象引用
-setState({ title: '新标题', width: 800 });
+// 正确：创建并返回一个新对象
+setState(options => ({
+  ...options,
+  title: '新标题',
+}));
 ```
 
 ## 快捷方法 {#shortcuts}
 
-`useDialog` 的 Controller 通过 `setState` 更新全部配置。
-它同样支持直接设值和函数式更新。
+`setState` 用于更新 Hook 的全部配置。你可以传入一份完整的新配置，也可以通过更新函数在当前配置的基础上创建新配置。
 
 ```ts
 const [Dialog, { setState }] = useDialog({
@@ -57,41 +55,37 @@ const [Dialog, { setState }] = useDialog({
   fullscreen: false,
 });
 
-// 1. 普通传参，全量覆盖（不推荐用于复杂配置）
+// 使用新配置替换当前配置
 setState({ title: '新标题', fullscreen: true });
 
-// 2. 函数式更新，只修改 title 并保留其他配置（推荐）
+// 根据当前配置创建新配置
 setState(prev => ({ ...prev, title: '新标题' }));
 ```
 
-大多数 Hook 还提供了常用属性的快捷方法。
-例如，`setTitle` 支持两种更新方式。
+对于经常单独更新的配置，Controller 提供了对应的快捷方法。快捷方法与 `setState` 的用法相同。以 `setTitle` 为例，可以传入新标题，也可以根据当前标题生成新值。
 
 ```ts
-// 更新 title，并保留其他配置
+// 传入新标题
 setTitle('新标题');
 
-// 函数式更新
-setTitle(prevTitle => `${prevTitle} - Subtitle`);
+// 根据当前标题生成新标题
+setTitle(title => `${title}（已更新）`);
 ```
 
-## 快捷方法对照表 {#shortcuts-mapping}
+## 快捷方法一览 {#shortcut-methods}
 
-下表列出常用快捷方法的状态写入结果。
+各组件 Hook 提供的快捷方法如下。
 
-| Hook        | 快捷方法              | 状态写入结果                                                     |
-| ----------- | --------------------- | ---------------------------------------------------------------- |
-| `useDialog` | `setTitle(title)`     | `setState(prev => ({ ...prev, title }))`                         |
-| `useTable`  | `setColumns(columns)` | `setState(prev => ({ ...prev, columns }))`                       |
-| `useTable`  | `setData(data)`       | 写入 `data`                                                      |
-| `useForm`   | `setItems(items)`     | `setState(prev => ({ ...prev, items }))`                         |
-| `useForm`   | `setModel(model)`     | `setState(prev => ({ ...prev, model }))`                         |
-| `useGrid`   | `setItems(items)`     | `setState(prev => ({ ...prev, form: { ...prev.form, items } }))` |
-| `useGrid`   | `setModel(model)`     | `setState(prev => ({ ...prev, form: { ...prev.form, model } }))` |
-| `useGrid`   | `setColumns(columns)` | `setState(prev => ({ ...prev, columns }))`                       |
-| `useGrid`   | `setData(data)`       | 写入 `data`                                                      |
-
-`loadData` 支持同步和异步加载函数。
-异步加载函数执行期间会自动管理加载状态。
-`useGrid` 的加载函数参数包含表单模型和分页参数。
-需要串行加载时，调用方应逐次 `await loadData(...)`。
+- **`useDialog`**
+  - `setTitle` — 更新对话框标题。
+- **`useTable`**
+  - `setColumns` — 更新表格列配置。
+  - `setData` — 更新表格数据。
+- **`useForm`**
+  - `setItems` — 更新表单项配置。
+  - `setModel` — 更新表单数据。
+- **`useGrid`**
+  - `setItems` — 更新查询表单项配置。
+  - `setModel` — 更新查询表单的数据。
+  - `setColumns` — 更新表格列配置。
+  - `setData` — 更新表格数据。

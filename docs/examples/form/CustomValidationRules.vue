@@ -90,7 +90,7 @@
         },
       },
       {
-        slot: 'buttons',
+        slot: 'actions',
       },
     ],
   });
@@ -118,7 +118,7 @@
 
 <template>
   <Form style="max-width: 600px" class="demo-ruleForm">
-    <template #buttons>
+    <template #actions>
       <el-button type="primary" @click="submitForm">Submit</el-button>
       <el-button @click="resetForm">Reset</el-button>
     </template>

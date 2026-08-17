@@ -2,12 +2,10 @@
 
 ## 安装 {#installation}
 
-Element Hooks 基于 [Element Plus](https://element-plus.org/) 构建。
-开始使用前，请确认项目满足以下依赖条件。
+安装前，请确认项目已经安装以下依赖。
 
 - [Vue](https://vuejs.org/) `^3.3.7`
 - [Element Plus](https://element-plus.org/) `^2.14.4`
-- [TypeScript](https://www.typescriptlang.org/) `^6.0.3`
 
 ::: code-group
 
@@ -29,32 +27,9 @@ bun add element-hooks
 
 :::
 
-## 引入插件 {#plugin-registration}
-
-推荐将 Element Hooks 注册为 Vue 插件。
-注册插件时可以传入 [全局配置](/guide/global-options)。
-插件同时会启用 Vue DevTools 支持。
-
-```ts {9}
-import ElementHooks from 'element-hooks';
-import ElementPlus from 'element-plus';
-import { createApp } from 'vue';
-
-import App from './App.vue';
-
-const app = createApp(App);
-
-app.use(ElementPlus);
-app.use(ElementHooks);
-
-app.mount('#app');
-```
-
 ## 基本用法 {#basic-usage}
 
-组件 Hook 返回 `[Component, controller]` 元组。
-在 `<script setup>` 中调用控制方法。
-在 `<template>` 中渲染返回的组件。
+可以直接从 `element-hooks` 按需导入 Hook，无需先注册 Vue 插件。在 `<script setup>` 中调用 `useDialog` 后，返回的 `Dialog` 可以直接在 `<template>` 中使用。
 
 ```vue
 <script setup lang="ts">
@@ -77,13 +52,28 @@ app.mount('#app');
 </template>
 ```
 
-完整的功能说明请参阅 [Hook 介绍](/hooks/introduce)。
+## 注册插件 {#plugin-registration}
+
+将 Element Hooks 注册为 Vue 插件后，可以设置 [全局配置](/guide/global-options)，并启用 Vue DevTools 支持。如果只需要按需使用 Hook，也可以不注册插件。
+
+```ts {10}
+import ElementHooks from 'element-hooks';
+import ElementPlus from 'element-plus';
+import { createApp } from 'vue';
+
+import App from './App.vue';
+
+const app = createApp(App);
+
+app.use(ElementPlus);
+app.use(ElementHooks);
+
+app.mount('#app');
+```
 
 ## 自动导入 {#auto-import}
 
-项目可以使用 [unplugin-auto-import](https://github.com/unplugin/unplugin-auto-import) 自动导入 Hook。
-`element-hooks/composables` 的默认导出包含全部 Hook。
-将该对象的键名添加到 `imports` 配置即可。
+如果项目已经使用 [unplugin-auto-import](https://github.com/unplugin/unplugin-auto-import)，可以添加以下配置，自动导入 Element Hooks 提供的全部 Hook。
 
 ```ts [vite.config.ts]
 import ElementHooksComposables from 'element-hooks/composables';
@@ -106,7 +96,8 @@ export default defineConfig({
 
 ## 下一步 {#next-steps}
 
-完成基本配置后，可以继续阅读以下内容。
+接下来可以继续阅读以下内容。
 
-- [Hook 介绍](/hooks/introduce) — 了解 Element Hooks 的 API 边界和分类。
+- [Hook 介绍](/hooks/introduction) — 查看 Core Hooks 和 Composite Hooks 的分类。
 - [全局配置](/guide/global-options) — 设置 Hook 的全局默认配置。
+- [状态管理](/guide/state-management) — 了解 `setState` 和快捷方法的使用方式。

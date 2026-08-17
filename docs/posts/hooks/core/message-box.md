@@ -1,7 +1,9 @@
 # useMessageBox
 
-`useMessageBox` 返回 `ElMessageBox` 的 `alert`、`confirm` 和 `prompt` 方法。
-取消或关闭时，`confirm` 返回 `false`，`prompt` 返回 `null`。
+原生 `ElMessageBox.confirm` 和 `ElMessageBox.prompt` 在取消或关闭时会 `reject` 并抛出异常，通常需要额外编写 `catch` 逻辑。`useMessageBox` 已统一处理这两种情况，因此可以直接使用 `await` 进行管理。
+
+- **`confirm`** — 确认时返回 `true`，取消或关闭时返回 `false`。
+- **`prompt`** — 确认时返回输入内容，取消或关闭时返回 `null`。
 
 ## 消息提示 {#alert}
 
