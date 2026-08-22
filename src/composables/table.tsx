@@ -6,6 +6,7 @@ import {
   vLoading,
 } from 'element-plus';
 import {
+  type PublicProps,
   type VNodeChild,
   defineComponent,
   h,
@@ -64,8 +65,29 @@ export type ColumnScope<T extends object> =
   | ColumnFilterIconScope
   | ColumnExpandScope;
 
+type TableColumnInternalProp =
+  | 'children'
+  | 'colSpan'
+  | 'columns'
+  | 'filterOpened'
+  | 'filterable'
+  | 'getColumnIndex'
+  | 'id'
+  | 'isColumnGroup'
+  | 'isSubColumn'
+  | 'level'
+  | 'no'
+  | 'order'
+  | 'rawColumnKey'
+  | 'realWidth'
+  | 'renderCell'
+  | 'renderExpand'
+  | 'renderFilterIcon'
+  | 'rowSpan';
+
 export type TableColumn<T extends object = object> = Partial<
-  Omit<TableColumnCtx<T>, 'children'>
+  Camelized<Omit<TableColumnCtx<T>, TableColumnInternalProp>> &
+    Omit<PublicProps, 'key' | 'ref'>
 > & {
   key?: string | number;
   children?: TableColumn<T>[];
@@ -205,24 +227,21 @@ function createTable<T extends object = object>(options: TableOptions<T> = {}) {
               `[useTable] TableColumn "${columnProps.prop ?? slot}" has both a slot and render defined. The slot will take priority.`,
             );
           } else {
-            columnSlots.default = (scope: ColumnDefaultScope<T>) => {
-              const { component } = render;
-              const renderComponent =
-                typeof component === 'string'
-                  ? getComponent(component)
-                  : component;
+            const { component } = render;
+            const renderComponent =
+              typeof component === 'string'
+                ? getComponent(component)
+                : component;
 
-              if (!renderComponent) {
-                console.warn(
-                  `[useTable] Global component "${String(component)}" is not registered.`,
-                );
-                return null;
-              }
-              return h(
-                renderComponent,
-                resolveRenderProps(render.props, scope.row),
+            if (!renderComponent) {
+              console.warn(
+                `[useTable] Global component "${String(component)}" is not registered.`,
               );
-            };
+              columnSlots.default = () => null;
+            } else {
+              columnSlots.default = (scope: ColumnDefaultScope<T>) =>
+                h(renderComponent, resolveRenderProps(render.props, scope.row));
+            }
           }
         }
 
