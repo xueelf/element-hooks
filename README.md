@@ -2,7 +2,7 @@
 
 [![npm downloads](https://img.shields.io/npm/dm/element-hooks?style=flat-square&labelColor=FAFAFA&color=CB3837&logo=npm&logoColor=CB3837)](https://www.npmjs.com/package/element-hooks)
 [![license](https://img.shields.io/github/license/xueelf/element-hooks?style=flat-square&labelColor=FAFAFA&color=181717&logo=github&logoColor=181717)](https://github.com/xueelf/element-hooks/blob/master/LICENSE)
-[![element-plus](https://img.shields.io/badge/element--plus-%5E2.14.4-409eff?style=flat-square&labelColor=FAFAFA&logo=element&logoColor=409eff)](https://element-plus.org/)
+[![element-plus](https://img.shields.io/badge/element--plus-%5E2.14.5-409eff?style=flat-square&labelColor=FAFAFA&logo=element&logoColor=409eff)](https://element-plus.org/)
 [![typescript](https://img.shields.io/badge/TypeScript-%5E6.0.3-3178c6?style=flat-square&labelColor=FAFAFA&logo=typescript&logoColor=3178c6)](https://www.typescriptlang.org/)
 
 Element Hooks 提供了一套组合式 API，让开发者以 Hook 方式使用 [Element Plus](https://element-plus.org/)，通过配置驱动组件、统一管理状态，减少重复模板代码。
@@ -36,8 +36,8 @@ npm install element-hooks
 
 ### 前置依赖
 
-- Vue ≥ 3.3
-- Element Plus ≥ 2.14.4
+- Vue ≥ 3.5.41
+- Element Plus ≥ 2.14.5
 
 ## 🚀 快速上手
 

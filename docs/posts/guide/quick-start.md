@@ -4,8 +4,8 @@
 
 安装前，请确认项目已经安装以下依赖。
 
-- [Vue](https://vuejs.org/) `^3.3.7`
-- [Element Plus](https://element-plus.org/) `^2.14.4`
+- [Vue](https://vuejs.org/) `^3.5.41`
+- [Element Plus](https://element-plus.org/) `^2.14.5`
 
 ::: code-group
 

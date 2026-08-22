@@ -85,9 +85,9 @@
     "vue-tsc": "^3.3.9"
   },
   "peerDependencies": {
-    "element-plus": "^2.14.4",
+    "element-plus": "^2.14.5",
     "typescript": "^6.0.3",
-    "vue": "^3.3.7"
+    "vue": "^3.5.41"
   },
   "devEngines": {
     "runtime": {
