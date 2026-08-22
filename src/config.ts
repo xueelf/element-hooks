@@ -11,8 +11,8 @@ export type GlobalComponentName = keyof GlobalComponents;
 export type GlobalOptions = {
   components?: object;
   dialog?: DialogOptions;
-  form?: Partial<FormOptions<object>>;
-  table?: TableOptions<object>;
+  form?: Partial<Omit<FormOptions<object>, 'items' | 'model'>>;
+  table?: Omit<TableOptions<object>, 'columns' | 'data'>;
   pagination?: PaginationOptions;
 };
 
