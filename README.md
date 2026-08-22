@@ -148,10 +148,12 @@ Core Hooks 以 Hook 形式封装 Element Plus 的单个组件或方法。返回�
 
 #### useMessageBox
 
-原生 `ElMessageBox.confirm` 和 `ElMessageBox.prompt` 在取消或关闭时会 `reject` 并抛出异常，通常需要额外编写 `catch` 逻辑。`useMessageBox` 已统一处理这两种情况，因此可以直接使用 `await` 进行管理。
+原生 `ElMessageBox.confirm` 和 `ElMessageBox.prompt` 在取消或关闭时会 `reject` 并抛出异常，通常需要额外编写 `catch` 逻辑。`useMessageBox` 已统一处理这两种情况，因此可以直接使用 `await` 进行管理。其他异常仍会向调用方抛出。
 
 - `confirm`：确认时返回 `true`，取消或关闭时返回 `false`。
 - `prompt`：确认时返回输入内容，取消或关闭时返回 `null`。
+
+`confirm` 和 `prompt` 通过 Promise 返回结果，因此不支持 `callback` 选项。`alert` 与原生方法保持一致。
 
 ```vue
 <script setup lang="ts">

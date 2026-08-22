@@ -1,6 +1,6 @@
 # useMessageBox
 
-原生 `ElMessageBox.confirm` 和 `ElMessageBox.prompt` 在取消或关闭时会 `reject` 并抛出异常，通常需要额外编写 `catch` 逻辑。`useMessageBox` 已统一处理这两种情况，因此可以直接使用 `await` 进行管理。
+原生 `ElMessageBox.confirm` 和 `ElMessageBox.prompt` 在取消或关闭时会 `reject` 并抛出异常，通常需要额外编写 `catch` 逻辑。`useMessageBox` 已统一处理这两种情况，因此可以直接使用 `await` 进行管理。其他异常仍会向调用方抛出。
 
 - **`confirm`** — 确认时返回 `true`，取消或关闭时返回 `false`。
 - **`prompt`** — 确认时返回输入内容，取消或关闭时返回 `null`。
@@ -75,16 +75,6 @@
 <<< @/examples/message-box/MessageBoxUseHTMLString.vue
 </ExampleCard>
 
-## 区分取消操作与关闭操作 {#distinguishing-cancel-and-close}
-
-<ExampleCard>
-  <template #example>
-    <DistinguishingCancelAndClose />
-  </template>
-
-<<< @/examples/message-box/DistinguishingCancelAndClose.vue
-</ExampleCard>
-
 ## 内容居中 {#centered-content}
 
 <ExampleCard>
@@ -119,11 +109,9 @@
 
 ### useMessageBox {#use-message-box}
 
-调用参数与 `ElMessageBox` 对应方法一致。
-
 - **`alert`** — 与 `ElMessageBox.alert` 行为一致。
-- **`confirm`** — 确认时返回 `true`，否则返回 `false`。
-- **`prompt`** — 确认时返回输入值，否则返回 `null`。
+- **`confirm`** — 调用参数与 `ElMessageBox.confirm` 一致，但不支持 `callback`。确认时返回 `true`，否则返回 `false`。
+- **`prompt`** — 调用参数与 `ElMessageBox.prompt` 一致，但不支持 `callback`。确认时返回输入值，否则返回 `null`。
 
 ### 返回值方法 {#returned-methods}
 

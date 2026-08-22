@@ -1,15 +1,30 @@
 import {
-  type ElMessageBoxShortcutMethod,
+  type ElMessageBoxOptions,
   type MessageBoxInputData,
   ElMessageBox,
 } from 'element-plus';
+import { type AppContext } from 'vue';
 
-type MessageBoxMethodParams = ElMessageBoxShortcutMethod extends {
-  (...args: infer A): unknown;
-  (...args: infer B): unknown;
+type MessageBoxOptions = Omit<ElMessageBoxOptions, 'callback'> & {
+  callback?: never;
+};
+
+type MessageBoxMethodParams =
+  | [
+      message: ElMessageBoxOptions['message'],
+      options?: MessageBoxOptions,
+      appContext?: AppContext | null,
+    ]
+  | [
+      message: ElMessageBoxOptions['message'],
+      title: ElMessageBoxOptions['title'],
+      options?: MessageBoxOptions,
+      appContext?: AppContext | null,
+    ];
+
+function isCanceled(error: unknown) {
+  return error === 'cancel' || error === 'close';
 }
-  ? A | B
-  : never;
 
 /**
  * ElMessageBox 会在点击关闭时返回一个 rejected 的 Promise，导致抛出异常。
@@ -22,8 +37,11 @@ export function useMessageBox() {
       try {
         await Reflect.apply(ElMessageBox.confirm, null, args);
         return true;
-      } catch {
-        return false;
+      } catch (error) {
+        if (isCanceled(error)) {
+          return false;
+        }
+        throw error;
       }
     },
     prompt: async (...args: MessageBoxMethodParams): Promise<string | null> => {
@@ -34,8 +52,11 @@ export function useMessageBox() {
           args,
         );
         return value;
-      } catch {
-        return null;
+      } catch (error) {
+        if (isCanceled(error)) {
+          return null;
+        }
+        throw error;
       }
     },
   };
