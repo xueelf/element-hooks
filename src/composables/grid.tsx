@@ -2,6 +2,8 @@ import {
   type FormInstance,
   type TableInstance,
   ElPagination,
+  useGlobalSize,
+  useNamespace,
   vLoading,
 } from 'element-plus';
 import { addUnit } from 'element-plus/es/utils/dom/style';
@@ -301,6 +303,8 @@ function createGrid<D extends object = object, M extends object = never>(
     inheritAttrs: false,
     setup(_, { slots }) {
       initState();
+      const globalSize = useGlobalSize();
+      const formItemNamespace = useNamespace('form-item');
 
       return () => {
         if (!gridState.value) {
@@ -338,6 +342,12 @@ function createGrid<D extends object = object, M extends object = never>(
           ...paginationProps
         } = paginationOptions ?? {};
 
+        /*
+         * 分页与表格的间距沿用当前尺寸下
+         * FormItem 的 margin-bottom。
+         */
+        const formItemSize = formOptions?.size || globalSize.value || 'default';
+
         return (
           <div
             style={{
@@ -364,13 +374,12 @@ function createGrid<D extends object = object, M extends object = never>(
             )}
             {paginationOptions && total > 0 && (
               <div
+                class={formItemNamespace.m(formItemSize)}
                 style={{
                   flexShrink: 0,
-                  /*
-                   * 与 Element Plus FormItem 默认的 margin-bottom 保持一致。
-                   * Element Plus 未提供对应的 CSS 变量。
-                   */
-                  marginTop: '18px',
+                  marginTop: `var(${formItemNamespace.cssVarBlockName(
+                    'margin-bottom',
+                  )})`,
                 }}
               >
                 <ElPagination
