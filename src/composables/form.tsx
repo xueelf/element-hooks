@@ -1,10 +1,18 @@
 import {
   type FormInstance,
-  type FormItemProps,
+  type FormItemInstance,
   ElForm,
   ElFormItem,
 } from 'element-plus';
-import { type VNodeChild, defineComponent, h, ref, toRaw, watch } from 'vue';
+import {
+  type VNodeChild,
+  defineComponent,
+  h,
+  mergeProps,
+  ref,
+  toRaw,
+  watch,
+} from 'vue';
 
 import { getComponent, withOptions } from '#/config';
 import {
@@ -28,7 +36,7 @@ export type FormItemSlotName = (typeof formItemSlotNames)[number];
 type FormItemSlot = (...args: never[]) => VNodeChild;
 
 export type FormItem<T extends object = object> = Partial<
-  Omit<FormItemProps, 'prop'>
+  Camelized<Omit<FormItemInstance['$props'], 'key' | 'prop' | 'ref'>>
 > & {
   key?: string | number;
   prop?: string | string[];
@@ -218,13 +226,20 @@ export function useForm<T extends object = object>(
               }
 
               if (formModel.value && prop) {
-                return h(renderComponent, {
-                  ...resolveRenderProps(render.props, formModel.value),
-                  modelValue: getProp(formModel.value, prop),
-                  'onUpdate:modelValue': (value: unknown) => {
-                    setProp(formModel.value, prop, value);
-                  },
-                });
+                return h(
+                  renderComponent,
+                  mergeProps(
+                    {
+                      'onUpdate:modelValue': (value: unknown) => {
+                        setProp(formModel.value, prop, value);
+                      },
+                    },
+                    resolveRenderProps(render.props, formModel.value),
+                    {
+                      modelValue: getProp(formModel.value, prop),
+                    },
+                  ),
+                );
               }
               return h(
                 renderComponent,
