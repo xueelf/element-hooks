@@ -3,6 +3,7 @@ import {
   type FunctionalComponent,
   type Ref,
   type ShallowRef,
+  onUnmounted,
   shallowRef,
   useAttrs,
   watchEffect,
@@ -110,7 +111,7 @@ export function useDataLoader<T, P = undefined>(
  *
  * - state: shallowRef，options 与 attrs 的扁平合并（attrs 优先），手动管理 render
  * - setState: 更新 options 源 → 触发 watchEffect → state 重赋值 → render
- * - initState: 在组件 setup 中调用，内部通过 useAttrs() 建立 watchEffect 自动同步
+ * - initState: 在组件 setup 中调用，同步 attrs 并在组件卸载后清理 state
  * - getCurrentState: 组件挂载前读取 options，挂载后读取合并 attrs 的 state
  */
 export function useState<T extends HookOptions>(
@@ -140,6 +141,10 @@ export function useState<T extends HookOptions>(
       },
       { flush: 'sync' },
     );
+
+    onUnmounted(() => {
+      state.value = null;
+    });
   };
 
   return [state, setState, initState, getCurrentState] as const;
