@@ -16,6 +16,15 @@ logger.info('Type declaration files generated');
 await build({
   entrypoints: ['src/index.ts', 'src/composables/index.ts'],
   format: 'esm',
+  /**
+   * Bun 解析 `packages: 'external'` 与 tsconfig paths 时会丢失 JSX 配置，
+   * 待 https://github.com/oven-sh/bun/pull/38805 发布后删除。
+   */
+  jsx: {
+    development: false,
+    importSource: 'vue',
+    runtime: 'automatic',
+  },
   outdir: compilerOptions.outDir,
   packages: 'external',
   splitting: true,
