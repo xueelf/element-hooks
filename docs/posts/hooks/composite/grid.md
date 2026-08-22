@@ -30,7 +30,7 @@
 
 ## 自定义数据映射 {#custom-data-map}
 
-默认数据字段是 `result` 和 `total`，`pagination.props` 可以将其他响应字段映射为这两个字段。
+Grid 会根据数据自动设置总条数。数据为数组时使用数组长度，数据为对象时默认读取 `result` 和 `total` 字段。`pagination.props` 可以将其他响应字段映射为这两个字段。
 
 <ExampleCard>
   <template #example>
@@ -81,6 +81,8 @@ await loadData(async params => {
 | `columns`    | 表格列配置                                 | `TableColumn<D>[]`  | `[]`   |
 | `form`       | 表单配置，参考 `useForm`                   | `FormOptions<M>`    | -      |
 | `pagination` | 分页配置，参考 `ElPagination`              | `PaginationOptions` | -      |
+
+`PaginationOptions` 不包含 `total`、`pageCount`、`defaultCurrentPage` 和 `defaultPageSize`。Grid 根据数据管理总条数，`ElPagination` 会结合 `pageSize` 计算总页数。初始页码和每页条数可以通过 `currentPage`、`pageSize` 设置。
 
 可以通过 `app.use(ElementHooks, { pagination })` 设置全局分页默认项。
 

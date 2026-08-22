@@ -6,7 +6,6 @@ import {
   useNamespace,
   vLoading,
 } from 'element-plus';
-import { addUnit } from 'element-plus/es/utils/dom/style';
 import { type Slot, computed, defineComponent, ref, withDirectives } from 'vue';
 
 import { type FormItem, type FormOptions, useForm } from '#/composables/form';
@@ -33,7 +32,10 @@ export type PaginationProps = Camelized<
   Omit<PaginationInstance['$props'], 'ref'>
 >;
 
-export type PaginationOptions = PaginationProps & {
+export type PaginationOptions = Omit<
+  PaginationProps,
+  'defaultCurrentPage' | 'defaultPageSize' | 'pageCount' | 'total'
+> & {
   props?: {
     result?: string;
     total?: string;
@@ -353,8 +355,9 @@ function createGrid<D extends object = object, M extends object = never>(
             style={{
               display: 'flex',
               flexDirection: 'column',
-              height: addUnit(height),
-              maxHeight: addUnit(maxHeight),
+              height: typeof height === 'number' ? `${height}px` : height,
+              maxHeight:
+                typeof maxHeight === 'number' ? `${maxHeight}px` : maxHeight,
             }}
           >
             {formOptions && (
