@@ -1,8 +1,7 @@
 import { type Plugin } from 'vue';
 
-import { type GlobalOptions, setOptions } from './config';
-import { setupDevtools } from './devtools';
-
+import { type GlobalOptions, setOptions } from '#/config';
+import { setupDevtools } from '#/devtools';
 import { version } from '~/package.json';
 
 type ElementHooksPlugin = Plugin<[options?: GlobalOptions]> & {
@@ -17,5 +16,5 @@ export default {
   version,
 } satisfies ElementHooksPlugin;
 
-export * from './config';
-export * from './composables';
+export * from '#/config';
+export * from '#/composables/index';

@@ -1,9 +1,9 @@
-import { useDialog } from './dialog';
-import { useForm } from './form';
-import { useGrid } from './grid';
-import { useMessage } from './message';
-import { useMessageBox } from './message-box';
-import { useTable } from './table';
+import { useDialog } from '#/composables/dialog';
+import { useForm } from '#/composables/form';
+import { useGrid } from '#/composables/grid';
+import { useMessage } from '#/composables/message';
+import { useMessageBox } from '#/composables/message-box';
+import { useTable } from '#/composables/table';
 
 export default {
   useDialog,
@@ -14,11 +14,11 @@ export default {
   useGrid,
 };
 
-export * from './dialog';
-export * from './form';
-export * from './grid';
-export * from './message-box';
-export * from './message';
-export * from './table';
+export * from '#/composables/dialog';
+export * from '#/composables/form';
+export * from '#/composables/grid';
+export * from '#/composables/message-box';
+export * from '#/composables/message';
+export * from '#/composables/table';
 
 export type { Awaitable, Recordable, SetRequired } from '#/util';

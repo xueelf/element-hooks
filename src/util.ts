@@ -2,13 +2,14 @@ import {
   type Component,
   type FunctionalComponent,
   type Ref,
+  type ShallowRef,
   shallowRef,
   useAttrs,
   watchEffect,
 } from 'vue';
 
-import { type GlobalComponentName } from './config';
-import { type HookOptions, HOOK_METADATA, useDevtools } from './devtools';
+import { type GlobalComponentName } from '#/config';
+import { type HookOptions, HOOK_METADATA, useDevtools } from '#/devtools';
 
 export type Awaitable<T> = T | PromiseLike<T>;
 
@@ -112,9 +113,11 @@ export function useDataLoader<T, P = undefined>(
  * - initState: 在组件 setup 中调用，内部通过 useAttrs() 建立 watchEffect 自动同步
  * - getCurrentState: 组件挂载前读取 options，挂载后读取合并 attrs 的 state
  */
-export function useState<T extends HookOptions>(initial: T) {
+export function useState<T extends HookOptions>(
+  initial: T,
+): readonly [ShallowRef<T | null>, Setter<T>, () => void, () => T] {
   const options = shallowRef<T>(initial);
-  const state = shallowRef<T | null>(null);
+  const state: ShallowRef<T | null> = shallowRef(null);
   const meta = initial[HOOK_METADATA];
 
   if (meta && meta.name && !meta.internal) {

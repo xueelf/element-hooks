@@ -1,9 +1,9 @@
 import { type Component } from 'vue';
 
-import { type DialogOptions } from './composables/dialog';
-import { type FormOptions } from './composables/form';
-import { type PaginationOptions } from './composables/grid';
-import { type TableOptions } from './composables/table';
+import { type DialogOptions } from '#/composables/dialog';
+import { type FormOptions } from '#/composables/form';
+import { type PaginationOptions } from '#/composables/grid';
+import { type TableOptions } from '#/composables/table';
 
 export interface GlobalComponents {}
 export type GlobalComponentName = keyof GlobalComponents;
