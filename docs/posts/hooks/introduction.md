@@ -44,6 +44,7 @@ Composite Hooks 在一个 Hook 中协调多个组件的状态和交互。例如�
 ### Core Hooks {#core-hook-index}
 
 - [**useDialog**](/hooks/core/dialog) — 提供 `open` 和 `close` 方法。
+- [**useDrawer**](/hooks/core/drawer) — 从窗口边缘打开抽屉内容。
 - [**useForm**](/hooks/core/form) — 在 `items` 数组中设置表单项。
 - [**useTable**](/hooks/core/table) — 在 `columns` 数组中设置表格列。
 - [**useMessage**](/hooks/core/message) — 返回 `$message` 全局方法。

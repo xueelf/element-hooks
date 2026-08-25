@@ -72,6 +72,32 @@ Core Hooks 以 Hook 形式封装 Element Plus 的单个组件或方法。返回�
 </template>
 ```
 
+#### useDrawer
+
+通过 `open` 和 `close` 控制抽屉，无需手动维护 `v-model`。`direction` 和 `size` 等配置与 `ElDrawer` 保持一致。
+
+```vue
+<script setup lang="ts">
+  import { useDrawer } from 'element-hooks';
+
+  const [Drawer, { open, close }] = useDrawer({
+    title: '详情',
+    direction: 'rtl',
+    size: '40%',
+  });
+</script>
+
+<template>
+  <el-button @click="open">打开抽屉</el-button>
+  <Drawer>
+    <p>这是一段内容。</p>
+    <template #footer>
+      <el-button @click="close">关闭</el-button>
+    </template>
+  </Drawer>
+</template>
+```
+
 #### useForm
 
 通过 `items` 配置数组声明表单项，使用 `prop` 可自动完成双向绑定，`render` 用来自定义渲染组件。

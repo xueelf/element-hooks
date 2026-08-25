@@ -74,6 +74,7 @@ const globalOptions = getOptions();
 
 - **`components`** — 为 `render.component` 提供全局组件映射。
 - **`dialog`** — `useDialog` 的默认配置。
+- **`drawer`** — `useDrawer` 的默认配置。
 - **`form`** — `useForm` 和 `useGrid` 的表单默认配置，不包含 `model` 和 `items`。
 - **`table`** — `useTable` 和 `useGrid` 的表格默认配置，不包含 `data` 和 `columns`。
 - **`pagination`** — `useGrid` 的分页默认配置。

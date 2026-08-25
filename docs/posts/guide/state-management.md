@@ -78,6 +78,8 @@ setTitle(title => `${title}（已更新）`);
 
 - **`useDialog`**
   - `setTitle` — 更新对话框标题。
+- **`useDrawer`**
+  - `setTitle` — 更新抽屉标题。
 - **`useTable`**
   - `setColumns` — 更新表格列配置。
   - `setData` — 更新表格数据。

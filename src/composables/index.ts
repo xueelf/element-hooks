@@ -1,4 +1,5 @@
 import { useDialog } from '#/composables/dialog';
+import { useDrawer } from '#/composables/drawer';
 import { useForm } from '#/composables/form';
 import { useGrid } from '#/composables/grid';
 import { useMessage } from '#/composables/message';
@@ -7,6 +8,7 @@ import { useTable } from '#/composables/table';
 
 export default {
   useDialog,
+  useDrawer,
   useForm,
   useMessage,
   useMessageBox,
@@ -15,6 +17,7 @@ export default {
 };
 
 export * from '#/composables/dialog';
+export * from '#/composables/drawer';
 export * from '#/composables/form';
 export * from '#/composables/grid';
 export * from '#/composables/message-box';

@@ -59,6 +59,7 @@ export default defineConfig({
           text: 'Core Hooks',
           items: [
             { text: 'useDialog', link: '/hooks/core/dialog' },
+            { text: 'useDrawer', link: '/hooks/core/drawer' },
             { text: 'useForm', link: '/hooks/core/form' },
             { text: 'useTable', link: '/hooks/core/table' },
             { text: 'useMessage', link: '/hooks/core/message' },

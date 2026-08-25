@@ -1,6 +1,7 @@
 import { type Component } from 'vue';
 
 import { type DialogOptions } from '#/composables/dialog';
+import { type DrawerOptions } from '#/composables/drawer';
 import { type FormOptions } from '#/composables/form';
 import { type PaginationOptions } from '#/composables/grid';
 import { type TableOptions } from '#/composables/table';
@@ -11,6 +12,7 @@ export type GlobalComponentName = keyof GlobalComponents;
 export type GlobalOptions = {
   components?: object;
   dialog?: DialogOptions;
+  drawer?: DrawerOptions;
   form?: Partial<Omit<FormOptions<object>, 'items' | 'model'>>;
   table?: Omit<TableOptions<object>, 'columns' | 'data'>;
   pagination?: PaginationOptions;
