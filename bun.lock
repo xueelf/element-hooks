@@ -502,7 +502,7 @@
 
     "alien-signals": ["alien-signals@3.2.1", "", {}, "sha512-I8FjmltrfnDFoZedi5CG8DghVYNhzb/Ijluz7tCSJH0xpd0484Kowhbb1XDYOxfJpU1p5wnM2X54dA+IfGyD1g=="],
 
-    "annal": ["annal@0.2.0", "", { "peerDependencies": { "typescript": "^6.0.3" } }, "sha512-+DPoEmWpqasa1wIZc7E0qHLOxbWzgdlqK9/KS3sWARKXEPf+CcWXNaW4LReCw1cDCwG/nMcmAyUo3VoZVvXv4w=="],
+    "annal": ["annal@0.2.1", "", { "peerDependencies": { "typescript": "^6.0.3" } }, "sha512-DWTN0kJHoHzd327WWRPYF/lC/nQaQFtiIQDZEyrPEp49t7Lppj/c23wj4PJ6lwJq0H/8vCfyRhTh9vG+701iyA=="],
 
     "ansi-regex": ["ansi-regex@6.3.0", "", {}, "sha512-WpDfL7NO6j7tH88IDBNVdUJxDh9nmCteAVW9dsep846XdwF4naCBK+/tGLX3KJgcpgMRXCFlTM2hKGoK9FsdrQ=="],
 
