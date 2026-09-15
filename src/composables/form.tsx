@@ -4,6 +4,7 @@ import {
   ElForm,
   ElFormItem,
 } from 'element-plus';
+import { getProp } from 'element-plus/es/utils/objects';
 import {
   type VNodeChild,
   defineComponent,
@@ -59,44 +60,6 @@ export type FormProps<T extends object> = HookComponentProps<FormState<T>>;
 type InternalFormOptions<T extends object> = FormState<T> & {
   [HOOK_METADATA]: { internal: true };
 };
-
-function getProp(targetObject: object, path: string | string[]) {
-  const pathKeys = Array.isArray(path) ? path : path.split('.');
-
-  return pathKeys.reduce<unknown>(
-    (value, key) =>
-      typeof value === 'object' && value !== null
-        ? Reflect.get(value, key)
-        : undefined,
-    targetObject,
-  );
-}
-
-function setProp(
-  targetObject: object,
-  path: string | string[],
-  value: unknown,
-) {
-  const pathKeys = Array.isArray(path) ? [...path] : path.split('.');
-  const lastKey = pathKeys.pop();
-
-  if (!lastKey) {
-    return;
-  }
-  const targetParent = pathKeys.reduce<object>((target, key) => {
-    const currentValue = Reflect.get(target, key);
-
-    if (typeof currentValue === 'object' && currentValue !== null) {
-      return currentValue;
-    }
-    const nextValue = {};
-
-    Reflect.set(target, key, nextValue);
-    return nextValue;
-  }, targetObject);
-
-  Reflect.set(targetParent, lastKey, value);
-}
 
 export function useForm<T extends object = object>(
   input?: FormOptions<T> | InternalFormOptions<T>,
@@ -226,17 +189,19 @@ export function useForm<T extends object = object>(
               }
 
               if (formModel.value && prop) {
+                const field = getProp<unknown>(formModel.value, prop);
+
                 return h(
                   renderComponent,
                   mergeProps(
                     {
                       'onUpdate:modelValue': (value: unknown) => {
-                        setProp(formModel.value, prop, value);
+                        field.value = value;
                       },
                     },
                     resolveRenderProps(render.props, formModel.value),
                     {
-                      modelValue: getProp(formModel.value, prop),
+                      modelValue: field.value,
                     },
                   ),
                 );
