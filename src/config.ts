@@ -5,6 +5,7 @@ import { type DrawerOptions } from '#/composables/drawer';
 import { type FormOptions } from '#/composables/form';
 import { type PaginationOptions } from '#/composables/grid';
 import { type TableOptions } from '#/composables/table';
+import { mergeOptions } from '#/util';
 
 export interface GlobalComponents {}
 export type GlobalComponentName = keyof GlobalComponents;
@@ -37,18 +38,7 @@ export function withOptions<T extends object>(
 ): Omit<GlobalOptions, 'components'> & T;
 export function withOptions(source: object, key?: OptionKey) {
   const { components: _components, ...options } = globalOptions;
-  const merged: Record<PropertyKey, unknown> = {
-    ...(key ? globalOptions[key] : options),
-  };
-
-  for (const optionKey of Reflect.ownKeys(source)) {
-    const value = Reflect.get(source, optionKey);
-
-    if (value !== undefined) {
-      Reflect.set(merged, optionKey, value);
-    }
-  }
-  return merged;
+  return mergeOptions(source, (key ? globalOptions[key] : options) ?? {});
 }
 
 export const getComponent = (name: string): Component | undefined => {

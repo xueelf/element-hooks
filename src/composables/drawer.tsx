@@ -11,6 +11,7 @@ import {
   type Camelized,
   type Setter,
   createController,
+  mergeOptions,
   unwrapSetter,
   useState,
 } from '#/util';
@@ -31,21 +32,25 @@ export type DrawerProps = HookComponentProps<DrawerOptions>;
 
 export function useDrawer(options: DrawerOptions = {}) {
   const name = 'Drawer';
-  const merged = withOptions(options, 'drawer');
-
-  Reflect.set(merged, HOOK_METADATA, {
-    name,
-    internal: options[HOOK_METADATA]?.internal,
-  });
-
-  const [drawerState, setState, initState] = useState<DrawerOptions>(merged);
+  const defaults = withOptions({}, 'drawer');
+  const [drawerState, setState, initState, getCurrentState] =
+    useState<DrawerOptions>(
+      {
+        ...options,
+        [HOOK_METADATA]: {
+          name,
+          internal: options[HOOK_METADATA]?.internal,
+        },
+      },
+      current => mergeOptions(current, defaults),
+    );
   const drawerVisible = ref(false);
   const drawerInstance = ref<DrawerInstance | null>(null);
 
   const setTitle: Setter<typeof options.title> = update => {
     setState(prev => ({
       ...prev,
-      title: unwrapSetter(update, prev.title),
+      title: unwrapSetter(update, getCurrentState().title),
     }));
   };
 

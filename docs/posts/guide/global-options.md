@@ -81,9 +81,28 @@ const globalOptions = getOptions();
 
 ## 合并规则 {#merging}
 
-每次调用 Hook 时，局部配置会与全局配置浅合并。局部配置的同名属性优先级更高。局部值为 `undefined` 时，不会覆盖全局默认值。数组、函数、组件和嵌套对象会替换全局配置中的同名属性。
+Hook 创建时会保存对应的全局默认配置。初始配置以及后续通过 `setState` 设置的局部配置，都会与这份默认配置按属性浅合并。局部配置的同名属性优先级更高。局部值为 `undefined` 时，不会覆盖默认值；`false`、`0` 和空字符串等明确值会覆盖默认值。数组、函数、组件和嵌套对象会整体替换全局配置中的同名属性。
 
-`useGrid` 始终使用全局 `table` 配置。只有传入 `form` 或 `pagination` 时，才会使用对应的全局配置。
+`setState` 只替换局部配置，更新函数的 `prev` 不包含全局默认值。新配置中省略某个属性，或将其设为 `undefined`，会移除该属性的局部覆盖，恢复使用默认值。
+
+```ts
+import { setOptions, useDialog } from 'element-hooks';
+
+setOptions({ dialog: { destroyOnClose: true } });
+
+const [Dialog, { setState }] = useDialog({ title: '初始标题' });
+
+// 更新标题，destroyOnClose 仍使用全局默认值 true
+setState({ title: '新标题' });
+
+// 明确传入 false，覆盖全局默认值
+setState(prev => ({ ...prev, destroyOnClose: false }));
+
+// 新配置省略 destroyOnClose，恢复使用全局默认值 true
+setState({ title: '恢复默认配置' });
+```
+
+`useGrid` 与独立 Hook 遵循相同的合并规则，并始终使用全局 `table` 配置。通过 Hook Options 或组件 Props 提供 `form`、`pagination` 时，才会启用对应模块并应用其全局默认值。全局配置不会自动启用这些模块。
 
 ## TypeScript {#typescript}
 

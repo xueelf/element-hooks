@@ -3,6 +3,7 @@ import {
   type FunctionalComponent,
   type Ref,
   type ShallowRef,
+  computed,
   onBeforeUpdate,
   onUnmounted,
   shallowRef,
@@ -58,6 +59,23 @@ export function createController<T extends object, E extends object = object>(
 
 export type Setter<T> = (value: T | ((prev: T) => T)) => void;
 
+export function mergeOptions<T extends object, D extends object>(
+  source: T,
+  defaults: D,
+): D & T;
+export function mergeOptions(source: object, defaults: object) {
+  const merged: Record<PropertyKey, unknown> = { ...defaults };
+
+  for (const key of Reflect.ownKeys(source)) {
+    const value = Reflect.get(source, key);
+
+    if (value !== undefined) {
+      Reflect.set(merged, key, value);
+    }
+  }
+  return merged;
+}
+
 export function unwrapSetter<T>(update: T | ((prev: T) => T), prev: T): T {
   return typeof update === 'function'
     ? (update as (prev: T) => T)(prev)
@@ -112,15 +130,20 @@ export function useDataLoader<T, P = undefined>(
 /**
  * 创建组件状态管理。
  *
- * - state: shallowRef，options 与 attrs 的扁平合并（attrs 优先），手动管理 render
- * - setState: 更新 options 源 → 触发 watch → state 重赋值 → render
+ * - state: shallowRef，局部 options 与 attrs 合并后解析默认值（attrs 优先）
+ * - setState: 替换局部 options → 重新解析默认值 → 同步 state
  * - initState: 在组件 setup 中调用，更新前同步 attrs，卸载后清理 state
- * - getCurrentState: 组件挂载前读取 options，挂载后读取合并 attrs 的 state
+ * - getCurrentState: 挂载前后均读取包含默认值的生效配置
  */
 export function useState<T extends HookOptions>(
   initial: T,
+  resolveOptions: (options: T) => T = options => options,
 ): readonly [ShallowRef<T | null>, Setter<T>, () => void, () => T] {
   const options = shallowRef<T>(initial);
+  const attrs = shallowRef<Recordable>({});
+  const resolved = computed(() =>
+    resolveOptions({ ...options.value, ...attrs.value }),
+  );
   const state: ShallowRef<T | null> = shallowRef(null);
   const meta = initial[HOOK_METADATA];
 
@@ -132,24 +155,18 @@ export function useState<T extends HookOptions>(
   };
 
   const getCurrentState = (): T => {
-    return state.value ?? options.value;
+    return resolved.value;
   };
 
   const initState = () => {
-    const attrs = useAttrs();
-    const syncState = () => {
-      state.value = { ...options.value, ...attrs };
-    };
-
-    watch(options, syncState, { immediate: true, flush: 'sync' });
-    onBeforeUpdate(() => {
-      const next = { ...options.value, ...attrs };
-      const current = state.value;
+    const componentAttrs = useAttrs();
+    const syncAttrs = () => {
+      const next = { ...componentAttrs };
+      const current = attrs.value;
       const keys = Reflect.ownKeys(next);
 
       // 避免父组件读取状态并传入动态插槽时反复触发更新。
       if (
-        !current ||
         keys.length !== Reflect.ownKeys(current).length ||
         keys.some(
           key =>
@@ -157,11 +174,19 @@ export function useState<T extends HookOptions>(
             !Object.is(Reflect.get(next, key), Reflect.get(current, key)),
         )
       ) {
-        state.value = next;
+        attrs.value = next;
       }
+    };
+
+    syncAttrs();
+    watch(resolved, value => (state.value = value), {
+      immediate: true,
+      flush: 'sync',
     });
+    onBeforeUpdate(syncAttrs);
 
     onUnmounted(() => {
+      attrs.value = {};
       state.value = null;
     });
   };

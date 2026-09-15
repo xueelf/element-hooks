@@ -27,6 +27,7 @@ import {
   type RenderOptions,
   type Setter,
   createController,
+  mergeOptions,
   resolveRenderProps,
   unwrapSetter,
   useDataLoader,
@@ -133,15 +134,21 @@ export function useTable<T extends object = object>(
 
 function createTable<T extends object = object>(options: TableOptions<T> = {}) {
   const name = 'Table';
-  const merged = withOptions(options, 'table');
-
-  Reflect.set(merged, HOOK_METADATA, {
-    name,
-    internal: options[HOOK_METADATA]?.internal,
-  });
-
-  const [tableState, setState, initState, getCurrentState] =
-    useState<TableOptions<T>>(merged);
+  const defaults = options[HOOK_METADATA]?.internal
+    ? {}
+    : withOptions({}, 'table');
+  const [tableState, setState, initState, getCurrentState] = useState<
+    TableOptions<T>
+  >(
+    {
+      ...options,
+      [HOOK_METADATA]: {
+        name,
+        internal: options[HOOK_METADATA]?.internal,
+      },
+    },
+    current => mergeOptions(current, defaults),
+  );
   const tableInstance = ref<TableInstance | null>(null);
 
   const setColumns: Setter<TableColumn<T>[]> = update => {

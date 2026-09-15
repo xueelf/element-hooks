@@ -27,6 +27,7 @@ import {
   type RenderOptions,
   type Setter,
   createController,
+  mergeOptions,
   resolveRenderProps,
   unwrapSetter,
   useState,
@@ -66,15 +67,21 @@ export function useForm<T extends object = object>(
 ) {
   const options: FormState<T> = input ?? {};
   const name = 'Form';
-  const merged = withOptions(options, 'form');
-
-  Reflect.set(merged, HOOK_METADATA, {
-    name,
-    internal: options[HOOK_METADATA]?.internal,
-  });
-
-  const [formState, setFormState, initState, getCurrentState] =
-    useState<FormState<T>>(merged);
+  const defaults = options[HOOK_METADATA]?.internal
+    ? {}
+    : withOptions({}, 'form');
+  const [formState, setFormState, initState, getCurrentState] = useState<
+    FormState<T>
+  >(
+    {
+      ...options,
+      [HOOK_METADATA]: {
+        name,
+        internal: options[HOOK_METADATA]?.internal,
+      },
+    },
+    current => mergeOptions(current, defaults),
+  );
   const formModel = ref<T | null>(null);
   const formInstance = ref<FormInstance | null>(null);
 

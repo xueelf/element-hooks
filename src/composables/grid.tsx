@@ -21,6 +21,7 @@ import {
   type Camelized,
   type Setter,
   createController,
+  mergeOptions,
   unwrapSetter,
   useDataLoader,
   useState,
@@ -140,25 +141,33 @@ function createGrid<D extends object = object, M extends object = never>(
   options: GridOptionsWithForm<D, M> | GridOptionsWithoutForm<D> = {},
 ) {
   const name = 'Grid';
-  const { form, pagination, data, ...table } = options;
-  const tableOptions = withOptions(table, 'table');
-  const formOptions = form ? withOptions(form, 'form') : undefined;
-  const paginationOptions = pagination
-    ? withOptions(pagination, 'pagination')
-    : undefined;
+  const tableDefaults = withOptions({}, 'table');
+  const formDefaults = withOptions({}, 'form');
+  const paginationDefaults = withOptions({}, 'pagination');
 
   const [gridState, setGridState, initState, getCurrentState] = useState<
     GridState<D, M>
-  >({
-    ...tableOptions,
-    [HOOK_METADATA]: {
-      name,
-      internal: false,
+  >(
+    {
+      ...options,
+      [HOOK_METADATA]: {
+        name,
+        internal: false,
+      },
     },
-    data,
-    form: formOptions,
-    pagination: paginationOptions,
-  });
+    current => {
+      const { form, pagination, data, ...table } = current;
+
+      return {
+        ...mergeOptions(table, tableDefaults),
+        data,
+        form: form ? mergeOptions(form, formDefaults) : undefined,
+        pagination: pagination
+          ? mergeOptions(pagination, paginationDefaults)
+          : undefined,
+      };
+    },
+  );
 
   const resolveData = (
     source?: GridData<D>,

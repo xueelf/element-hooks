@@ -11,6 +11,7 @@ import {
   type Camelized,
   type Setter,
   createController,
+  mergeOptions,
   unwrapSetter,
   useState,
 } from '#/util';
@@ -31,21 +32,25 @@ export type DialogProps = HookComponentProps<DialogOptions>;
 
 export function useDialog(options: DialogOptions = {}) {
   const name = 'Dialog';
-  const merged = withOptions(options, 'dialog');
-
-  Reflect.set(merged, HOOK_METADATA, {
-    name,
-    internal: options[HOOK_METADATA]?.internal,
-  });
-
-  const [dialogState, setState, initState] = useState<DialogOptions>(merged);
+  const defaults = withOptions({}, 'dialog');
+  const [dialogState, setState, initState, getCurrentState] =
+    useState<DialogOptions>(
+      {
+        ...options,
+        [HOOK_METADATA]: {
+          name,
+          internal: options[HOOK_METADATA]?.internal,
+        },
+      },
+      current => mergeOptions(current, defaults),
+    );
   const dialogVisible = ref(false);
   const dialogInstance = ref<DialogInstance | null>(null);
 
   const setTitle: Setter<typeof options.title> = update => {
     setState(prev => ({
       ...prev,
-      title: unwrapSetter(update, prev.title),
+      title: unwrapSetter(update, getCurrentState().title),
     }));
   };
 

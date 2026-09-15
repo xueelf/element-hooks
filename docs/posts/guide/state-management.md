@@ -47,7 +47,9 @@ setState(options => ({
 
 ## 快捷方法 {#shortcuts}
 
-`setState` 用于更新 Hook 的全部配置。你可以传入一份完整的新配置，也可以通过更新函数在当前配置的基础上创建新配置。
+`setState` 用于替换 Hook 的局部配置。你可以传入一份完整的新配置，也可以通过更新函数创建新配置。更新函数的 `prev` 是当前局部配置，不包含全局默认值。
+
+局部配置更新后，Hook 会继续继承创建时的全局默认值。新配置中省略某个属性，或将其设为 `undefined`，都会移除该属性的局部覆盖，恢复使用默认值。详见 [全局配置的合并规则](/guide/global-options#merging)。
 
 ```ts
 const [Dialog, { setState }] = useDialog({
@@ -55,14 +57,14 @@ const [Dialog, { setState }] = useDialog({
   fullscreen: false,
 });
 
-// 使用新配置替换当前配置
+// 使用新配置替换当前局部配置
 setState({ title: '新标题', fullscreen: true });
 
-// 根据当前配置创建新配置
+// 根据当前局部配置创建新配置
 setState(prev => ({ ...prev, title: '新标题' }));
 ```
 
-对于经常单独更新的配置，Controller 提供了对应的快捷方法。快捷方法与 `setState` 的用法相同。以 `setTitle` 为例，可以传入新标题，也可以根据当前标题生成新值。
+对于经常单独更新的配置，Controller 提供了对应的快捷方法。以 `setTitle` 为例，可以传入新标题，也可以根据当前生效的标题生成新值，包括继承自全局配置的标题。
 
 ```ts
 // 传入新标题
