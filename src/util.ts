@@ -75,15 +75,17 @@ function isPromiseLike<T>(value: Awaitable<T>): value is PromiseLike<T> {
 
 type DataLoader<T, P> = (params: P) => Awaitable<T>;
 
+type LoadDataResult<R> = R extends PromiseLike<unknown> ? Promise<void> : void;
+
 export function useDataLoader<T, P = undefined>(
   updateData: (data: T) => void,
   getParams: () => P,
 ) {
   const loading = shallowRef(false);
 
-  function loadData(loader: (params: P) => T): void;
-  function loadData(loader: (params: P) => PromiseLike<T>): Promise<void>;
-  function loadData(loader: DataLoader<T, P>): void | Promise<void>;
+  function loadData<R extends Awaitable<T>>(
+    loader: (params: P) => R,
+  ): LoadDataResult<R>;
   function loadData(loader: DataLoader<T, P>) {
     loading.value = true;
 
