@@ -9,6 +9,10 @@ type MessageBoxOptions = Omit<ElMessageBoxOptions, 'callback'> & {
   callback?: never;
 };
 
+type MessageBoxTitle =
+  | Exclude<ElMessageBoxOptions['title'], ElMessageBoxOptions>
+  | MessageBoxOptions;
+
 type MessageBoxMethodParams =
   | [
       message: ElMessageBoxOptions['message'],
@@ -17,7 +21,7 @@ type MessageBoxMethodParams =
     ]
   | [
       message: ElMessageBoxOptions['message'],
-      title: ElMessageBoxOptions['title'],
+      title: MessageBoxTitle,
       options?: MessageBoxOptions,
       appContext?: AppContext | null,
     ];
