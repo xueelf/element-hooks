@@ -3,10 +3,11 @@ import {
   type FunctionalComponent,
   type Ref,
   type ShallowRef,
+  onBeforeUpdate,
   onUnmounted,
   shallowRef,
   useAttrs,
-  watchEffect,
+  watch,
 } from 'vue';
 
 import { type GlobalComponentName } from '#/config';
@@ -110,8 +111,8 @@ export function useDataLoader<T, P = undefined>(
  * 创建组件状态管理。
  *
  * - state: shallowRef，options 与 attrs 的扁平合并（attrs 优先），手动管理 render
- * - setState: 更新 options 源 → 触发 watchEffect → state 重赋值 → render
- * - initState: 在组件 setup 中调用，同步 attrs 并在组件卸载后清理 state
+ * - setState: 更新 options 源 → 触发 watch → state 重赋值 → render
+ * - initState: 在组件 setup 中调用，更新前同步 attrs，卸载后清理 state
  * - getCurrentState: 组件挂载前读取 options，挂载后读取合并 attrs 的 state
  */
 export function useState<T extends HookOptions>(
@@ -134,13 +135,29 @@ export function useState<T extends HookOptions>(
 
   const initState = () => {
     const attrs = useAttrs();
+    const syncState = () => {
+      state.value = { ...options.value, ...attrs };
+    };
 
-    watchEffect(
-      () => {
-        state.value = { ...options.value, ...attrs };
-      },
-      { flush: 'sync' },
-    );
+    watch(options, syncState, { immediate: true, flush: 'sync' });
+    onBeforeUpdate(() => {
+      const next = { ...options.value, ...attrs };
+      const current = state.value;
+      const keys = Reflect.ownKeys(next);
+
+      // 避免父组件读取状态并传入动态插槽时反复触发更新。
+      if (
+        !current ||
+        keys.length !== Reflect.ownKeys(current).length ||
+        keys.some(
+          key =>
+            !Object.hasOwn(current, key) ||
+            !Object.is(Reflect.get(next, key), Reflect.get(current, key)),
+        )
+      ) {
+        state.value = next;
+      }
+    });
 
     onUnmounted(() => {
       state.value = null;
