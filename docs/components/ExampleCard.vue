@@ -4,35 +4,24 @@
     Check,
     CopyDocument,
     Hide,
-    Link,
     View,
   } from '@element-plus/icons-vue';
   import { ElMessage } from 'element-plus';
-  import { computed, reactive, useTemplateRef } from 'vue';
+  import { computed, reactive, useId, useTemplateRef } from 'vue';
 
+  const sourceCodeRef = useTemplateRef<HTMLDivElement>('source-code');
+  const sourceCodeId = useId();
   const state = reactive({
     copied: false,
     expanded: false,
-    sourceCodeRef: useTemplateRef<HTMLDivElement>('source-code'),
   });
-  const icon = computed(() => {
-    return {
-      copy: {
-        component: state.copied ? Check : CopyDocument,
-        title: state.copied ? '已复制' : '复制代码',
-      },
-      expand: {
-        component: state.expanded ? Hide : View,
-        title: state.expanded ? '隐藏代码' : '查看代码',
-      },
-    };
-  });
+  const copyTitle = computed(() => (state.copied ? '已复制' : '复制代码'));
+  const expandTitle = computed(() =>
+    state.expanded ? '隐藏代码' : '查看代码',
+  );
 
   const handleCopy = async () => {
-    if (!state.sourceCodeRef) {
-      return;
-    }
-    const code = state.sourceCodeRef.querySelector('pre code')?.textContent;
+    const code = sourceCodeRef.value?.querySelector('pre code')?.textContent;
 
     if (!code) {
       ElMessage.warning('未找到可复制的代码');
@@ -43,9 +32,9 @@
       await navigator.clipboard.writeText(code);
 
       ElMessage.success('代码已复制');
-      Reflect.set(state, 'copied', true);
+      state.copied = true;
       setTimeout(() => {
-        Reflect.set(state, 'copied', false);
+        state.copied = false;
       }, 2000);
     } catch (error) {
       console.error(error);
@@ -65,38 +54,35 @@
     </template>
     <template #footer>
       <div class="action-wrapper">
-        <el-icon class="cursor-pointer" title="Open in Playground">
-          <Link />
-        </el-icon>
-        <el-icon
-          class="cursor-pointer"
-          :title="icon.copy.title"
+        <el-button
+          link
+          :icon="state.copied ? Check : CopyDocument"
+          :title="copyTitle"
+          :aria-label="copyTitle"
           @click="handleCopy"
-        >
-          <component :is="icon.copy.component" />
-        </el-icon>
-        <el-icon
-          class="cursor-pointer"
-          :title="icon.expand.title"
+        />
+        <el-button
+          link
+          :icon="state.expanded ? Hide : View"
+          :title="expandTitle"
+          :aria-label="expandTitle"
+          :aria-expanded="state.expanded"
+          :aria-controls="sourceCodeId"
           @click="handleExpand"
-        >
-          <component :is="icon.expand.component" />
-        </el-icon>
+        />
       </div>
-      <div ref="source-code" :class="state.expanded ? 'block' : 'hidden'">
+      <div v-show="state.expanded" :id="sourceCodeId" ref="source-code">
         <slot />
         <div class="expand-wrapper">
           <el-button
             link
+            :icon="CaretTop"
             style="width: 100%; height: 100%"
+            :aria-expanded="state.expanded"
+            :aria-controls="sourceCodeId"
             @click="handleExpand"
           >
-            <template #icon>
-              <el-icon class="cursor-pointer">
-                <CaretTop />
-              </el-icon>
-            </template>
-            <span>{{ icon.expand.title }}</span>
+            {{ expandTitle }}
           </el-button>
         </div>
       </div>
@@ -113,7 +99,6 @@
       padding: 0 var(--el-card-padding);
       background-color: var(--el-card-bg-color);
       display: flex;
-      gap: 1rem;
       align-items: center;
       justify-content: flex-end;
     }

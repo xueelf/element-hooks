@@ -222,11 +222,12 @@ Composite Hooks 将 Core Hooks 与原生组件聚合在一起，并通过统一�
     },
     pagination: {
       pageSize: 10,
+      onChange: handleSearch,
     },
   });
 
-  const handleSearch = async () =>
-    await loadData(async params => {
+  function handleSearch() {
+    return loadData(async params => {
       const response = await fetch('/api/users', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -235,10 +236,9 @@ Composite Hooks 将 Core Hooks 与原生组件聚合在一起，并通过统一�
 
       return response.json();
     });
+  }
 
-  onMounted(async () => {
-    await handleSearch();
-  });
+  onMounted(handleSearch);
 </script>
 
 <template>
