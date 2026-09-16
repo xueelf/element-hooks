@@ -52,6 +52,7 @@
     "lint": "eslint --cache",
     "lint:fix": "eslint --fix --cache",
     "prepare": "husky",
+    "test": "bun run typecheck && bun test",
     "typecheck": "vue-tsc --noEmit"
   },
   "dependencies": {

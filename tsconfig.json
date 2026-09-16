@@ -36,5 +36,5 @@
     /* Completeness */
     "skipLibCheck": true
   },
-  "include": ["*.config.ts", "docs", "scripts", "src"]
+  "include": ["*.config.ts", "docs", "scripts", "src", "tests"]
 }
