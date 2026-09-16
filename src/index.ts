@@ -11,7 +11,12 @@ type ElementHooksPlugin = Plugin<[options?: GlobalOptions]> & {
 export default {
   install(app, options = {}) {
     setOptions(options);
-    setupDevtools(app);
+    if (
+      process.env.NODE_ENV !== 'production' &&
+      typeof window !== 'undefined'
+    ) {
+      setupDevtools(app);
+    }
   },
   version,
 } satisfies ElementHooksPlugin;

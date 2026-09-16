@@ -254,7 +254,7 @@ Composite Hooks 将 Core Hooks 与原生组件聚合在一起，并通过统一�
 
 ### 全局配置
 
-将 `ElementHooks` 注册为 Vue 插件后，可以设置全局默认配置，并启用 Vue DevTools 支持。
+将 `ElementHooks` 注册为 Vue 插件后，可以设置全局默认配置。在浏览器开发环境中，还可以通过 Vue DevTools 的 Components 面板查看 Hook 组件的配置。
 
 ```ts
 import ElementHooks from 'element-hooks';

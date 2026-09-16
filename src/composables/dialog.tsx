@@ -3,11 +3,6 @@ import { defineComponent, ref } from 'vue';
 
 import { withOptions } from '#/config';
 import {
-  type HookComponentProps,
-  type HookOptions,
-  HOOK_METADATA,
-} from '#/devtools';
-import {
   type Camelized,
   type Setter,
   createController,
@@ -18,31 +13,19 @@ import {
 
 export type DialogSlotName = 'default' | 'header' | 'footer';
 
-export type DialogOptions = HookOptions &
-  Partial<
-    Camelized<
-      Omit<
-        DialogInstance['$props'],
-        'ref' | 'modelValue' | 'onUpdate:modelValue'
-      >
-    >
-  >;
+export type DialogOptions = Partial<
+  Camelized<
+    Omit<DialogInstance['$props'], 'ref' | 'modelValue' | 'onUpdate:modelValue'>
+  >
+>;
 
-export type DialogProps = HookComponentProps<DialogOptions>;
+export type DialogProps = DialogOptions;
 
 export function useDialog(options: DialogOptions = {}) {
-  const name = 'Dialog';
   const defaults = withOptions({}, 'dialog');
   const [dialogState, setState, initState, getCurrentState] =
-    useState<DialogOptions>(
-      {
-        ...options,
-        [HOOK_METADATA]: {
-          name,
-          internal: options[HOOK_METADATA]?.internal,
-        },
-      },
-      current => mergeOptions(current, defaults),
+    useState<DialogOptions>(options, current =>
+      mergeOptions(current, defaults),
     );
   const dialogVisible = ref(false);
   const dialogInstance = ref<DialogInstance | null>(null);
@@ -75,7 +58,7 @@ export function useDialog(options: DialogOptions = {}) {
   });
 
   const Dialog = defineComponent<DialogProps>({
-    name,
+    name: 'Dialog',
     inheritAttrs: false,
     setup(_, { slots }) {
       initState();

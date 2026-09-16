@@ -15,13 +15,13 @@ import {
   useTable,
 } from '#/composables/table';
 import { withOptions } from '#/config';
-import { type HookComponentProps, HOOK_METADATA } from '#/devtools';
 import {
   type Awaitable,
   type Camelized,
   type Setter,
   createController,
   mergeOptions,
+  SKIP_DEFAULTS,
   unwrapSetter,
   useDataLoader,
   useState,
@@ -99,7 +99,7 @@ type GridState<D extends object, M extends object> = GridBaseOptions<D> & {
 export type GridProps<
   D extends object = object,
   M extends object = never,
-> = HookComponentProps<GridState<D, M>>;
+> = GridState<D, M>;
 
 type GridResult<D extends object, M extends object> = ReturnType<
   typeof createGrid<[D] extends [never] ? object : D, M>
@@ -140,34 +140,24 @@ export function useGrid<D extends object = object, M extends object = object>(
 function createGrid<D extends object = object, M extends object = never>(
   options: GridOptionsWithForm<D, M> | GridOptionsWithoutForm<D> = {},
 ) {
-  const name = 'Grid';
   const tableDefaults = withOptions({}, 'table');
   const formDefaults = withOptions({}, 'form');
   const paginationDefaults = withOptions({}, 'pagination');
 
   const [gridState, setGridState, initState, getCurrentState] = useState<
     GridState<D, M>
-  >(
-    {
-      ...options,
-      [HOOK_METADATA]: {
-        name,
-        internal: false,
-      },
-    },
-    current => {
-      const { form, pagination, data, ...table } = current;
+  >(options, current => {
+    const { form, pagination, data, ...table } = current;
 
-      return {
-        ...mergeOptions(table, tableDefaults),
-        data,
-        form: form ? mergeOptions(form, formDefaults) : undefined,
-        pagination: pagination
-          ? mergeOptions(pagination, paginationDefaults)
-          : undefined,
-      };
-    },
-  );
+    return {
+      ...mergeOptions(table, tableDefaults),
+      data,
+      form: form ? mergeOptions(form, formDefaults) : undefined,
+      pagination: pagination
+        ? mergeOptions(pagination, paginationDefaults)
+        : undefined,
+    };
+  });
 
   const resolveData = (
     source?: GridData<D>,
@@ -190,14 +180,10 @@ function createGrid<D extends object = object, M extends object = never>(
   };
 
   const [Form, formController] = useForm<M>({
-    [HOOK_METADATA]: {
-      internal: true,
-    },
+    [SKIP_DEFAULTS]: true,
   });
   const [Table, tableController] = useTable<D>({
-    [HOOK_METADATA]: {
-      internal: true,
-    },
+    [SKIP_DEFAULTS]: true,
   });
   const paginationRef = ref<PaginationInstance | null>(null);
   const gridInstance = computed<GridInstance | null>(() => {
@@ -310,7 +296,7 @@ function createGrid<D extends object = object, M extends object = never>(
   });
 
   const Grid = defineComponent<GridProps<D, M>>({
-    name,
+    name: 'Grid',
     inheritAttrs: false,
     setup(_, { slots }) {
       initState();

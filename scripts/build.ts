@@ -16,6 +16,8 @@ logger.info('Type declaration files generated');
 await build({
   entrypoints: ['src/index.ts', 'src/composables/index.ts'],
   format: 'esm',
+  // 避免 Bun 提前替换环境判断，交由使用方构建时处理。
+  define: { 'process.env.NODE_ENV': 'process.env.NODE_ENV' },
   /**
    * Bun 解析 `packages: 'external'` 与 tsconfig paths 时会丢失 JSX 配置，
    * 待 https://github.com/oven-sh/bun/pull/38805 发布后删除。

@@ -12,11 +12,13 @@ import {
 } from 'vue';
 
 import { type GlobalComponentName } from '#/config';
-import { type HookOptions, HOOK_METADATA, useDevtools } from '#/devtools';
+import { useDevtools } from '#/devtools';
 
 export type Awaitable<T> = T | PromiseLike<T>;
 
 export type Recordable<T = unknown> = Record<string, T>;
+
+export const SKIP_DEFAULTS: unique symbol = Symbol('skip-defaults');
 
 export type SetRequired<Type, Keys extends keyof Type> = Omit<Type, Keys> &
   Required<Pick<Type, Keys>>;
@@ -135,7 +137,7 @@ export function useDataLoader<T, P = undefined>(
  * - initState: 在组件 setup 中调用，更新前同步 attrs，卸载后清理 state
  * - getCurrentState: 挂载前后均读取包含默认值的生效配置
  */
-export function useState<T extends HookOptions>(
+export function useState<T extends object>(
   initial: T,
   resolveOptions: (options: T) => T = options => options,
 ): readonly [ShallowRef<T | null>, Setter<T>, () => void, () => T] {
@@ -145,11 +147,6 @@ export function useState<T extends HookOptions>(
     resolveOptions({ ...options.value, ...attrs.value }),
   );
   const state: ShallowRef<T | null> = shallowRef(null);
-  const meta = initial[HOOK_METADATA];
-
-  if (meta && meta.name && !meta.internal) {
-    useDevtools(meta.name, state);
-  }
   const setState: Setter<T> = update => {
     options.value = unwrapSetter(update, options.value);
   };
@@ -159,6 +156,12 @@ export function useState<T extends HookOptions>(
   };
 
   const initState = () => {
+    if (
+      process.env.NODE_ENV !== 'production' &&
+      typeof window !== 'undefined'
+    ) {
+      useDevtools(resolved);
+    }
     const componentAttrs = useAttrs();
     const syncAttrs = () => {
       const next = { ...componentAttrs };

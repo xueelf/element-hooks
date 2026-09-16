@@ -3,11 +3,6 @@ import { defineComponent, ref } from 'vue';
 
 import { withOptions } from '#/config';
 import {
-  type HookComponentProps,
-  type HookOptions,
-  HOOK_METADATA,
-} from '#/devtools';
-import {
   type Camelized,
   type Setter,
   createController,
@@ -18,31 +13,19 @@ import {
 
 export type DrawerSlotName = 'default' | 'header' | 'footer';
 
-export type DrawerOptions = HookOptions &
-  Partial<
-    Camelized<
-      Omit<
-        DrawerInstance['$props'],
-        'ref' | 'modelValue' | 'onUpdate:modelValue'
-      >
-    >
-  >;
+export type DrawerOptions = Partial<
+  Camelized<
+    Omit<DrawerInstance['$props'], 'ref' | 'modelValue' | 'onUpdate:modelValue'>
+  >
+>;
 
-export type DrawerProps = HookComponentProps<DrawerOptions>;
+export type DrawerProps = DrawerOptions;
 
 export function useDrawer(options: DrawerOptions = {}) {
-  const name = 'Drawer';
   const defaults = withOptions({}, 'drawer');
   const [drawerState, setState, initState, getCurrentState] =
-    useState<DrawerOptions>(
-      {
-        ...options,
-        [HOOK_METADATA]: {
-          name,
-          internal: options[HOOK_METADATA]?.internal,
-        },
-      },
-      current => mergeOptions(current, defaults),
+    useState<DrawerOptions>(options, current =>
+      mergeOptions(current, defaults),
     );
   const drawerVisible = ref(false);
   const drawerInstance = ref<DrawerInstance | null>(null);
@@ -75,7 +58,7 @@ export function useDrawer(options: DrawerOptions = {}) {
   });
 
   const Drawer = defineComponent<DrawerProps>({
-    name,
+    name: 'Drawer',
     inheritAttrs: false,
     setup(_, { slots }) {
       initState();

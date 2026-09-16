@@ -17,11 +17,6 @@ import {
 
 import { getComponent, withOptions } from '#/config';
 import {
-  type HookComponentProps,
-  type HookOptions,
-  HOOK_METADATA,
-} from '#/devtools';
-import {
   type Camelized,
   type Recordable,
   type RenderOptions,
@@ -29,6 +24,7 @@ import {
   createController,
   mergeOptions,
   resolveRenderProps,
+  SKIP_DEFAULTS,
   unwrapSetter,
   useState,
 } from '#/util';
@@ -48,40 +44,32 @@ export type FormItem<T extends object = object> = Partial<
   raw?: boolean;
 };
 
-export type FormOptions<T extends object> = HookOptions &
-  Partial<Camelized<Omit<FormInstance['$props'], 'ref' | 'model'>>> & {
-    model: T;
-    items?: FormItem<NoInfer<T>>[];
-  };
+export type FormOptions<T extends object> = Partial<
+  Camelized<Omit<FormInstance['$props'], 'ref' | 'model'>>
+> & {
+  model: T;
+  items?: FormItem<NoInfer<T>>[];
+};
 
 type FormState<T extends object> = Partial<FormOptions<T>>;
 
-export type FormProps<T extends object> = HookComponentProps<FormState<T>>;
+export type FormProps<T extends object> = FormState<T>;
 
 type InternalFormOptions<T extends object> = FormState<T> & {
-  [HOOK_METADATA]: { internal: true };
+  [SKIP_DEFAULTS]: true;
 };
 
 export function useForm<T extends object = object>(
   input?: FormOptions<T> | InternalFormOptions<T>,
 ) {
-  const options: FormState<T> = input ?? {};
-  const name = 'Form';
-  const defaults = options[HOOK_METADATA]?.internal
-    ? {}
-    : withOptions({}, 'form');
+  const { [SKIP_DEFAULTS]: skipDefaults, ...options } = {
+    [SKIP_DEFAULTS]: false,
+    ...input,
+  };
+  const defaults = skipDefaults ? {} : withOptions({}, 'form');
   const [formState, setFormState, initState, getCurrentState] = useState<
     FormState<T>
-  >(
-    {
-      ...options,
-      [HOOK_METADATA]: {
-        name,
-        internal: options[HOOK_METADATA]?.internal,
-      },
-    },
-    current => mergeOptions(current, defaults),
-  );
+  >(options, current => mergeOptions(current, defaults));
   const formModel = ref<T | null>(null);
   const formInstance = ref<FormInstance | null>(null);
 
@@ -135,7 +123,7 @@ export function useForm<T extends object = object>(
   });
 
   const Form = defineComponent<FormProps<T>>({
-    name,
+    name: 'Form',
     inheritAttrs: false,
     setup(_, { slots }) {
       initState();

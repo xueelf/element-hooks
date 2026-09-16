@@ -17,11 +17,6 @@ import {
 
 import { getComponent, withOptions } from '#/config';
 import {
-  type HookComponentProps,
-  type HookOptions,
-  HOOK_METADATA,
-} from '#/devtools';
-import {
   type Awaitable,
   type Camelized,
   type RenderOptions,
@@ -29,6 +24,7 @@ import {
   createController,
   mergeOptions,
   resolveRenderProps,
+  SKIP_DEFAULTS,
   unwrapSetter,
   useDataLoader,
   useState,
@@ -101,16 +97,17 @@ export type TableData<T extends object> = T[];
 
 export type TableDataLoader<T extends object> = () => Awaitable<TableData<T>>;
 
-export type TableOptions<T extends object> = HookOptions &
-  Partial<Camelized<Omit<Parameters<typeof ElTable<T>>[0], 'ref' | 'data'>>> & {
-    data?: TableData<T>;
-    columns?: TableColumn<T>[];
-  };
+export type TableOptions<T extends object> = Partial<
+  Camelized<Omit<Parameters<typeof ElTable<T>>[0], 'ref' | 'data'>>
+> & {
+  data?: TableData<T>;
+  columns?: TableColumn<T>[];
+};
 
-export type TableProps<T extends object> = HookComponentProps<TableOptions<T>>;
+export type TableProps<T extends object> = TableOptions<T>;
 
 type InternalTableOptions<T extends object> = TableOptions<T> & {
-  [HOOK_METADATA]: { internal: true };
+  [SKIP_DEFAULTS]: true;
 };
 
 type DefaultTableOptions = Omit<TableOptions<object>, 'data'> & {
@@ -127,28 +124,22 @@ export function useTable<T extends object>(
   options?: TableOptions<T>,
 ): TableResult<T>;
 export function useTable<T extends object = object>(
-  options: TableOptions<T> = {},
+  options: TableOptions<T> | InternalTableOptions<T> = {},
 ) {
   return createTable(options);
 }
 
-function createTable<T extends object = object>(options: TableOptions<T> = {}) {
-  const name = 'Table';
-  const defaults = options[HOOK_METADATA]?.internal
-    ? {}
-    : withOptions({}, 'table');
+function createTable<T extends object = object>(
+  input: TableOptions<T> | InternalTableOptions<T> = {},
+) {
+  const { [SKIP_DEFAULTS]: skipDefaults, ...options } = {
+    [SKIP_DEFAULTS]: false,
+    ...input,
+  };
+  const defaults = skipDefaults ? {} : withOptions({}, 'table');
   const [tableState, setState, initState, getCurrentState] = useState<
     TableOptions<T>
-  >(
-    {
-      ...options,
-      [HOOK_METADATA]: {
-        name,
-        internal: options[HOOK_METADATA]?.internal,
-      },
-    },
-    current => mergeOptions(current, defaults),
-  );
+  >(options, current => mergeOptions(current, defaults));
   const tableInstance = ref<TableInstance | null>(null);
 
   const setColumns: Setter<TableColumn<T>[]> = update => {
@@ -198,7 +189,7 @@ function createTable<T extends object = object>(options: TableOptions<T> = {}) {
   });
 
   const Table = defineComponent<TableProps<T>>({
-    name,
+    name: 'Table',
     inheritAttrs: false,
     setup(_, { slots }) {
       initState();

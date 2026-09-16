@@ -54,7 +54,7 @@ bun add element-hooks
 
 ## 注册插件 {#plugin-registration}
 
-将 Element Hooks 注册为 Vue 插件后，可以设置 [全局配置](/guide/global-options)，并启用 Vue DevTools 支持。如果只需要按需使用 Hook，也可以不注册插件。
+将 Element Hooks 注册为 Vue 插件后，可以设置 [全局配置](/guide/global-options)，并在浏览器开发环境中启用 Vue DevTools 支持。如果只需要按需使用 Hook，也可以不注册插件。
 
 ```ts {10}
 import ElementHooks from 'element-hooks';
@@ -70,6 +70,10 @@ app.use(ElementHooks);
 
 app.mount('#app');
 ```
+
+在 Vue DevTools 的 **Components** 面板中，选择已挂载的 `Dialog`、`Drawer`、`Form`、`Table` 或 `Grid` 组件，可以在 **Element Hooks** 分组中查看合并全局默认值和组件 Props 后的生效配置。配置以只读方式展示，并随组件更新刷新。
+
+调试信息集成在组件面板中。生产应用构建会移除这部分调试代码。
 
 ## 自动导入 {#auto-import}
 
