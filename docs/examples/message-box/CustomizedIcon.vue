@@ -1,8 +1,9 @@
 <script setup lang="ts">
   import { Delete } from '@element-plus/icons-vue';
-  import { useMessageBox } from 'element-hooks';
   import { ElMessage } from 'element-plus';
   import { markRaw } from 'vue';
+
+  import { useMessageBox } from 'element-hooks';
 
   const { confirm } = useMessageBox();
 

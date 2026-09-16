@@ -1,7 +1,8 @@
 <script setup lang="ts">
-  import { useDialog } from 'element-hooks';
   import { type DialogTransition } from 'element-plus';
   import { computed, ref } from 'vue';
+
+  import { useDialog } from 'element-hooks';
 
   const currentAnimation = ref('fade');
   const isObjectConfig = ref(false);

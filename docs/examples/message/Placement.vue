@@ -1,6 +1,7 @@
 <script setup lang="ts">
-  import { useMessage } from 'element-hooks';
   import { type MessagePlacement, type MessageType } from 'element-plus';
+
+  import { useMessage } from 'element-hooks';
 
   const message = useMessage();
 

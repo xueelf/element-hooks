@@ -1,6 +1,7 @@
 <script setup lang="ts">
-  import { useForm } from 'element-hooks';
   import { type FormItemRule, type FormRules, ElInput } from 'element-plus';
+
+  import { useForm } from 'element-hooks';
 
   type Validator = NonNullable<FormItemRule['validator']>;
 

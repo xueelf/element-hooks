@@ -1,7 +1,8 @@
 <script setup lang="ts">
-  import { useMessageBox } from 'element-hooks';
   import { ElSwitch } from 'element-plus';
   import { h, ref } from 'vue';
+
+  import { useMessageBox } from 'element-hooks';
 
   const { alert } = useMessageBox();
 

@@ -1,7 +1,8 @@
 <script setup lang="ts">
-  import { useTable } from 'element-hooks';
   import { type TableTooltipData, ElLink } from 'element-plus';
   import { h } from 'vue';
+
+  import { useTable } from 'element-hooks';
 
   type TableData = {
     address: string;

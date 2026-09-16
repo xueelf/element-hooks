@@ -1,7 +1,8 @@
 <script setup lang="ts">
-  import { useDrawer, useMessageBox } from 'element-hooks';
   import { type DrawerProps } from 'element-plus';
   import { ref } from 'vue';
+
+  import { useDrawer, useMessageBox } from 'element-hooks';
 
   const direction = ref<DrawerProps['direction']>('rtl');
   const radio1 = ref('Option 1');

@@ -1,5 +1,4 @@
 <script setup lang="ts">
-  import { useForm } from 'element-hooks';
   import {
     type FormRules,
     ElCheckboxGroup,
@@ -10,6 +9,8 @@
     ElSelectV2,
     ElSwitch,
   } from 'element-plus';
+
+  import { useForm } from 'element-hooks';
 
   interface RuleForm {
     name: string;

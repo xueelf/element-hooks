@@ -1,5 +1,4 @@
 <script setup lang="ts">
-  import { useForm } from 'element-hooks';
   import {
     type ComponentSize,
     type FormProps,
@@ -9,6 +8,8 @@
     ElSelect,
   } from 'element-plus';
   import { ref } from 'vue';
+
+  import { useForm } from 'element-hooks';
 
   const [Form, { setState }] = useForm({
     labelWidth: 'auto',

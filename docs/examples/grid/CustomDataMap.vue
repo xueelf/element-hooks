@@ -1,6 +1,7 @@
 <script setup lang="ts">
-  import { useGrid } from 'element-hooks';
   import { onMounted } from 'vue';
+
+  import { useGrid } from 'element-hooks';
 
   type Row = {
     address: string;

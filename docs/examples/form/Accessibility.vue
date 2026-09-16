@@ -1,6 +1,7 @@
 <script setup lang="ts">
-  import { useForm } from 'element-hooks';
   import { ElInput } from 'element-plus';
+
+  import { useForm } from 'element-hooks';
 
   const [Form] = useForm({
     labelPosition: 'left',

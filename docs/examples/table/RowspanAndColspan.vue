@@ -1,6 +1,7 @@
 <script setup lang="ts">
-  import { useTable } from 'element-hooks';
   import { type TableColumnCtx } from 'element-plus';
+
+  import { useTable } from 'element-hooks';
 
   interface User {
     id: string;

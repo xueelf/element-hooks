@@ -1,7 +1,8 @@
 <script setup lang="ts">
-  import { useMessageBox } from 'element-hooks';
   import { ElMessage } from 'element-plus';
   import { h } from 'vue';
+
+  import { useMessageBox } from 'element-hooks';
 
   const { confirm } = useMessageBox();
 

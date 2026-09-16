@@ -1,7 +1,8 @@
 <script setup lang="ts">
-  import { type FormItem, useForm } from 'element-hooks';
   import { ElInput } from 'element-plus';
   import { ref, watch } from 'vue';
+
+  import { type FormItem, useForm } from 'element-hooks';
 
   interface DomainItem {
     key: number;
