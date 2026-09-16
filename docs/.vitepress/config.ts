@@ -2,11 +2,6 @@ import { fileURLToPath } from 'node:url';
 
 import VueJSX from '@vitejs/plugin-vue-jsx';
 import UnoCSS from 'unocss/vite';
-import AutoImport from 'unplugin-auto-import/vite';
-import ElementPlus from 'unplugin-element-plus/vite';
-import IconsResolver from 'unplugin-icons/resolver';
-import Icons from 'unplugin-icons/vite';
-import { ElementPlusResolver } from 'unplugin-vue-components/resolvers';
 import Components from 'unplugin-vue-components/vite';
 import VueDevTools from 'vite-plugin-vue-devtools';
 import { defineConfig } from 'vitepress';
@@ -101,32 +96,10 @@ export default defineConfig({
   },
   vite: {
     plugins: [
-      AutoImport({
-        dts: './types/auto-imports.d.ts',
-        resolvers: [
-          ElementPlusResolver(),
-          IconsResolver({
-            prefix: 'Icon',
-          }),
-        ],
-      }),
       Components({
         dirs: ['components', 'examples'],
-        dts: './types/components.d.ts',
+        dts: false,
         include: [/\.vue$/, /\.md$/],
-        resolvers: [
-          ElementPlusResolver(),
-          IconsResolver({
-            prefix: 'icon',
-            enabledCollections: ['ep'],
-          }),
-        ],
-      }),
-      ElementPlus({
-        useSource: true,
-      }),
-      Icons({
-        autoInstall: true,
       }),
       UnoCSS(),
       VueDevTools(),

@@ -9,8 +9,8 @@
     resizable: true,
   });
 
-  const handleDirectionChange = (value: DrawerProps['direction']) => {
-    setState(prev => ({ ...prev, direction: value }));
+  const handleDirectionChange = () => {
+    setState(prev => ({ ...prev, direction: direction.value }));
     open();
   };
 </script>

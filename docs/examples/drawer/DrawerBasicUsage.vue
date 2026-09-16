@@ -32,9 +32,9 @@
     direction: direction.value,
   });
 
-  const handleDirectionChange = (value: DrawerProps['direction']) => {
-    setState(prev => ({ ...prev, direction: value }));
-    setDrawerWithFooterState(prev => ({ ...prev, direction: value }));
+  const handleDirectionChange = () => {
+    setState(prev => ({ ...prev, direction: direction.value }));
+    setDrawerWithFooterState(prev => ({ ...prev, direction: direction.value }));
   };
 
   function cancelClick() {

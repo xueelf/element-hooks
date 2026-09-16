@@ -1,5 +1,12 @@
 <script setup lang="ts">
-  import { Check, CopyDocument, Hide, View } from '@element-plus/icons-vue';
+  import {
+    CaretTop,
+    Check,
+    CopyDocument,
+    Hide,
+    Link,
+    View,
+  } from '@element-plus/icons-vue';
   import { ElMessage } from 'element-plus';
   import { computed, reactive, useTemplateRef } from 'vue';
 
@@ -59,7 +66,7 @@
     <template #footer>
       <div class="action-wrapper">
         <el-icon class="cursor-pointer" title="Open in Playground">
-          <icon-ep-link />
+          <Link />
         </el-icon>
         <el-icon
           class="cursor-pointer"
@@ -86,7 +93,7 @@
           >
             <template #icon>
               <el-icon class="cursor-pointer">
-                <icon-ep-caret-top />
+                <CaretTop />
               </el-icon>
             </template>
             <span>{{ icon.expand.title }}</span>

@@ -6,7 +6,7 @@
     "jsx": "preserve",
     "jsxImportSource": "vue",
     "moduleDetection": "force",
-    "types": ["bun"],
+    "types": ["bun", "element-plus/global"],
 
     /* Modules */
     "module": "Preserve",
